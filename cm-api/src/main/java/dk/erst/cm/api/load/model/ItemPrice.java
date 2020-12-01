@@ -1,8 +1,8 @@
 
 package dk.erst.cm.api.load.model;
 
-import static dk.erst.cm.api.load.model.Const.CAC;
-import static dk.erst.cm.api.load.model.Const.CBC;
+import static dk.erst.cm.api.load.model.NamespacesUBL.CAC;
+import static dk.erst.cm.api.load.model.NamespacesUBL.CBC;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

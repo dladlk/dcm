@@ -60,6 +60,8 @@ public class CatalogHandler extends XMLFilterImpl {
 	 */
 	private NamespaceSupport namespaces = new NamespaceSupport();
 
+	private boolean parseHead;
+
 	public void startPrefixMapping(String prefix, String uri) throws SAXException {
 		namespaces.pushContext();
 		namespaces.declarePrefix(prefix, uri);
@@ -77,10 +79,31 @@ public class CatalogHandler extends XMLFilterImpl {
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 		if (localName.equals("Catalogue")) {
 			unmarshallerHandler = catalogUnmarshaller.getUnmarshallerHandler();
+			parseHead = true;
 			prepareUnmarshaller();
 
 			super.startElement(namespaceURI, localName, qName, atts);
 		} else if (localName.equals("CatalogueLine")) {
+			if (parseHead) {
+				endPrefixes();
+				super.endElement("urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2", "Catalogue", "Catalogue");
+				unmarshallerHandler.endDocument();
+
+				try {
+					consumer.consumeHead((Catalogue) unmarshallerHandler.getResult());
+				} catch (JAXBException je) {
+					throw new SAXException("Failed to unmarshall Catalogue on line " + locator.getLineNumber(), je);
+				}
+
+				setContentHandler(defaultHandler);
+
+				unmarshallerHandler = null;
+				if (!loadLines) {
+					throw new StopParseException();
+				}
+				parseHead = false;
+			}
+
 			unmarshallerHandler = catalogLineUnmarshaller.getUnmarshallerHandler();
 			prepareUnmarshaller();
 
@@ -96,30 +119,7 @@ public class CatalogHandler extends XMLFilterImpl {
 		// forward this event
 		super.endElement(namespaceURI, localName, qName);
 
-		if (localName.equals("CatalogLine")) {
-			// just finished sending one chunk.
-
-			endPrefixes();
-
-			super.endElement("urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2", "Catalogue", "Catalogue");
-			unmarshallerHandler.endDocument();
-
-			// then retrieve the fully unmarshalled object
-			try {
-				consumer.consumeHead((Catalogue) unmarshallerHandler.getResult());
-			} catch (JAXBException je) {
-				throw new SAXException("Failed to unmarshall Catalogue on line " + locator.getLineNumber(), je);
-			}
-
-			setContentHandler(defaultHandler);
-
-			unmarshallerHandler = null;
-
-			if (!loadLines) {
-				throw new StopParseException();
-			}
-
-		} else if (localName.equals("CatalogueLine")) {
+		if (localName.equals("CatalogueLine")) {
 			// just finished sending one chunk.
 			endPrefixes();
 
@@ -144,7 +144,7 @@ public class CatalogHandler extends XMLFilterImpl {
 		}
 	}
 
-	public void prepareUnmarshaller() throws SAXException {
+	private void prepareUnmarshaller() throws SAXException {
 		setContentHandler(unmarshallerHandler);
 		unmarshallerHandler.startDocument();
 		unmarshallerHandler.setDocumentLocator(locator);
@@ -152,7 +152,7 @@ public class CatalogHandler extends XMLFilterImpl {
 		startPrefixes();
 	}
 
-	public void startPrefixes() throws SAXException {
+	private void startPrefixes() throws SAXException {
 		Enumeration<?> e = namespaces.getPrefixes();
 		while (e.hasMoreElements()) {
 			String prefix = (String) e.nextElement();
@@ -166,7 +166,7 @@ public class CatalogHandler extends XMLFilterImpl {
 		}
 	}
 
-	public void endPrefixes() throws SAXException {
+	private void endPrefixes() throws SAXException {
 		// emulate the end of a document.
 		Enumeration<?> e = namespaces.getPrefixes();
 		while (e.hasMoreElements()) {

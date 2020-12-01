@@ -12,11 +12,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Period {
+public class Country {
 
-	@XmlElement(name = "StartDate", namespace = CBC)
-	private String startDate;
+	@XmlElement(name = "IdentificationCode", namespace = CBC)
+	private String identificationCode;
 
-	@XmlElement(name = "EndDate", namespace = CBC)
-	private String endDate;
 }

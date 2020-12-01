@@ -21,6 +21,7 @@ import dk.erst.cm.api.load.model.Catalogue;
 import dk.erst.cm.api.load.model.CatalogueLine;
 import dk.erst.cm.api.load.model.Item;
 import dk.erst.cm.api.load.model.ItemPrice;
+import dk.erst.cm.api.load.model.Party;
 import dk.erst.cm.api.load.model.RequiredItemLocationQuantity;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,8 +33,8 @@ class PeppolLoadServiceTest {
 
 	@Test
 	void testLoadXml() throws Exception {
-		appendUpToMb = 500;
-		repeatTimes = 5;
+		appendUpToMb = 0;
+		repeatTimes = 0;
 
 		PeppolLoadService s = new PeppolLoadService();
 
@@ -92,6 +93,8 @@ class PeppolLoadServiceTest {
 
 				lineCount[0] = 0;
 
+				final Catalogue[] resCat = new Catalogue[1];
+
 				s.loadXml(tempFile.toPath(), new CatalogConsumer() {
 					@Override
 					public void consumeLine(CatalogueLine line) {
@@ -101,13 +104,12 @@ class PeppolLoadServiceTest {
 
 					@Override
 					public void consumeHead(Catalogue c) {
-						assertNotNull(c);
-						assertEquals("1387", c.getId());
-						assertEquals("2016-08-01", c.getIssueDate());
+						resCat[0] = c;
 					}
 				});
-				assertEquals(expectedLineCount, lineCount[0]);
 				long duration = System.currentTimeMillis() - start;
+				assertEquals(expectedLineCount, lineCount[0]);
+				assertCatalog(resCat[0]);
 				if (i > 0) {
 					totalDuration += duration;
 				}
@@ -124,6 +126,90 @@ class PeppolLoadServiceTest {
 		} finally {
 			assertTrue(FileUtils.deleteQuietly(tempFile));
 		}
+	}
+
+	private void assertCatalog(Catalogue c) {
+		assertNotNull(c);
+		assertEquals("urn:fdc:peppol.eu:poacc:trns:catalogue:3", c.getCustomizationID());
+		assertEquals("urn:fdc:peppol.eu:poacc:bis:catalogue_only:3", c.getProfileID());
+		assertEquals("1387", c.getId());
+		assertEquals("Add", c.getActionCode());
+		assertEquals("Spring Catalogue", c.getName());
+		assertEquals("2016-08-01", c.getIssueDate());
+		assertEquals("2.0", c.getVersionID());
+		assertEquals("2018-09-01", c.getValidityPeriod().getStartDate());
+		assertEquals("2019-08-31", c.getValidityPeriod().getEndDate());
+		assertEquals("CRT1387", c.getReferencedContract().getId());
+		assertEquals("1.0", c.getSourceCatalogueReference().getId());
+
+		Party p = c.getProviderParty();
+		assertEquals("987654325", p.getEndpointID().getId());
+		assertEquals("0192", p.getEndpointID().getSchemeId());
+		assertEquals("5790000435951", p.getPartyIdentification().getId().getId());
+		assertEquals("0088", p.getPartyIdentification().getId().getSchemeId());
+		assertEquals("Sinsenveien 40", p.getPostalAddress().getStreetName());
+		assertEquals("Oppgang B", p.getPostalAddress().getAdditionalStreetName());
+		assertEquals("Oslo", p.getPostalAddress().getCityName());
+		assertEquals("0501", p.getPostalAddress().getPostalZone());
+		assertEquals("Region", p.getPostalAddress().getCountrySubentity());
+		assertEquals("Address Line 3", p.getPostalAddress().getAddressLine().get(0).getLine());
+		assertEquals("NO", p.getPostalAddress().getCountry().getIdentificationCode());
+		assertEquals("Helseforetak AS", p.getPartyLegalEntity().getRegistrationName());
+		assertEquals("123456785", p.getPartyLegalEntity().getCompanyID().getId());
+		assertEquals("0192", p.getPartyLegalEntity().getCompanyID().getSchemeId());
+		assertEquals("Oslo", p.getPartyLegalEntity().getRegistrationAddress().getCityName());
+		assertEquals("NO", p.getPartyLegalEntity().getRegistrationAddress().getCountry().getIdentificationCode());
+
+		p = c.getReceiverParty();
+		assertEquals("987654325", p.getEndpointID().getId());
+		assertEquals("0192", p.getEndpointID().getSchemeId());
+		assertEquals("5790000435944", p.getPartyIdentification().getId().getId());
+		assertEquals("0088", p.getPartyIdentification().getId().getSchemeId());
+		assertEquals("Storgt. 12", p.getPostalAddress().getStreetName());
+		assertEquals("4. etasje", p.getPostalAddress().getAdditionalStreetName());
+		assertEquals("Oslo", p.getPostalAddress().getCityName());
+		assertEquals("0585", p.getPostalAddress().getPostalZone());
+		assertEquals("Region", p.getPostalAddress().getCountrySubentity());
+		assertEquals("Address Line 3", p.getPostalAddress().getAddressLine().get(0).getLine());
+		assertEquals("NO", p.getPostalAddress().getCountry().getIdentificationCode());
+		assertEquals("Medical AS", p.getPartyLegalEntity().getRegistrationName());
+		assertEquals("123456785", p.getPartyLegalEntity().getCompanyID().getId());
+		assertEquals("0192", p.getPartyLegalEntity().getCompanyID().getSchemeId());
+		assertEquals("Oslo", p.getPartyLegalEntity().getRegistrationAddress().getCityName());
+		assertEquals("NO", p.getPartyLegalEntity().getRegistrationAddress().getCountry().getIdentificationCode());
+
+		p = c.getSellerSupplierParty().getParty();
+		assertEquals("987654325", p.getEndpointID().getId());
+		assertEquals("0192", p.getEndpointID().getSchemeId());
+		assertEquals("5790000435951", p.getPartyIdentification().getId().getId());
+		assertEquals("0088", p.getPartyIdentification().getId().getSchemeId());
+
+		assertEquals("Medical", p.getPartyName().getName());
+
+		assertEquals("Storgt. 12", p.getPostalAddress().getStreetName());
+		assertEquals("4. etasje", p.getPostalAddress().getAdditionalStreetName());
+		assertEquals("Oslo", p.getPostalAddress().getCityName());
+		assertEquals("0585", p.getPostalAddress().getPostalZone());
+		assertEquals("Region", p.getPostalAddress().getCountrySubentity());
+		assertEquals("Address Line 3", p.getPostalAddress().getAddressLine().get(0).getLine());
+		assertEquals("NO", p.getPostalAddress().getCountry().getIdentificationCode());
+		assertEquals("Nils Nilsen", p.getContact().getName());
+		assertEquals("22150510", p.getContact().getTelephone());
+		assertEquals("post@medical.no", p.getContact().getElectronicMail());
+
+		p = c.getContractorCustomerParty().getParty();
+		assertEquals("123456785", p.getEndpointID().getId());
+		assertEquals("0192", p.getEndpointID().getSchemeId());
+		assertEquals("5790000435951", p.getPartyIdentification().getId().getId());
+		assertEquals("0088", p.getPartyIdentification().getId().getSchemeId());
+
+		assertEquals("Medical", p.getPartyName().getName());
+
+		assertEquals("Nils Nilsen", p.getContact().getName());
+		assertEquals("22150510", p.getContact().getTelephone());
+		assertEquals("post@medical.no", p.getContact().getElectronicMail());
+
+		assertEquals("Net within 30 days", c.getTradingTerms().getInformation());
 	}
 
 	private void assertLine(CatalogueLine line) {

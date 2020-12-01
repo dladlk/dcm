@@ -1,6 +1,6 @@
 package dk.erst.cm.api.load.model;
 
-import static dk.erst.cm.api.load.model.NamespacesUBL.CBC;
+import static dk.erst.cm.api.load.model.NamespacesUBL.CAC;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -12,11 +12,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Period {
+public class NestedParty {
 
-	@XmlElement(name = "StartDate", namespace = CBC)
-	private String startDate;
+	@XmlElement(name = "Party", namespace = CAC)
+	private Party party;
 
-	@XmlElement(name = "EndDate", namespace = CBC)
-	private String endDate;
 }

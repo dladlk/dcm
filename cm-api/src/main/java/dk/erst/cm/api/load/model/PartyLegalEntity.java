@@ -13,18 +13,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RequiredItemLocationQuantity {
+public class PartyLegalEntity {
 
-	@XmlElement(name = "LeadTimeMeasure", namespace = CBC)
-	private UnitQuantity leadTimeMeasure;
+	@XmlElement(name = "RegistrationName", namespace = CBC)
+	private String registrationName;
 
-	@XmlElement(name = "MinimumQuantity", namespace = CBC)
-	private UnitQuantity minimumQuantity;
+	@XmlElement(name = "CompanyID", namespace = CBC)
+	private SchemeID CompanyID;
 
-	@XmlElement(name = "MaximumQuantity", namespace = CBC)
-	private UnitQuantity maximumQuantity;
-
-	@XmlElement(name = "Price", namespace = CAC)
-	private ItemPrice price;
+	@XmlElement(name = "RegistrationAddress", namespace = CAC)
+	private PostalAddress registrationAddress;
 
 }
