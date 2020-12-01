@@ -24,6 +24,9 @@ public class RequiredItemLocationQuantity {
 	@XmlElement(name = "MaximumQuantity", namespace = CBC)
 	private UnitQuantity maximumQuantity;
 
+	@XmlElement(name = "ApplicableTerritoryAddress", namespace = CAC)
+	private PostalAddress applicableTerritoryAddress;
+
 	@XmlElement(name = "Price", namespace = CAC)
 	private ItemPrice price;
 

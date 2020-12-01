@@ -261,7 +261,7 @@ class PeppolLoadServiceTest {
 		assertNotNull(line.getId());
 		if ("1".equals(line.getId())) {
 			assertNotNull(line.getActionCode());
-			assertTrue(line.isOrderableIndicator());
+			assertEquals("true", line.getOrderableIndicator());
 			assertNotNull(line.getContentUnitQuantity());
 			assertEquals("10", line.getContentUnitQuantity().getQuantity());
 			assertEquals("C62", line.getContentUnitQuantity().getUnitCode());

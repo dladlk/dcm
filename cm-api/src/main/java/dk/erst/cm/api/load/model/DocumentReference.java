@@ -1,5 +1,6 @@
 package dk.erst.cm.api.load.model;
 
+import static dk.erst.cm.api.load.model.NamespacesUBL.CAC;
 import static dk.erst.cm.api.load.model.NamespacesUBL.CBC;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,8 +13,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ID {
+public class DocumentReference {
 
 	@XmlElement(name = "ID", namespace = CBC)
 	private String id;
+
+	@XmlElement(name = "Attachment", namespace = CAC)
+	private Attachment attachment;
 }

@@ -49,10 +49,10 @@ public class Catalogue {
 	private Period validityPeriod;
 
 	@XmlElement(name = "ReferencedContract", namespace = CAC)
-	private ID referencedContract;
+	private NestedID referencedContract;
 
 	@XmlElement(name = "SourceCatalogueReference", namespace = CAC)
-	private ID sourceCatalogueReference;
+	private NestedID sourceCatalogueReference;
 
 	@XmlElement(name = "ProviderParty", namespace = CAC)
 	private Party providerParty;
