@@ -4,6 +4,8 @@ import static dk.erst.cm.api.load.model.NamespacesUBL.CAC;
 import static dk.erst.cm.api.load.model.NamespacesUBL.CATALOGUE;
 import static dk.erst.cm.api.load.model.NamespacesUBL.CBC;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -67,4 +69,6 @@ public class Catalogue {
 	@XmlElement(name = "TradingTerms", namespace = CAC)
 	private TradingTerms tradingTerms;
 
+	@XmlElement(name = "CatalogueLine", namespace = CAC)
+	private List<CatalogueLine> lineList;
 }

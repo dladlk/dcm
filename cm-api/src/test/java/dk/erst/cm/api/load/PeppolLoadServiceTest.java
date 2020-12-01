@@ -5,18 +5,34 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StreamUtils;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import dk.erst.cm.api.load.handler.CatalogConsumer;
+import dk.erst.cm.api.load.handler.CatalogProducer;
 import dk.erst.cm.api.load.model.Catalogue;
 import dk.erst.cm.api.load.model.CatalogueLine;
 import dk.erst.cm.api.load.model.Item;
@@ -40,17 +56,20 @@ class PeppolLoadServiceTest {
 
 		File tempFile = File.createTempFile(this.getClass().getSimpleName(), ".xml");
 
+		final Catalogue[] resCat = new Catalogue[1];
+		final List<CatalogueLine> firstLines = new ArrayList<CatalogueLine>();
 		try {
 			log.info("Created temp file for test: " + tempFile.getAbsolutePath());
 
 			int expectedLineCount = 2;
 
+			String xml;
+			try (InputStream inputStream = this.getClass().getResourceAsStream("/Catalogue_Example.xml")) {
+				xml = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+			}
+
 			if (appendUpToMb > 0) {
 
-				String xml;
-				try (InputStream inputStream = this.getClass().getResourceAsStream("/Catalogue_Example.xml")) {
-					xml = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-				}
 				int catalogEnd = xml.lastIndexOf("</Catalogue>");
 				int lineStart = xml.lastIndexOf("<cac:CatalogueLine>");
 				int lineEnd = catalogEnd - 1;
@@ -77,8 +96,8 @@ class PeppolLoadServiceTest {
 				log.info("Generated file size " + mb(tempFile.length()) + " after appending " + countAppended + " lines more");
 
 			} else {
-				try (InputStream inputStream = this.getClass().getResourceAsStream("/Catalogue_Example.xml"); OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tempFile))) {
-					StreamUtils.copy(inputStream, outputStream);
+				try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tempFile))) {
+					StreamUtils.copy(xml.getBytes(StandardCharsets.UTF_8), outputStream);
 				}
 			}
 
@@ -92,12 +111,13 @@ class PeppolLoadServiceTest {
 				long start = System.currentTimeMillis();
 
 				lineCount[0] = 0;
-
-				final Catalogue[] resCat = new Catalogue[1];
-
+				firstLines.clear();
 				s.loadXml(tempFile.toPath(), new CatalogConsumer() {
 					@Override
 					public void consumeLine(CatalogueLine line) {
+						if (lineCount[0] < 2) {
+							firstLines.add(line);
+						}
 						assertLine(line);
 						lineCount[0]++;
 					}
@@ -120,6 +140,30 @@ class PeppolLoadServiceTest {
 				long averageDuration = Math.round(totalDuration / (repeat - 1));
 				log.info("lines\t" + lineCount[0] + "\tsize\t" + appendUpToMb + " mb\tduration\t" + averageDuration + "\tspeed\t" + Math.round(lineCount[0] / (averageDuration / 1000.0)) + "\tlines/sec");
 			}
+
+			PeppolExportService es = new PeppolExportService();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+			resCat[0].setLineList(firstLines);
+			es.export(new CatalogProducer() {
+				@Override
+				public CatalogueLine produceLine() {
+					return null;
+				}
+
+				@Override
+				public Catalogue produceHead() {
+					return resCat[0];
+				}
+			}, baos, true);
+
+			String loadedXml = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+
+			xml = prettyFormatXml(xml);
+			loadedXml = prettyFormatXml(loadedXml);
+
+			assertEquals(xml, loadedXml);
+
 		} catch (Exception e) {
 			log.error("Failed", e);
 			throw e;
@@ -261,6 +305,20 @@ class PeppolLoadServiceTest {
 
 		}
 		assertNotNull(line.getItem());
+	}
+
+	private static String prettyFormatXml(String xml) throws Exception {
+		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		Document doc = documentBuilder.parse(new InputSource(new StringReader(xml)));
+
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+		StreamResult result = new StreamResult(new StringWriter());
+		DOMSource source = new DOMSource(doc);
+		transformer.transform(source, result);
+		String xmlString = result.getWriter().toString();
+		return xmlString;
 	}
 
 	private static String usedMemory() {
