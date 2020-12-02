@@ -24,12 +24,15 @@ import lombok.ToString;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Catalogue {
 
+	@Mandatory
 	@XmlElement(name = "CustomizationID", namespace = CBC)
 	private String customizationID;
 
+	@Mandatory
 	@XmlElement(name = "ProfileID", namespace = CBC)
 	private String profileID;
 
+	@Mandatory
 	@XmlElement(name = "ID", namespace = CBC)
 	private String id;
 
@@ -39,12 +42,14 @@ public class Catalogue {
 	@XmlElement(name = "Name", namespace = CBC)
 	private String name;
 
+	@Mandatory
 	@XmlElement(name = "IssueDate", namespace = CBC)
 	private String issueDate;
 
 	@XmlElement(name = "VersionID", namespace = CBC)
 	private String versionID;
 
+	@Mandatory
 	@XmlElement(name = "ValidityPeriod", namespace = CAC)
 	private Period validityPeriod;
 
@@ -54,9 +59,11 @@ public class Catalogue {
 	@XmlElement(name = "SourceCatalogueReference", namespace = CAC)
 	private NestedID sourceCatalogueReference;
 
+	@Mandatory
 	@XmlElement(name = "ProviderParty", namespace = CAC)
 	private Party providerParty;
 
+	@Mandatory
 	@XmlElement(name = "ReceiverParty", namespace = CAC)
 	private Party receiverParty;
 
@@ -67,8 +74,9 @@ public class Catalogue {
 	private NestedParty contractorCustomerParty;
 
 	@XmlElement(name = "TradingTerms", namespace = CAC)
-	private TradingTerms tradingTerms;
+	private List<TradingTerms> tradingTerms;
 
+	@Mandatory
 	@XmlElement(name = "CatalogueLine", namespace = CAC)
 	private List<CatalogueLine> lineList;
 }

@@ -20,6 +20,9 @@ import dk.erst.cm.api.load.model.CatalogueLine;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Based on example from https://github.com/javaee/jaxb-v2/blob/master/jaxb-ri/samples/src/main/samples/partial-unmarshalling/src/Splitter.java
+ */
 public class CatalogHandler extends XMLFilterImpl {
 
 	private UnmarshallerHandler unmarshallerHandler;
@@ -167,7 +170,6 @@ public class CatalogHandler extends XMLFilterImpl {
 	}
 
 	private void endPrefixes() throws SAXException {
-		// emulate the end of a document.
 		Enumeration<?> e = namespaces.getPrefixes();
 		while (e.hasMoreElements()) {
 			String prefix = (String) e.nextElement();

@@ -16,6 +16,7 @@ public class UnitQuantity {
 	@XmlValue
 	private String quantity;
 
+	@Mandatory
 	@XmlAttribute(name = "unitCode")
 	private String unitCode;
 

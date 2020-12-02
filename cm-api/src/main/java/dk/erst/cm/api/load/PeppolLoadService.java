@@ -1,9 +1,7 @@
 package dk.erst.cm.api.load;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -29,11 +27,7 @@ public class PeppolLoadService {
 		private static final long serialVersionUID = 5967628673896950778L;
 	}
 
-	/*
-	 * Example comes from https://github.com/javaee/jaxb-v2/blob/master/jaxb-ri/samples/src/main/samples/partial-unmarshalling/src/Splitter.java
-	 */
-
-	public void loadXml(Path xmlPath, final CatalogConsumer consumer) throws JAXBException, SAXException, ParserConfigurationException {
+	public void loadXml(InputStream xmlInputStream, String description, final CatalogConsumer consumer) throws JAXBException, SAXException, ParserConfigurationException {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setNamespaceAware(true);
 		XMLReader reader = factory.newSAXParser().getXMLReader();
@@ -44,12 +38,12 @@ public class PeppolLoadService {
 		handler.setConsumer(consumer);
 		reader.setContentHandler(handler);
 
-		try (InputStream inputStream = new FileInputStream(xmlPath.toFile())) {
-			reader.parse(new InputSource(inputStream));
+		try {
+			reader.parse(new InputSource(xmlInputStream));
 		} catch (StopParseException e) {
 			log.info("Loading stopped before lines read");
 		} catch (IOException e) {
-			log.error("Failed to read file " + xmlPath, e);
+			log.error("Failed to read " + description, e);
 		}
 	}
 

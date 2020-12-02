@@ -2,6 +2,8 @@ package dk.erst.cm.api.load.model;
 
 import static dk.erst.cm.api.load.model.NamespacesUBL.CBC;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -15,5 +17,5 @@ import lombok.Setter;
 public class TradingTerms {
 
 	@XmlElement(name = "Information", namespace = CBC)
-	private String information;
+	private List<String> informationList;
 }

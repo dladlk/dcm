@@ -14,12 +14,14 @@ import lombok.Setter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AdditionalItemProperty {
 
+	@Mandatory
 	@XmlElement(name = "Name", namespace = CBC)
 	private String name;
 
 	@XmlElement(name = "NameCode", namespace = CBC)
 	private ListID nameCode;
 
+	@Mandatory
 	@XmlElement(name = "Value", namespace = CBC)
 	private String value;
 

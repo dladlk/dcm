@@ -12,13 +12,20 @@ import javax.xml.bind.annotation.XmlElement;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 
+ * PEPPOL-T19-B17701 Element 'cbc:Name' MUST be provided.
+ * 
+ * PEPPOL-T19-R012 Each item in a Catalogue line SHALL be identifiable by either "item sellers identifier" or "item standard identifier" ( https://docs.peppol.eu/poacc/upgrade-3/syntax/Catalogue/cac-CatalogueLine/cac-Item/cac-SellersItemIdentification/ )
+ * 
+ */
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Item {
 
 	@XmlElement(name = "Description", namespace = CBC)
-	private String description;
+	private List<String> descriptionList;
 
 	@XmlElement(name = "PackQuantity", namespace = CBC)
 	private UnitQuantity packQuantity;
@@ -26,6 +33,7 @@ public class Item {
 	@XmlElement(name = "PackSizeNumeric", namespace = CBC)
 	private String packSizeNumeric;
 
+	@Mandatory
 	@XmlElement(name = "Name", namespace = CBC)
 	private String name;
 
@@ -33,7 +41,10 @@ public class Item {
 	private List<String> keywordList;
 
 	@XmlElement(name = "BrandName", namespace = CBC)
-	private String brandName;
+	private List<String> brandNameList;
+
+	@XmlElement(name = "BuyersItemIdentification", namespace = CAC)
+	private NestedID buyersItemIdentification;
 
 	@XmlElement(name = "SellersItemIdentification", namespace = CAC)
 	private NestedID sellersItemIdentification;
@@ -45,19 +56,19 @@ public class Item {
 	private NestedSchemeID standardItemIdentification;
 
 	@XmlElement(name = "ItemSpecificationDocumentReference", namespace = CAC)
-	private DocumentReference itemSpecificationDocumentReference;
+	private List<DocumentReference> itemSpecificationDocumentReferenceList;
 
 	@XmlElement(name = "OriginCountry", namespace = CAC)
 	private Country originCountry;
 
 	@XmlElement(name = "CommodityClassification", namespace = CAC)
-	private List<CommodityClassification> commodityClassification;
+	private List<CommodityClassification> commodityClassificationList;
 
 	@XmlElement(name = "TransactionConditions", namespace = CAC)
 	private TransactionConditions transactionConditions;
 
 	@XmlElement(name = "HazardousItem", namespace = CAC)
-	private HazardousItem hazardousItem;
+	private List<HazardousItem> hazardousItemList;
 
 	@XmlElement(name = "ClassifiedTaxCategory", namespace = CAC)
 	private ClassifiedTaxCategory classifiedTaxCategory;
@@ -69,10 +80,10 @@ public class Item {
 	private NestedPartyName manufacturerParty;
 
 	@XmlElement(name = "ItemInstance", namespace = CAC)
-	private ItemInstance itemInstance;
+	private List<ItemInstance> itemInstanceList;
 
 	@XmlElement(name = "Certificate", namespace = CAC)
-	private Certificate certificate;
+	private List<Certificate> certificateList;
 
 	@XmlElement(name = "Dimension", namespace = CAC)
 	private List<Dimension> dimensionList;

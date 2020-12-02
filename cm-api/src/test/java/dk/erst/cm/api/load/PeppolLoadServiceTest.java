@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,6 +40,7 @@ import dk.erst.cm.api.load.model.Item;
 import dk.erst.cm.api.load.model.ItemPrice;
 import dk.erst.cm.api.load.model.Party;
 import dk.erst.cm.api.load.model.RequiredItemLocationQuantity;
+import dk.erst.cm.test.TestDocument;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -64,7 +66,7 @@ class PeppolLoadServiceTest {
 			int expectedLineCount = 2;
 
 			String xml;
-			try (InputStream inputStream = this.getClass().getResourceAsStream("/Catalogue_Example.xml")) {
+			try (InputStream inputStream = TestDocument.CATALOGUE_PEPPOL.getInputStream()) {
 				xml = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 			}
 
@@ -112,21 +114,23 @@ class PeppolLoadServiceTest {
 
 				lineCount[0] = 0;
 				firstLines.clear();
-				s.loadXml(tempFile.toPath(), new CatalogConsumer() {
-					@Override
-					public void consumeLine(CatalogueLine line) {
-						if (lineCount[0] < 2) {
-							firstLines.add(line);
+				try (InputStream inputStream = new FileInputStream(tempFile)) {
+					s.loadXml(inputStream, "file://" + tempFile.toPath(), new CatalogConsumer() {
+						@Override
+						public void consumeLine(CatalogueLine line) {
+							if (lineCount[0] < 2) {
+								firstLines.add(line);
+							}
+							assertLine(line);
+							lineCount[0]++;
 						}
-						assertLine(line);
-						lineCount[0]++;
-					}
 
-					@Override
-					public void consumeHead(Catalogue c) {
-						resCat[0] = c;
-					}
-				});
+						@Override
+						public void consumeHead(Catalogue c) {
+							resCat[0] = c;
+						}
+					});
+				}
 				long duration = System.currentTimeMillis() - start;
 				assertEquals(expectedLineCount, lineCount[0]);
 				assertCatalog(resCat[0]);
@@ -253,7 +257,7 @@ class PeppolLoadServiceTest {
 		assertEquals("22150510", p.getContact().getTelephone());
 		assertEquals("post@medical.no", p.getContact().getElectronicMail());
 
-		assertEquals("Net within 30 days", c.getTradingTerms().getInformation());
+		assertEquals("Net within 30 days", c.getTradingTerms().get(0).getInformationList().get(0));
 	}
 
 	private void assertLine(CatalogueLine line) {
@@ -293,7 +297,7 @@ class PeppolLoadServiceTest {
 			assertEquals("2018-12-31", p.getValidityPeriod().getEndDate());
 
 			Item item = line.getItem();
-			assertEquals("Photo copy paper 80g A4, package of 500 sheets.", item.getDescription());
+			assertEquals("Photo copy paper 80g A4, package of 500 sheets.", item.getDescriptionList().get(0));
 			assertEquals("1", item.getPackQuantity().getQuantity());
 			assertEquals("LBR", item.getPackQuantity().getUnitCode());
 			assertEquals("10", item.getPackSizeNumeric());
@@ -301,7 +305,7 @@ class PeppolLoadServiceTest {
 			assertEquals(2, item.getKeywordList().size());
 			assertEquals("text", item.getKeywordList().get(0));
 			assertEquals("text2", item.getKeywordList().get(1));
-			assertEquals("text", item.getBrandName());
+			assertEquals("text", item.getBrandNameList().get(0));
 
 		}
 		assertNotNull(line.getItem());

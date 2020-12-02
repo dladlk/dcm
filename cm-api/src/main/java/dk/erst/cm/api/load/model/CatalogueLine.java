@@ -23,6 +23,7 @@ import lombok.ToString;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CatalogueLine {
 
+	@Mandatory
 	@XmlElement(name = "ID", namespace = CBC)
 	private String id;
 
@@ -68,6 +69,7 @@ public class CatalogueLine {
 	@XmlElement(name = "RequiredItemLocationQuantity", namespace = CAC)
 	private RequiredItemLocationQuantity itemPrice;
 
+	@Mandatory
 	@XmlElement(name = "Item", namespace = CAC)
 	private Item item;
 
