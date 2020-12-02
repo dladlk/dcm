@@ -49,8 +49,8 @@ class PeppolLoadServiceTest {
 
 	@Test
 	void testLoadXml() throws Exception {
-		appendUpToMb = 0;
-		repeatTimes = 0;
+		// appendUpToMb = 500;
+		// repeatTimes = 5;
 
 		PeppolLoadService s = new PeppolLoadService();
 
@@ -138,7 +138,7 @@ class PeppolLoadServiceTest {
 			}
 			if (repeat > 1) {
 				long averageDuration = Math.round(totalDuration / (repeat - 1));
-				log.info("lines\t" + lineCount[0] + "\tsize\t" + appendUpToMb + " mb\tduration\t" + averageDuration + "\tspeed\t" + Math.round(lineCount[0] / (averageDuration / 1000.0)) + "\tlines/sec");
+				log.info("stat lines\t" + lineCount[0] + "\tsize\t" + appendUpToMb + " mb\tduration\t" + averageDuration + "\tspeed\t" + Math.round(lineCount[0] / (averageDuration / 1000.0)) + "\tlines/sec");
 			}
 
 			PeppolExportService es = new PeppolExportService();

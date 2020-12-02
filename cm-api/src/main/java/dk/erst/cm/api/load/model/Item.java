@@ -53,4 +53,28 @@ public class Item {
 	@XmlElement(name = "CommodityClassification", namespace = CAC)
 	private List<CommodityClassification> commodityClassification;
 
+	@XmlElement(name = "TransactionConditions", namespace = CAC)
+	private TransactionConditions transactionConditions;
+
+	@XmlElement(name = "HazardousItem", namespace = CAC)
+	private HazardousItem hazardousItem;
+
+	@XmlElement(name = "ClassifiedTaxCategory", namespace = CAC)
+	private ClassifiedTaxCategory classifiedTaxCategory;
+
+	@XmlElement(name = "AdditionalItemProperty", namespace = CAC)
+	private List<AdditionalItemProperty> additionalItemPropertyList;
+
+	@XmlElement(name = "ManufacturerParty", namespace = CAC)
+	private NestedPartyName manufacturerParty;
+
+	@XmlElement(name = "ItemInstance", namespace = CAC)
+	private ItemInstance itemInstance;
+
+	@XmlElement(name = "Certificate", namespace = CAC)
+	private Certificate certificate;
+
+	@XmlElement(name = "Dimension", namespace = CAC)
+	private List<Dimension> dimensionList;
+
 }
