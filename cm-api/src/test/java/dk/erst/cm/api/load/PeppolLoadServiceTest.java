@@ -10,13 +10,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,6 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StreamUtils;
 import org.w3c.dom.Document;
@@ -46,31 +48,31 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class PeppolLoadServiceTest {
 
-	int appendUpToMb = 0;
-	int repeatTimes = 0;
-
 	@Test
-	void testLoadXml() throws Exception {
-		// appendUpToMb = 500;
-		// repeatTimes = 5;
+	@Disabled
+	void testLoadXmlPerformance() throws Exception {
+		int[] appendUpToMbList = new int[] { 10, 50, 100, 500 };
+		// appendUpToMbList = new int[] { 0, 1 };
+		int repeatTimes = 5;
 
 		PeppolLoadService s = new PeppolLoadService();
 
 		File tempFile = File.createTempFile(this.getClass().getSimpleName(), ".xml");
 
-		final Catalogue[] resCat = new Catalogue[1];
-		final List<CatalogueLine> firstLines = new ArrayList<CatalogueLine>();
-		try {
-			log.info("Created temp file for test: " + tempFile.getAbsolutePath());
+		List<Number[]> figuresList = new ArrayList<Number[]>();
 
-			int expectedLineCount = 2;
+		for (int j = 0; j < appendUpToMbList.length; j++) {
+			int appendUpToMb = appendUpToMbList[j];
 
-			String xml;
-			try (InputStream inputStream = TestDocument.CATALOGUE_PEPPOL.getInputStream()) {
-				xml = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-			}
+			try {
+				log.info("Created temp file for test: " + tempFile.getAbsolutePath());
 
-			if (appendUpToMb > 0) {
+				int expectedLineCount = 2;
+
+				String xml;
+				try (InputStream inputStream = TestDocument.CATALOGUE_PEPPOL.getInputStream()) {
+					xml = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+				}
 
 				int catalogEnd = xml.lastIndexOf("</Catalogue>");
 				int lineStart = xml.lastIndexOf("<cac:CatalogueLine>");
@@ -97,53 +99,102 @@ class PeppolLoadServiceTest {
 
 				log.info("Generated file size " + mb(tempFile.length()) + " after appending " + countAppended + " lines more");
 
-			} else {
-				try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tempFile))) {
-					StreamUtils.copy(xml.getBytes(StandardCharsets.UTF_8), outputStream);
+				Runtime.getRuntime().gc();
+				log.info("Before unmarshalling: " + usedMemory());
+				int lineCount[] = new int[1];
+
+				long totalDuration = 0;
+				int repeat = Math.max(1, repeatTimes);
+				for (int i = 0; i < repeat; i++) {
+					long start = System.currentTimeMillis();
+
+					lineCount[0] = 0;
+					try (InputStream inputStream = new FileInputStream(tempFile)) {
+						s.loadXml(inputStream, "file://" + tempFile.toPath(), new CatalogConsumer() {
+							@Override
+							public void consumeLine(CatalogueLine line) {
+								lineCount[0]++;
+								assertNotNull(line);
+							}
+
+							@Override
+							public void consumeHead(Catalogue c) {
+								assertNotNull(c);
+							}
+						});
+					}
+					long duration = System.currentTimeMillis() - start;
+					assertEquals(expectedLineCount, lineCount[0]);
+					if (i > 0) {
+						totalDuration += duration;
+					}
+					log.info("Done in " + duration + " ms, " + usedMemory() + " used, loaded " + lineCount[0] + " lines, " + Math.round(lineCount[0] / (duration / 1000.0)) + " lines/sec");
+					Runtime.getRuntime().gc();
 				}
+				if (repeat > 1) {
+					long averageDuration = Math.round(totalDuration / (repeat - 1));
+					Number[] figures = new Number[] { lineCount[0], appendUpToMb, averageDuration, Math.round(lineCount[0] / (averageDuration / 1000.0)) };
+					log.info("stat lines\t" + figures[0] + "\tsize\t" + figures[1] + " mb\tduration\t" + figures[2] + "\tspeed\t" + figures[3] + "\tlines/sec");
+					figuresList.add(figures);
+				}
+			} catch (Exception e) {
+				log.error("Failed", e);
+				throw e;
+			} finally {
+				assertTrue(FileUtils.deleteQuietly(tempFile));
 			}
+		}
+
+		System.out.println(String.join(" | ", "Lines", "Size, MB", "Duration, ms", "Lines/sec"));
+		System.out.println(String.join(" | ", "---:", "---:", "---:", "---:"));
+
+		for (int i = 0; i < figuresList.size(); i++) {
+			Number[] figures = figuresList.get(i);
+
+			String v = Arrays.asList(figures).stream().map(f -> String.valueOf(f)).collect(Collectors.joining(" | "));
+			System.out.println(v);
+		}
+	}
+
+	@Test
+	void testLoadXml() throws Exception {
+		PeppolLoadService s = new PeppolLoadService();
+
+		final Catalogue[] resCat = new Catalogue[1];
+		final List<CatalogueLine> firstLines = new ArrayList<CatalogueLine>();
+		try {
+			int expectedLineCount = 2;
 
 			Runtime.getRuntime().gc();
 			log.info("Before unmarshalling: " + usedMemory());
 			int lineCount[] = new int[1];
 
-			long totalDuration = 0;
-			int repeat = Math.max(1, repeatTimes);
-			for (int i = 0; i < repeat; i++) {
-				long start = System.currentTimeMillis();
+			long start = System.currentTimeMillis();
 
-				lineCount[0] = 0;
-				firstLines.clear();
-				try (InputStream inputStream = new FileInputStream(tempFile)) {
-					s.loadXml(inputStream, "file://" + tempFile.toPath(), new CatalogConsumer() {
-						@Override
-						public void consumeLine(CatalogueLine line) {
-							if (lineCount[0] < 2) {
-								firstLines.add(line);
-							}
-							assertLine(line);
-							lineCount[0]++;
+			lineCount[0] = 0;
+			firstLines.clear();
+			try (InputStream inputStream = TestDocument.CATALOGUE_PEPPOL.getInputStream()) {
+				s.loadXml(inputStream, TestDocument.CATALOGUE_PEPPOL.getFilePath(), new CatalogConsumer() {
+					@Override
+					public void consumeLine(CatalogueLine line) {
+						if (lineCount[0] < 2) {
+							firstLines.add(line);
 						}
+						assertLine(line);
+						lineCount[0]++;
+					}
 
-						@Override
-						public void consumeHead(Catalogue c) {
-							resCat[0] = c;
-						}
-					});
-				}
-				long duration = System.currentTimeMillis() - start;
-				assertEquals(expectedLineCount, lineCount[0]);
-				assertCatalog(resCat[0]);
-				if (i > 0) {
-					totalDuration += duration;
-				}
-				log.info("Done in " + duration + " ms, " + usedMemory() + " used, loaded " + lineCount[0] + " lines, " + Math.round(lineCount[0] / (duration / 1000.0)) + " lines/sec");
-				Runtime.getRuntime().gc();
+					@Override
+					public void consumeHead(Catalogue c) {
+						resCat[0] = c;
+					}
+				});
 			}
-			if (repeat > 1) {
-				long averageDuration = Math.round(totalDuration / (repeat - 1));
-				log.info("stat lines\t" + lineCount[0] + "\tsize\t" + appendUpToMb + " mb\tduration\t" + averageDuration + "\tspeed\t" + Math.round(lineCount[0] / (averageDuration / 1000.0)) + "\tlines/sec");
-			}
+			long duration = System.currentTimeMillis() - start;
+			assertEquals(expectedLineCount, lineCount[0]);
+			assertCatalog(resCat[0]);
+			log.info("Done in " + duration + " ms, " + usedMemory() + " used, loaded " + lineCount[0] + " lines, " + Math.round(lineCount[0] / (duration / 1000.0)) + " lines/sec");
+			Runtime.getRuntime().gc();
 
 			PeppolExportService es = new PeppolExportService();
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -163,6 +214,10 @@ class PeppolLoadServiceTest {
 
 			String loadedXml = new String(baos.toByteArray(), StandardCharsets.UTF_8);
 
+			String xml;
+			try (InputStream inputStream = TestDocument.CATALOGUE_PEPPOL.getInputStream()) {
+				xml = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+			}
 			xml = prettyFormatXml(xml);
 			loadedXml = prettyFormatXml(loadedXml);
 
@@ -171,8 +226,6 @@ class PeppolLoadServiceTest {
 		} catch (Exception e) {
 			log.error("Failed", e);
 			throw e;
-		} finally {
-			assertTrue(FileUtils.deleteQuietly(tempFile));
 		}
 	}
 
