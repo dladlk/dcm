@@ -322,6 +322,7 @@ class PeppolLoadServiceTest {
 		DOMSource source = new DOMSource(doc);
 		transformer.transform(source, result);
 		String xmlString = result.getWriter().toString();
+		xmlString = xmlString.replaceAll("    ", "\t");
 		return xmlString;
 	}
 

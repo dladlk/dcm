@@ -14,6 +14,7 @@ import lombok.Setter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NestedParty {
 
+	@Mandatory
 	@XmlElement(name = "Party", namespace = CAC)
 	private Party party;
 

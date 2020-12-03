@@ -21,7 +21,7 @@ import lombok.ToString;
 @XmlRootElement(name = "CatalogueLine", namespace = CAC)
 @XmlType(name = "CatalogueLine")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CatalogueLine {
+public class CatalogueLine implements LogicIdentifiable {
 
 	@Mandatory
 	@XmlElement(name = "ID", namespace = CBC)
@@ -72,5 +72,18 @@ public class CatalogueLine {
 	@Mandatory
 	@XmlElement(name = "Item", namespace = CAC)
 	private Item item;
+
+	@Override
+	public String getLogicalId() {
+		if (item != null) {
+			if (item.getSellersItemIdentification() != null) {
+				return item.getSellersItemIdentification().getId().toUpperCase();
+			}
+			if (item.getStandardItemIdentification() != null) {
+				return item.getStandardItemIdentification().getId().getId().toUpperCase();
+			}
+		}
+		return null;
+	}
 
 }

@@ -19,4 +19,14 @@ public class SchemeID {
 	@XmlAttribute(name = "schemeID")
 	private String schemeId;
 
+	public String getLogicalId() {
+		if (schemeId != null) {
+			return (schemeId + ":" + id).toUpperCase();
+		}
+		return id.toUpperCase();
+	}
+
+	public String toString() {
+		return getLogicalId();
+	}
 }

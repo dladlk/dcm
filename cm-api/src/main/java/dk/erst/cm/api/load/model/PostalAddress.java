@@ -35,6 +35,7 @@ public class PostalAddress {
 	@XmlElement(name = "AddressLine", namespace = CAC)
 	private List<Line> addressLine;
 
+	@Mandatory
 	@XmlElement(name = "Country", namespace = CAC)
 	private Country country;
 

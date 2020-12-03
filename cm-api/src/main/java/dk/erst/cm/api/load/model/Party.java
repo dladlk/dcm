@@ -15,6 +15,7 @@ import lombok.Setter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Party {
 
+	@Mandatory
 	@XmlElement(name = "EndpointID", namespace = CBC)
 	private SchemeID endpointID;
 

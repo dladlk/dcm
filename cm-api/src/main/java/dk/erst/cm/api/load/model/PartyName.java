@@ -14,6 +14,7 @@ import lombok.Setter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PartyName {
 
+	@Mandatory
 	@XmlElement(name = "Name", namespace = CBC)
 	private String name;
 

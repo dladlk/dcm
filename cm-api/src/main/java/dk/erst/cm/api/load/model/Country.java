@@ -14,6 +14,7 @@ import lombok.Setter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Country {
 
+	@Mandatory
 	@XmlElement(name = "IdentificationCode", namespace = CBC)
 	private String identificationCode;
 
