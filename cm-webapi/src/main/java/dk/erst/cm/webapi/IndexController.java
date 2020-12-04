@@ -4,17 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import dk.erst.cm.api.item.ItemService;
+import dk.erst.cm.api.item.ProductService;
 
 @RestController
 public class IndexController {
 
 	@Autowired
-	private ItemService itemService;
+	private ProductService productService;
 
 	@GetMapping("/")
 	public String index() {
-		return "OK: " + itemService.countItems() + " items";
+		return "OK: " + productService.countItems() + " items";
 	}
 
 }

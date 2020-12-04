@@ -7,48 +7,48 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dk.erst.cm.api.dao.mongo.ItemRepository;
-import dk.erst.cm.api.data.Item;
+import dk.erst.cm.api.dao.mongo.ProductRepository;
+import dk.erst.cm.api.data.Product;
 import dk.erst.cm.api.load.model.Catalogue;
 import dk.erst.cm.api.load.model.CatalogueLine;
 import dk.erst.cm.api.load.model.Party;
 import dk.erst.cm.api.load.model.SchemeID;
 
 @Service
-public class ItemService {
+public class ProductService {
 
-	private ItemRepository itemRepository;
+	private ProductRepository productRepository;
 
 	@Autowired
-	public ItemService(ItemRepository itemRepository) {
-		this.itemRepository = itemRepository;
+	public ProductService(ProductRepository itemRepository) {
+		this.productRepository = itemRepository;
 	}
 
-	public Item saveCatalogUpdateItem(Catalogue catalogue, CatalogueLine line) {
+	public Product saveCatalogUpdateItem(Catalogue catalogue, CatalogueLine line) {
 		String lineLogicalId = line.getLogicalId();
 		String sellerLogicalId = buildSellerLocalId(catalogue);
 
 		String itemLogicalId = sellerLogicalId + "_" + lineLogicalId;
 
-		Item item;
-		Optional<Item> optional = itemRepository.findById(itemLogicalId);
+		Product product;
+		Optional<Product> optional = productRepository.findById(itemLogicalId);
 		if (optional.isPresent()) {
-			item = optional.get();
-			item.setUpdateTime(Instant.now());
-			item.setVersion(item.getVersion() + 1);
-			item.setDocumentVersion(ItemDocumentVersion.PEPPOL_1_0);
-			item.setDocument(line);
+			product = optional.get();
+			product.setUpdateTime(Instant.now());
+			product.setVersion(product.getVersion() + 1);
+			product.setDocumentVersion(ProductDocumentVersion.PEPPOL_1_0);
+			product.setDocument(line);
 		} else {
-			item = new Item();
-			item.setId(itemLogicalId);
-			item.setCreateTime(Instant.now());
-			item.setUpdateTime(null);
-			item.setVersion(1);
-			item.setDocumentVersion(ItemDocumentVersion.PEPPOL_1_0);
-			item.setDocument(line);
+			product = new Product();
+			product.setId(itemLogicalId);
+			product.setCreateTime(Instant.now());
+			product.setUpdateTime(null);
+			product.setVersion(1);
+			product.setDocumentVersion(ProductDocumentVersion.PEPPOL_1_0);
+			product.setDocument(line);
 		}
-		itemRepository.save(item);
-		return item;
+		productRepository.save(product);
+		return product;
 	}
 
 	private String buildSellerLocalId(Catalogue catalogue) {
@@ -68,14 +68,14 @@ public class ItemService {
 	}
 
 	public long countItems() {
-		return itemRepository.count();
+		return productRepository.count();
 	}
 
-	public List<Item> findAll() {
-		return itemRepository.findAll();
+	public List<Product> findAll() {
+		return productRepository.findAll();
 	}
 
-	public Optional<Item> findById(String id) {
-		return itemRepository.findById(id);
+	public Optional<Product> findById(String id) {
+		return productRepository.findById(id);
 	}
 }

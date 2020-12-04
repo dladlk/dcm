@@ -11,26 +11,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import dk.erst.cm.api.data.Item;
-import dk.erst.cm.api.item.ItemService;
+import dk.erst.cm.api.data.Product;
+import dk.erst.cm.api.item.ProductService;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
-public class ItemController {
+public class ProductController {
 
 	@Autowired
-	private ItemService itemService;
+	private ProductService productService;
 
-	@RequestMapping(value = "/items")
-	public List<Item> getAllEmployees() {
-		return itemService.findAll();
+	@RequestMapping(value = "/products")
+	public List<Product> getAllEmployees() {
+		return productService.findAll();
 	}
 
-	@RequestMapping(value = "/item/{id}")
-	public ResponseEntity<Item> getEmployeeById(@PathVariable("id") String id) {
-		Optional<Item> findById = itemService.findById(id);
+	@RequestMapping(value = "/product/{id}")
+	public ResponseEntity<Product> getProductById(@PathVariable("id") String id) {
+		Optional<Product> findById = productService.findById(id);
 		if (findById.isPresent()) {
-			return new ResponseEntity<Item>(findById.get(), HttpStatus.OK);
+			return new ResponseEntity<Product>(findById.get(), HttpStatus.OK);
 		}
 		return ResponseEntity.notFound().build();
 	}

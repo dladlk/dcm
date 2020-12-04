@@ -5,14 +5,14 @@ import java.time.Instant;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import dk.erst.cm.api.item.ItemDocumentVersion;
+import dk.erst.cm.api.item.ProductDocumentVersion;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Document
 @Data
 @NoArgsConstructor
-public class Item {
+public class Product {
 
 	@Id
 	private String id;
@@ -20,8 +20,8 @@ public class Item {
 	private Instant updateTime;
 	private int version;
 
-	private Long itemGroupId;
+	private Long productGroupId;
 
-	private ItemDocumentVersion documentVersion;
+	private ProductDocumentVersion documentVersion;
 	private Object document;
 }
