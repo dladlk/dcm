@@ -56,6 +56,7 @@ class PeppolLoadServiceTest {
 		int repeatTimes = 5;
 
 		PeppolLoadService s = new PeppolLoadService();
+		TestDocument testDocument = TestDocument.CATALOGUE_PEPPOL;
 
 		File tempFile = File.createTempFile(this.getClass().getSimpleName(), ".xml");
 
@@ -70,7 +71,7 @@ class PeppolLoadServiceTest {
 				int expectedLineCount = 2;
 
 				String xml;
-				try (InputStream inputStream = TestDocument.CATALOGUE_PEPPOL.getInputStream()) {
+				try (InputStream inputStream = testDocument.getInputStream()) {
 					xml = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 				}
 
@@ -110,7 +111,7 @@ class PeppolLoadServiceTest {
 
 					lineCount[0] = 0;
 					try (InputStream inputStream = new FileInputStream(tempFile)) {
-						s.loadXml(inputStream, "file://" + tempFile.toPath(), new CatalogConsumer() {
+						s.loadXml(inputStream, "file://" + tempFile.toPath(), new CatalogConsumer<Catalogue, CatalogueLine>() {
 							@Override
 							public void consumeLine(CatalogueLine line) {
 								lineCount[0]++;
@@ -159,6 +160,8 @@ class PeppolLoadServiceTest {
 	@Test
 	void testLoadXml() throws Exception {
 		PeppolLoadService s = new PeppolLoadService();
+		PeppolExportService es = new PeppolExportService();
+		TestDocument testDocument = TestDocument.CATALOGUE_PEPPOL;
 
 		final Catalogue[] resCat = new Catalogue[1];
 		final List<CatalogueLine> firstLines = new ArrayList<CatalogueLine>();
@@ -173,8 +176,8 @@ class PeppolLoadServiceTest {
 
 			lineCount[0] = 0;
 			firstLines.clear();
-			try (InputStream inputStream = TestDocument.CATALOGUE_PEPPOL.getInputStream()) {
-				s.loadXml(inputStream, TestDocument.CATALOGUE_PEPPOL.getFilePath(), new CatalogConsumer() {
+			try (InputStream inputStream = testDocument.getInputStream()) {
+				s.loadXml(inputStream, testDocument.getFilePath(), new CatalogConsumer<Catalogue, CatalogueLine>() {
 					@Override
 					public void consumeLine(CatalogueLine line) {
 						if (lineCount[0] < 2) {
@@ -196,11 +199,10 @@ class PeppolLoadServiceTest {
 			log.info("Done in " + duration + " ms, " + usedMemory() + " used, loaded " + lineCount[0] + " lines, " + Math.round(lineCount[0] / (duration / 1000.0)) + " lines/sec");
 			Runtime.getRuntime().gc();
 
-			PeppolExportService es = new PeppolExportService();
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 			resCat[0].setLineList(firstLines);
-			es.export(new CatalogProducer() {
+			es.export(new CatalogProducer<Catalogue, CatalogueLine>() {
 				@Override
 				public CatalogueLine produceLine() {
 					return null;
@@ -215,7 +217,7 @@ class PeppolLoadServiceTest {
 			String loadedXml = new String(baos.toByteArray(), StandardCharsets.UTF_8);
 
 			String xml;
-			try (InputStream inputStream = TestDocument.CATALOGUE_PEPPOL.getInputStream()) {
+			try (InputStream inputStream = testDocument.getInputStream()) {
 				xml = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 			}
 			xml = prettyFormatXml(xml);

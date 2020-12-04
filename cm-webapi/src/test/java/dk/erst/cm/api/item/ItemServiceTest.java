@@ -28,7 +28,7 @@ class ItemServiceTest {
 		PeppolLoadService peppolLoadService = new PeppolLoadService();
 
 		try (InputStream inputStream = TestDocument.CATALOGUE_PEPPOL.getInputStream()) {
-			peppolLoadService.loadXml(inputStream, "Test file", new CatalogConsumer() {
+			peppolLoadService.loadXml(inputStream, "Test file", new CatalogConsumer<Catalogue, CatalogueLine>() {
 				private Catalogue catalogue;
 				@Override
 				public void consumeHead(Catalogue catalog) {

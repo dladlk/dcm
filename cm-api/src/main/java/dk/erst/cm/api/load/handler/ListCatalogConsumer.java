@@ -3,27 +3,25 @@ package dk.erst.cm.api.load.handler;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.erst.cm.xml.ubl21.model.Catalogue;
-import dk.erst.cm.xml.ubl21.model.CatalogueLine;
 import lombok.Getter;
 
 @Getter
-public class ListCatalogConsumer implements CatalogConsumer {
+public class ListCatalogConsumer<H, L> implements CatalogConsumer<H, L> {
 
-	private Catalogue catalog;
-	private List<CatalogueLine> list;
+	private H catalog;
+	private List<L> list;
 
 	public ListCatalogConsumer() {
-		list = new ArrayList<CatalogueLine>();
+		list = new ArrayList<L>();
 	}
 
 	@Override
-	public void consumeHead(Catalogue catalog) {
+	public void consumeHead(H catalog) {
 		this.catalog = catalog;
 	}
 
 	@Override
-	public void consumeLine(CatalogueLine line) {
+	public void consumeLine(L line) {
 		list.add(line);
 	}
 

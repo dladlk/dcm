@@ -25,6 +25,11 @@
 			<version>${cm.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>dk.erst</groupId>
+			<artifactId>cm-ubl20</artifactId>
+			<version>${cm.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 			<version>${spring.boot.version}</version>
@@ -55,14 +60,12 @@
 			<version>2.3.3</version>
 		</dependency>
 
-		<!-- JSON Validator -->
+<!-- 		
 		<dependency>
 			<groupId>com.github.java-json-tools</groupId>
 			<artifactId>json-schema-validator</artifactId>
 			<version>2.2.14</version>
 		</dependency>
-
-		<!-- Excel reading via Apache POI -->
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -77,12 +80,12 @@
 		</dependency>
 
 
+ -->
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
 			<version>2.7.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

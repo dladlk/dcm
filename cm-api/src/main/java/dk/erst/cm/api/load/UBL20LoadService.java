@@ -17,13 +17,13 @@ import org.xml.sax.XMLReader;
 import dk.erst.cm.api.load.handler.CatalogConsumer;
 import dk.erst.cm.api.load.handler.CatalogHandler;
 import dk.erst.cm.api.load.handler.CatalogHandler.StopParseException;
-import dk.erst.cm.xml.ubl21.model.Catalogue;
-import dk.erst.cm.xml.ubl21.model.CatalogueLine;
+import dk.erst.cm.xml.ubl20.model.Catalogue;
+import dk.erst.cm.xml.ubl20.model.CatalogueLine;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class PeppolLoadService {
+public class UBL20LoadService {
 
 	private CatalogHandler<Catalogue, CatalogueLine> handler;
 

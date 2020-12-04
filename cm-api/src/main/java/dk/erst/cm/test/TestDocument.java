@@ -8,6 +8,8 @@ public enum TestDocument {
 
 	CATALOGUE_PEPPOL("Peppol_Catalogue_Example.xml"),
 
+	CATALOGUE_OIOUBL("OIOUBL_Catalogue_Example.xml"),
+
 	;
 
 	private static String TEST_EXAMPLE_ROOT_PATH = "../cm-resources/examples/";

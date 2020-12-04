@@ -1,12 +1,9 @@
 package dk.erst.cm.api.load.handler;
 
-import dk.erst.cm.xml.ubl21.model.Catalogue;
-import dk.erst.cm.xml.ubl21.model.CatalogueLine;
+public interface CatalogProducer<H, L> {
 
-public interface CatalogProducer {
+	public H produceHead();
 
-	public Catalogue produceHead();
-
-	public CatalogueLine produceLine();
+	public L produceLine();
 
 }

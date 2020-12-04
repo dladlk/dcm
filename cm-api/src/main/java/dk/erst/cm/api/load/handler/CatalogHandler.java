@@ -2,7 +2,6 @@ package dk.erst.cm.api.load.handler;
 
 import java.util.Enumeration;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.UnmarshallerHandler;
@@ -14,21 +13,18 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.NamespaceSupport;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import dk.erst.cm.api.load.PeppolLoadService.StopParseException;
-import dk.erst.cm.xml.ubl21.model.Catalogue;
-import dk.erst.cm.xml.ubl21.model.CatalogueLine;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * Based on example from https://github.com/javaee/jaxb-v2/blob/master/jaxb-ri/samples/src/main/samples/partial-unmarshalling/src/Splitter.java
  */
-public class CatalogHandler extends XMLFilterImpl {
+public class CatalogHandler<H, L> extends XMLFilterImpl {
 
 	private UnmarshallerHandler unmarshallerHandler;
 
-	private Unmarshaller catalogUnmarshaller;
-	private Unmarshaller catalogLineUnmarshaller;
+	private Unmarshaller headUnmarshaller;
+	private Unmarshaller lineUnmarshaller;
 	private DefaultHandler defaultHandler;
 
 	@Getter
@@ -37,12 +33,18 @@ public class CatalogHandler extends XMLFilterImpl {
 
 	@Getter
 	@Setter
-	private CatalogConsumer consumer;
+	private CatalogConsumer<H, L> consumer;
 
-	public CatalogHandler() throws JAXBException {
-		catalogUnmarshaller = JAXBContext.newInstance(Catalogue.class).createUnmarshaller();
-		catalogLineUnmarshaller = JAXBContext.newInstance(CatalogueLine.class).createUnmarshaller();
-		defaultHandler = new DefaultHandler();
+	public static class StopParseException extends SAXException {
+
+		private static final long serialVersionUID = 5967628673896950778L;
+
+	}
+
+	public CatalogHandler(Unmarshaller headUnmarshaller, Unmarshaller lineUnmarshaller) throws JAXBException {
+		this.headUnmarshaller = headUnmarshaller;
+		this.lineUnmarshaller = lineUnmarshaller;
+		this.defaultHandler = new DefaultHandler();
 	}
 
 	/**
@@ -78,10 +80,11 @@ public class CatalogHandler extends XMLFilterImpl {
 		super.endPrefixMapping(prefix);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 		if (localName.equals("Catalogue")) {
-			unmarshallerHandler = catalogUnmarshaller.getUnmarshallerHandler();
+			unmarshallerHandler = headUnmarshaller.getUnmarshallerHandler();
 			parseHead = true;
 			prepareUnmarshaller();
 
@@ -93,7 +96,7 @@ public class CatalogHandler extends XMLFilterImpl {
 				unmarshallerHandler.endDocument();
 
 				try {
-					consumer.consumeHead((Catalogue) unmarshallerHandler.getResult());
+					consumer.consumeHead((H) unmarshallerHandler.getResult());
 				} catch (JAXBException je) {
 					throw new SAXException("Failed to unmarshall Catalogue on line " + locator.getLineNumber(), je);
 				}
@@ -107,7 +110,7 @@ public class CatalogHandler extends XMLFilterImpl {
 				parseHead = false;
 			}
 
-			unmarshallerHandler = catalogLineUnmarshaller.getUnmarshallerHandler();
+			unmarshallerHandler = lineUnmarshaller.getUnmarshallerHandler();
 			prepareUnmarshaller();
 
 			super.startElement(namespaceURI, localName, qName, atts);
@@ -116,22 +119,17 @@ public class CatalogHandler extends XMLFilterImpl {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-
-		// forward this event
 		super.endElement(namespaceURI, localName, qName);
 
 		if (localName.equals("CatalogueLine")) {
-			// just finished sending one chunk.
 			endPrefixes();
 
 			unmarshallerHandler.endDocument();
-
-			// then retrieve the fully unmarshalled object
 			try {
-				CatalogueLine line = (CatalogueLine) unmarshallerHandler.getResult();
-				consumer.consumeLine(line);
+				consumer.consumeLine((L) unmarshallerHandler.getResult());
 			} catch (JAXBException je) {
 				throw new SAXException("Failed to unmarshall CatalogueLine on line " + locator.getLineNumber(), je);
 			}

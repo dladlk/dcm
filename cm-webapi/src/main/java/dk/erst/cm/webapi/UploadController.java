@@ -31,7 +31,7 @@ public class UploadController {
 		final int[] count = new int[1];
 		try {
 			final Catalogue[] cat = new Catalogue[1];
-			loadService.loadXml(file.getInputStream(), file.getName(), new CatalogConsumer() {
+			loadService.loadXml(file.getInputStream(), file.getName(), new CatalogConsumer<Catalogue, CatalogueLine>() {
 				@Override
 				public void consumeHead(Catalogue catalog) {
 					cat[0] = catalog;

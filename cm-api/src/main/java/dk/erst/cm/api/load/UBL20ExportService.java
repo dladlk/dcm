@@ -14,10 +14,10 @@ import javax.xml.bind.Marshaller;
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 import dk.erst.cm.api.load.handler.CatalogProducer;
-import dk.erst.cm.xml.ubl21.model.Catalogue;
-import dk.erst.cm.xml.ubl21.model.CatalogueLine;
+import dk.erst.cm.xml.ubl20.model.Catalogue;
+import dk.erst.cm.xml.ubl20.model.CatalogueLine;
 
-public class PeppolExportService {
+public class UBL20ExportService {
 
 	public void export(CatalogProducer<Catalogue, CatalogueLine> catalogProducer, OutputStream out) throws JAXBException {
 		export(catalogProducer, out, false);

@@ -1,8 +1,8 @@
-package dk.erst.cm.xml.ubl21.model;
+package dk.erst.cm.xml.ubl20.model;
 
-import static dk.erst.cm.xml.ubl21.model.NamespacesUBL.CAC;
-import static dk.erst.cm.xml.ubl21.model.NamespacesUBL.CATALOGUE;
-import static dk.erst.cm.xml.ubl21.model.NamespacesUBL.CBC;
+import static dk.erst.cm.xml.ubl20.model.NamespacesUBL.CAC;
+import static dk.erst.cm.xml.ubl20.model.NamespacesUBL.CATALOGUE;
+import static dk.erst.cm.xml.ubl20.model.NamespacesUBL.CBC;
 
 import java.util.List;
 
@@ -23,6 +23,10 @@ import lombok.ToString;
 @XmlType(name = "Catalogue")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Catalogue {
+
+	@Mandatory
+	@XmlElement(name = "UBLVersionID", namespace = CBC)
+	private String ublVersionID;
 
 	@Mandatory
 	@XmlElement(name = "CustomizationID", namespace = CBC)
