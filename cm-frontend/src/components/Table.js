@@ -10,10 +10,15 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { Snackbar } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   table: {
     minWidth: 600,
+  },
+  header: {
+    marginBottom: '1em'
   },
   paper: {
     display: "flex",
@@ -37,18 +42,20 @@ const useStyles = makeStyles(theme => ({
 export default function SimpleTable() {
   const classes = useStyles();
 
-  const [data, updateData] = React.useState([]);
+  const [data, updateData] = React.useState(null);
   const [firstLoad, setLoad] = React.useState(true);
+  const [selectedFile, setSelectedFile] = React.useState(null);
+  const [snakBarOpen, setSnakBarOpen] = React.useState(false);
   let isLoading = true;
 
-  async function sampleFunc() {
-    let response = await fetch("http://localhost:8080/items");
+  async function loadProducts() {
+    let response = await fetch("http://localhost:8080/products");
     let body = await response.json();
     updateData(body);
   }
 
   if (firstLoad) {
-    sampleFunc();
+    loadProducts();
     setLoad(false);
   }
 
@@ -59,13 +66,43 @@ export default function SimpleTable() {
     return null;
   }
 
-  if (data.length > 0) isLoading = false;
+  function onFileChange(event) {
+    setSelectedFile(event.target.files[0]); 
+  }
+  function onFileUpload() { 
+    const formData = new FormData(); 
+    console.log(selectedFile); 
+    formData.append( 
+      "file", 
+      selectedFile, 
+      selectedFile.name 
+    ); 
+    axios.post("http://localhost:8080/upload", formData).then((res) => {
+      console.log(res);
+      setSnakBarOpen(true);
+      updateData(null);
+      loadProducts();
+    });
+  };
+
+  function handleSnakBarClose(event, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnakBarOpen(false);
+  }
+
+  if (data != null) isLoading = false;
 
   return (
     <div className={classes.paper}>
-      <Typography component="h1" variant="h5">
+      <Typography component="h1" variant="h5" className={classes.header}>
         <Link to="/" className={classes.link}>DELIS Catalogue</Link>
       </Typography>
+
+      <div>
+          <input type="file" onChange={onFileChange}/><button onClick={onFileUpload}>Upload</button>
+      </div>
 
       {isLoading ? (
         <CircularProgress />
@@ -102,6 +139,13 @@ export default function SimpleTable() {
           </Table>
         </TableContainer>
       )}
+
+      <Snackbar open={snakBarOpen} autoHideDuration={1000} onClose={handleSnakBarClose}>
+        <Typography component="h6">
+          File is successfully uploaded
+        </Typography>
+      </Snackbar>
+
     </div>
   );
 }
