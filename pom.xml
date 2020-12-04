@@ -12,6 +12,7 @@
     <name>Delis Catalogue Manager :: Parent</name>
     
     <modules>
+        <module>cm-ubl21</module>
         <module>cm-api</module>
         <module>cm-webapi</module>
     </modules>

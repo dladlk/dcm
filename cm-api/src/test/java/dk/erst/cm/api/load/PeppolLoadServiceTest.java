@@ -36,13 +36,13 @@ import org.xml.sax.InputSource;
 
 import dk.erst.cm.api.load.handler.CatalogConsumer;
 import dk.erst.cm.api.load.handler.CatalogProducer;
-import dk.erst.cm.api.load.model.Catalogue;
-import dk.erst.cm.api.load.model.CatalogueLine;
-import dk.erst.cm.api.load.model.Item;
-import dk.erst.cm.api.load.model.ItemPrice;
-import dk.erst.cm.api.load.model.Party;
-import dk.erst.cm.api.load.model.RequiredItemLocationQuantity;
 import dk.erst.cm.test.TestDocument;
+import dk.erst.cm.xml.ubl21.model.Catalogue;
+import dk.erst.cm.xml.ubl21.model.CatalogueLine;
+import dk.erst.cm.xml.ubl21.model.Item;
+import dk.erst.cm.xml.ubl21.model.ItemPrice;
+import dk.erst.cm.xml.ubl21.model.Party;
+import dk.erst.cm.xml.ubl21.model.RequiredItemLocationQuantity;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

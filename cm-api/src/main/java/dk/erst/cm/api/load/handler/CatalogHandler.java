@@ -15,8 +15,8 @@ import org.xml.sax.helpers.NamespaceSupport;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import dk.erst.cm.api.load.PeppolLoadService.StopParseException;
-import dk.erst.cm.api.load.model.Catalogue;
-import dk.erst.cm.api.load.model.CatalogueLine;
+import dk.erst.cm.xml.ubl21.model.Catalogue;
+import dk.erst.cm.xml.ubl21.model.CatalogueLine;
 import lombok.Getter;
 import lombok.Setter;
 

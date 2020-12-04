@@ -10,9 +10,9 @@ import dk.erst.cm.api.dao.mongo.ProductRepository;
 import dk.erst.cm.api.data.Product;
 import dk.erst.cm.api.load.PeppolLoadService;
 import dk.erst.cm.api.load.handler.CatalogConsumer;
-import dk.erst.cm.api.load.model.Catalogue;
-import dk.erst.cm.api.load.model.CatalogueLine;
 import dk.erst.cm.test.TestDocument;
+import dk.erst.cm.xml.ubl21.model.Catalogue;
+import dk.erst.cm.xml.ubl21.model.CatalogueLine;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

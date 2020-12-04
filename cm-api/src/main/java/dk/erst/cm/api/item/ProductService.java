@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 
 import dk.erst.cm.api.dao.mongo.ProductRepository;
 import dk.erst.cm.api.data.Product;
-import dk.erst.cm.api.load.model.Catalogue;
-import dk.erst.cm.api.load.model.CatalogueLine;
-import dk.erst.cm.api.load.model.Party;
-import dk.erst.cm.api.load.model.SchemeID;
+import dk.erst.cm.xml.ubl21.model.Catalogue;
+import dk.erst.cm.xml.ubl21.model.CatalogueLine;
+import dk.erst.cm.xml.ubl21.model.Party;
+import dk.erst.cm.xml.ubl21.model.SchemeID;
 
 @Service
 public class ProductService {

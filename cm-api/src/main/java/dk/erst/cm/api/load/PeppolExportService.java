@@ -1,8 +1,8 @@
 package dk.erst.cm.api.load;
 
-import static dk.erst.cm.api.load.model.NamespacesUBL.CAC;
-import static dk.erst.cm.api.load.model.NamespacesUBL.CATALOGUE;
-import static dk.erst.cm.api.load.model.NamespacesUBL.CBC;
+import static dk.erst.cm.xml.ubl21.model.NamespacesUBL.CAC;
+import static dk.erst.cm.xml.ubl21.model.NamespacesUBL.CATALOGUE;
+import static dk.erst.cm.xml.ubl21.model.NamespacesUBL.CBC;
 
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +14,7 @@ import javax.xml.bind.Marshaller;
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 import dk.erst.cm.api.load.handler.CatalogProducer;
-import dk.erst.cm.api.load.model.Catalogue;
+import dk.erst.cm.xml.ubl21.model.Catalogue;
 
 public class PeppolExportService {
 

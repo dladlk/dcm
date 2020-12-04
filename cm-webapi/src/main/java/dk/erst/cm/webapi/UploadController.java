@@ -13,8 +13,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import dk.erst.cm.api.item.ProductService;
 import dk.erst.cm.api.load.PeppolLoadService;
 import dk.erst.cm.api.load.handler.CatalogConsumer;
-import dk.erst.cm.api.load.model.Catalogue;
-import dk.erst.cm.api.load.model.CatalogueLine;
+import dk.erst.cm.xml.ubl21.model.Catalogue;
+import dk.erst.cm.xml.ubl21.model.CatalogueLine;
 
 @RestController
 @CrossOrigin(maxAge = 3600)
