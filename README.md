@@ -1,6 +1,14 @@
 # DELIS - Catalogue Manager
 
+### Schema changes from UBL 2.0 XML to UBL 2.1 XML
 
+docs.oasis-open.org/ubl/os-UBL-2.1/UBL-2.1.html#S-CHANGES-FROM-UBL-2.0-TO-UBL-2.1
+
+> All changes in 2.1 schemas are backward-compatible with valid UBL 2.0 instances. Changes include:
+> - the addition of new elements and attributes; 
+> - changes in cardinality from 1 to 0..1 (i.e., making a formerly required element optional); 
+> - changes in cardinality from 0..1 to 0..n (i.e., allowing an unlimited number of occurrences instead of just one); 
+> - corrections to Dictionary Entry Names (DENs).
 
 ### JAXB parsing speed test
 
