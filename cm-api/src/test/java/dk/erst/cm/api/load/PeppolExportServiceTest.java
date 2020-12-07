@@ -24,7 +24,7 @@ import dk.erst.cm.xml.ubl21.model.CatalogueLine;
 class PeppolExportServiceTest {
 
 	private static int repeatCount = 10;
-	private static int linesCount = 400 * 1000;
+	private static int linesCount = 100 * 1000;
 	private Catalogue c;
 	private CatalogueLine cl;
 
