@@ -2,23 +2,21 @@ package dk.erst.cm.api.load;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -27,13 +25,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StreamUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import com.sun.tools.xjc.util.NullStream;
+
+import dk.erst.cm.api.load.TestDocumentGenerator.TestDocumentFile;
 import dk.erst.cm.api.load.handler.CatalogConsumer;
 import dk.erst.cm.api.load.handler.CatalogProducer;
 import dk.erst.cm.test.TestDocument;
@@ -49,16 +48,20 @@ import lombok.extern.slf4j.Slf4j;
 class PeppolLoadServiceTest {
 
 	@Test
-	@Disabled
+	// @Disabled
 	void testLoadXmlPerformance() throws Exception {
-		int[] appendUpToMbList = new int[] { 10, 50, 100, 500 };
+		int[] appendUpToMbList = new int[] { 0, 10, 50, 100, 500 };
 		// appendUpToMbList = new int[] { 0, 1 };
 		int repeatTimes = 5;
+
+		final boolean includeConversionAndSerialization = true;
 
 		PeppolLoadService s = new PeppolLoadService();
 		TestDocument testDocument = TestDocument.CATALOGUE_PEPPOL;
 
-		File tempFile = File.createTempFile(this.getClass().getSimpleName(), ".xml");
+		MapperService ms = new MapperService();
+		UBL20ExportService ubl20e = new UBL20ExportService();
+		PeppolExportService ubl21e = new PeppolExportService();
 
 		List<Number[]> figuresList = new ArrayList<Number[]>();
 
@@ -66,39 +69,8 @@ class PeppolLoadServiceTest {
 			int appendUpToMb = appendUpToMbList[j];
 
 			try {
-				log.info("Created temp file for test: " + tempFile.getAbsolutePath());
-
-				int expectedLineCount = 2;
-
-				String xml;
-				try (InputStream inputStream = testDocument.getInputStream()) {
-					xml = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-				}
-
-				int catalogEnd = xml.lastIndexOf("</Catalogue>");
-				int lineStart = xml.lastIndexOf("<cac:CatalogueLine>");
-				int lineEnd = catalogEnd - 1;
-
-				String catalogLinePart = xml.substring(lineStart, lineEnd);
-
-				int countAppended = 0;
-
-				try (OutputStreamWriter writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tempFile)), StandardCharsets.UTF_8)) {
-					int curLen = xml.length();
-					writer.write(xml.substring(0, lineEnd));
-
-					while (curLen < appendUpToMb * 1024 * 1024) {
-						writer.write(catalogLinePart);
-						curLen += catalogLinePart.length();
-						countAppended++;
-					}
-
-					writer.write(xml.substring(catalogEnd));
-				}
-
-				expectedLineCount += countAppended;
-
-				log.info("Generated file size " + mb(tempFile.length()) + " after appending " + countAppended + " lines more");
+				TestDocumentFile testDocumentFile = TestDocumentGenerator.getTestDocumentFile(testDocument, appendUpToMb);
+				int expectedLineCount = testDocumentFile.getLines();
 
 				Runtime.getRuntime().gc();
 				log.info("Before unmarshalling: " + usedMemory());
@@ -110,17 +82,32 @@ class PeppolLoadServiceTest {
 					long start = System.currentTimeMillis();
 
 					lineCount[0] = 0;
-					try (InputStream inputStream = new FileInputStream(tempFile)) {
-						s.loadXml(inputStream, "file://" + tempFile.toPath(), new CatalogConsumer<Catalogue, CatalogueLine>() {
+					try (InputStream inputStream = new FileInputStream(testDocumentFile.getFile())) {
+						s.loadXml(inputStream, "file://" + testDocumentFile.getFile().toPath(), new CatalogConsumer<Catalogue, CatalogueLine>() {
 							@Override
 							public void consumeLine(CatalogueLine line) {
 								lineCount[0]++;
 								assertNotNull(line);
+								if (includeConversionAndSerialization) {
+									try {
+										ubl21e.marshallLine(line, new NullStream());
+									} catch (JAXBException e) {
+										e.printStackTrace();
+									}
+								}
+
 							}
 
 							@Override
 							public void consumeHead(Catalogue c) {
 								assertNotNull(c);
+								if (includeConversionAndSerialization) {
+									try {
+										ubl21e.marshallHead(c, new NullStream());
+									} catch (JAXBException e) {
+										e.printStackTrace();
+									}
+								}
 							}
 						});
 					}
@@ -141,8 +128,6 @@ class PeppolLoadServiceTest {
 			} catch (Exception e) {
 				log.error("Failed", e);
 				throw e;
-			} finally {
-				assertTrue(FileUtils.deleteQuietly(tempFile));
 			}
 		}
 
@@ -201,16 +186,17 @@ class PeppolLoadServiceTest {
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-			resCat[0].setLineList(firstLines);
+			Collection<CatalogueLine> lineList = firstLines;
 			es.export(new CatalogProducer<Catalogue, CatalogueLine>() {
-				@Override
-				public CatalogueLine produceLine() {
-					return null;
-				}
 
 				@Override
 				public Catalogue produceHead() {
 					return resCat[0];
+				}
+
+				@Override
+				public Iterator<CatalogueLine> lineIterator() {
+					return lineList.iterator();
 				}
 			}, baos, true);
 
@@ -225,6 +211,33 @@ class PeppolLoadServiceTest {
 
 			assertEquals(xml, loadedXml);
 
+			MapperService ms = new MapperService();
+			UBL20ExportService ubl20Export = new UBL20ExportService();
+			final dk.erst.cm.xml.ubl20.model.Catalogue c20 = ms.convert(resCat[0]);
+
+			assertEquals("AddTEST", c20.getActionCode());
+
+			final List<dk.erst.cm.xml.ubl20.model.CatalogueLine> c20LineList = new ArrayList<dk.erst.cm.xml.ubl20.model.CatalogueLine>();
+			for (int i = 0; i < firstLines.size(); i++) {
+				c20LineList.add(ms.convert(firstLines.get(i)));
+			}
+
+			ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+			ubl20Export.export(new CatalogProducer<dk.erst.cm.xml.ubl20.model.Catalogue, dk.erst.cm.xml.ubl20.model.CatalogueLine>() {
+				@Override
+				public dk.erst.cm.xml.ubl20.model.Catalogue produceHead() {
+					return c20;
+				}
+
+				@Override
+				public Iterator<dk.erst.cm.xml.ubl20.model.CatalogueLine> lineIterator() {
+					return c20LineList.iterator();
+				}
+			}, baos2, true);
+
+			String loadedXml20 = new String(baos2.toByteArray(), StandardCharsets.UTF_8);
+			System.out.println(loadedXml20);
+
 		} catch (Exception e) {
 			log.error("Failed", e);
 			throw e;
@@ -234,7 +247,7 @@ class PeppolLoadServiceTest {
 	private void assertCatalog(Catalogue c) {
 		assertNotNull(c);
 		assertEquals("urn:fdc:peppol.eu:poacc:trns:catalogue:3", c.getCustomizationID());
-		assertEquals("urn:fdc:peppol.eu:poacc:bis:catalogue_only:3", c.getProfileID());
+		assertEquals("urn:fdc:peppol.eu:poacc:bis:catalogue_only:3", c.getProfileID().getId());
 		assertEquals("1387", c.getId());
 		assertEquals("Add", c.getActionCode());
 		assertEquals("Spring Catalogue", c.getName());

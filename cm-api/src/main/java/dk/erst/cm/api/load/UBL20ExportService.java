@@ -6,6 +6,9 @@ import static dk.erst.cm.xml.ubl21.model.NamespacesUBL.CBC;
 
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -19,18 +22,48 @@ import dk.erst.cm.xml.ubl20.model.CatalogueLine;
 
 public class UBL20ExportService {
 
+	private Marshaller headMarshaller;
+	private Marshaller lineMarshaller;
+
+	public UBL20ExportService() throws JAXBException {
+		headMarshaller = JAXBContext.newInstance(Catalogue.class).createMarshaller();
+		headMarshaller.setProperty(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.displayName());
+		if (true) {
+			headMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			headMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new UblNamespacePrefixMapper());
+		}
+		lineMarshaller = JAXBContext.newInstance(CatalogueLine.class).createMarshaller();
+		lineMarshaller.setProperty(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.displayName());
+	}
+
 	public void export(CatalogProducer<Catalogue, CatalogueLine> catalogProducer, OutputStream out) throws JAXBException {
 		export(catalogProducer, out, false);
 	}
 
+	public void marshallLine(CatalogueLine line, OutputStream out) throws JAXBException {
+		lineMarshaller.marshal(line, out);
+	}
+
 	public void export(CatalogProducer<Catalogue, CatalogueLine> catalogProducer, OutputStream out, boolean nice) throws JAXBException {
-		Marshaller marshaller = JAXBContext.newInstance(Catalogue.class).createMarshaller();
-		marshaller.setProperty(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.displayName());
-		if (nice) {
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new UblNamespacePrefixMapper());
+		Catalogue head = catalogProducer.produceHead();
+		List<CatalogueLine> lineList = head.getLineList();
+		try {
+			head.setLineList(new ArrayList<CatalogueLine>() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Iterator<CatalogueLine> iterator() {
+					return catalogProducer.lineIterator();
+				}
+			});
+			marshallHead(head, out);
+		} finally {
+			head.setLineList(lineList);
 		}
-		marshaller.marshal(catalogProducer.produceHead(), out);
+	}
+
+	public void marshallHead(Catalogue head, OutputStream out) throws JAXBException {
+		headMarshaller.marshal(head, out);
 	}
 
 	private static class UblNamespacePrefixMapper extends NamespacePrefixMapper {

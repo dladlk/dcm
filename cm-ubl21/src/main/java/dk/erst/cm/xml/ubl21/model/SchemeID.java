@@ -25,8 +25,4 @@ public class SchemeID {
 		}
 		return id.toUpperCase();
 	}
-
-	public String toString() {
-		return getLogicalId();
-	}
 }

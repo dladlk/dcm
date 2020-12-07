@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -80,14 +81,15 @@ class UBL20LoadServiceTest {
 
 			resCat[0].setLineList(firstLines);
 			es.export(new CatalogProducer<Catalogue, CatalogueLine>() {
-				@Override
-				public CatalogueLine produceLine() {
-					return null;
-				}
 
 				@Override
 				public Catalogue produceHead() {
 					return resCat[0];
+				}
+
+				@Override
+				public Iterator<CatalogueLine> lineIterator() {
+					return resCat[0].getLineList().iterator();
 				}
 			}, baos, true);
 
