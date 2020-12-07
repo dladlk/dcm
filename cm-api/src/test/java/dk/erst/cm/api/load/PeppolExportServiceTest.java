@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import com.sun.tools.xjc.util.NullStream;
 
+import dk.erst.cm.api.convert.Peppol2OIOUBLCatalogueConverter;
 import dk.erst.cm.api.load.handler.CatalogProducer;
 import dk.erst.cm.api.load.handler.ListCatalogConsumer;
 import dk.erst.cm.test.TestDocument;
@@ -48,19 +49,22 @@ class PeppolExportServiceTest {
 		XmlStreamMarshaller s = new XmlStreamMarshaller();
 		OutputStream baos = repeatCount == 1 ? new ByteArrayOutputStream() : new NullStream();
 		long totalDuration = 0;
-		System.out.println("Push marshaller");
+		System.out.println("Push marshaller with converter");
+
+		Peppol2OIOUBLCatalogueConverter p = new Peppol2OIOUBLCatalogueConverter();
+
 		for (int i = 0; i < repeatCount; i++) {
 
 			s.startMarshall(baos);
-			s.marshallHead(c);
+			s.marshallHead(p.convert(c));
 
 			long start = System.currentTimeMillis();
 			for (int j = 0; j < linesCount; j++) {
-				s.marshallLine(cl);
+				s.marshallLine(p.convert(cl));
 			}
 			s.endMarshall();
 			long duration = System.currentTimeMillis() - start;
-			System.out.println("Done in " + duration);
+			System.out.println("Done in " + duration + ", " + linesCount(duration, linesCount));
 			if (i > 0) {
 				totalDuration += duration;
 			}
@@ -73,7 +77,12 @@ class PeppolExportServiceTest {
 			}
 
 		}
-		System.out.println("Avg duration: " + (Math.round(totalDuration / ((repeatCount - 1.0)))));
+		long avgDuration = Math.round(totalDuration / ((repeatCount - 1.0)));
+		System.out.println("Avg duration: " + avgDuration + ", " + linesCount(avgDuration, linesCount));
+	}
+
+	private String linesCount(long duration, int linesCount) {
+		return (Math.round(linesCount * 1000.0 / duration)) + " lines/sec";
 	}
 
 	@Test
@@ -114,7 +123,7 @@ class PeppolExportServiceTest {
 				}
 			}, baos);
 			long duration = System.currentTimeMillis() - start;
-			System.out.println("Done in " + duration);
+			System.out.println("Done in " + duration + ", " + linesCount(duration, linesCount));
 			if (i > 0) {
 				totalDuration += duration;
 			}
@@ -128,7 +137,8 @@ class PeppolExportServiceTest {
 
 		}
 
-		System.out.println("Avg duration: " + (Math.round(totalDuration / ((repeatCount - 1.0)))));
+		long avgDuration = Math.round(totalDuration / ((repeatCount - 1.0)));
+		System.out.println("Avg duration: " + avgDuration + ", " + linesCount(avgDuration, linesCount));
 	}
 
 }

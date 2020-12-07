@@ -25,6 +25,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StreamUtils;
 import org.w3c.dom.Document;
@@ -48,7 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 class PeppolLoadServiceTest {
 
 	@Test
-	// @Disabled
+	@Disabled
 	void testLoadXmlPerformance() throws Exception {
 		int[] appendUpToMbList = new int[] { 0, 10, 50, 100, 500 };
 		// appendUpToMbList = new int[] { 0, 1 };
@@ -59,8 +60,6 @@ class PeppolLoadServiceTest {
 		PeppolLoadService s = new PeppolLoadService();
 		TestDocument testDocument = TestDocument.CATALOGUE_PEPPOL;
 
-		MapperService ms = new MapperService();
-		UBL20ExportService ubl20e = new UBL20ExportService();
 		PeppolExportService ubl21e = new PeppolExportService();
 
 		List<Number[]> figuresList = new ArrayList<Number[]>();

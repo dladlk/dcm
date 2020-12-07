@@ -27,18 +27,12 @@ public class XmlStreamMarshaller {
 	public XmlStreamMarshaller() throws JAXBException {
 		headMarshaller = JAXBContext.newInstance(Catalogue.class).createMarshaller();
 		headMarshaller.setProperty(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.displayName());
-		if (true) {
-			headMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			headMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new UblNamespacePrefixMapper());
-		}
+		headMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new UblNamespacePrefixMapper());
 
 		lineMarshaller = JAXBContext.newInstance(CatalogueLine.class).createMarshaller();
 		lineMarshaller.setProperty(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.displayName());
-		if (true) {
-			lineMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			lineMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-			lineMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new UblNamespacePrefixMapper());
-		}
+		lineMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+		lineMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new UblNamespacePrefixMapper());
 	}
 
 	public void startMarshall(OutputStream out) throws XMLStreamException, FactoryConfigurationError {
@@ -49,9 +43,6 @@ public class XmlStreamMarshaller {
 
 	public void marshallHead(Catalogue head) throws JAXBException, XMLStreamException {
 		headMarshaller.marshal(head, headWriter);
-		// NamespaceContext namespaceContext = headWriter.getNamespaceContext();
-		// lineWriter.setNamespaceContext(namespaceContext);
-		// lineWriter.setDefaultNamespace("urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2");
 	}
 
 	public void marshallLine(CatalogueLine line) throws JAXBException {

@@ -28,7 +28,7 @@ public class CatalogueLine implements LogicIdentifiable {
 	private String id;
 
 	@XmlElement(name = "ActionCode", namespace = CBC)
-	private String actionCode;
+	private ListID actionCode;
 
 	@XmlElement(name = "OrderableIndicator", namespace = CBC)
 	private String orderableIndicator;

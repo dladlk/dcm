@@ -20,6 +20,8 @@ public class ItemClassificationCode {
 	private String listID;
 	@XmlAttribute(name = "listVersionID")
 	private String listVersionID;
+	@XmlAttribute(name = "listAgencyID")
+	private String listAgencyID;
 	@XmlAttribute(name = "name")
 	private String name;
 

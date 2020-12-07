@@ -6,9 +6,9 @@ import java.io.InputStream;
 
 public enum TestDocument {
 
-	CATALOGUE_PEPPOL("Peppol_Catalogue_Example.xml"),
+	CATALOGUE_PEPPOL("Peppol_Catalogue_Example.xml", "peppol_catalogues/"),
 
-	CATALOGUE_OIOUBL("OIOUBL_Catalogue_Example.xml"),
+	CATALOGUE_OIOUBL("OIOUBL_Catalogue_Example.xml", null),
 
 	;
 
@@ -16,7 +16,10 @@ public enum TestDocument {
 
 	private final String filename;
 
-	private TestDocument(String filename) {
+	private final String additionalExamplesFolder;
+
+	private TestDocument(String filename, String additionalExamplesFolder) {
+		this.additionalExamplesFolder = additionalExamplesFolder;
 		this.filename = filename.trim();
 	}
 
@@ -35,5 +38,9 @@ public enum TestDocument {
 
 	public boolean isExpectedSuccess() {
 		return !this.name().startsWith("ERROR_");
+	}
+
+	public String getAdditionalExamplesFolder() {
+		return TEST_EXAMPLE_ROOT_PATH + additionalExamplesFolder;
 	}
 }

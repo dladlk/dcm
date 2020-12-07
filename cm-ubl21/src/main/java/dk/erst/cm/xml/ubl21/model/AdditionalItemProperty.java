@@ -18,6 +18,7 @@ public class AdditionalItemProperty {
 	@XmlElement(name = "Name", namespace = CBC)
 	private String name;
 
+	@AbsentOIOUBL
 	@XmlElement(name = "NameCode", namespace = CBC)
 	private ListID nameCode;
 
@@ -25,9 +26,11 @@ public class AdditionalItemProperty {
 	@XmlElement(name = "Value", namespace = CBC)
 	private String value;
 
+	@AbsentOIOUBL
 	@XmlElement(name = "ValueQuantity", namespace = CBC)
 	private UnitQuantity valueQuantity;
 
+	@AbsentOIOUBL
 	@XmlElement(name = "ValueQualifier", namespace = CBC)
 	private String valueQualifier;
 

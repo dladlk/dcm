@@ -15,6 +15,7 @@ import lombok.Setter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ItemInstance {
 
+	@AbsentOIOUBL
 	@XmlElement(name = "BestBeforeDate", namespace = CBC)
 	private String bestBeforeDate;
 

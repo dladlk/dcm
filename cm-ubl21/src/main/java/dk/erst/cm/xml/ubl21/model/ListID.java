@@ -19,4 +19,7 @@ public class ListID {
 	@XmlAttribute(name = "listID")
 	private String listID;
 
+	@XmlAttribute(name = "listAgencyID")
+	private String listAgencyID;
+
 }

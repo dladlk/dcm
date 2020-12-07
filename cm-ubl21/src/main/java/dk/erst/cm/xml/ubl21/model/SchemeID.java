@@ -15,6 +15,9 @@ public class SchemeID {
 
 	@XmlValue
 	private String id;
+	
+	@XmlAttribute(name = "schemeAgencyID")
+	private String schemeAgencyId;
 
 	@XmlAttribute(name = "schemeID")
 	private String schemeId;

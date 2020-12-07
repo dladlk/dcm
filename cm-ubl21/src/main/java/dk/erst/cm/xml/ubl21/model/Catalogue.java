@@ -24,6 +24,10 @@ import lombok.ToString;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Catalogue {
 
+	@MandatoryOIOUBL
+	@XmlElement(name = "UBLVersionID", namespace = CBC)
+	private String ublVersionID;
+	
 	@Mandatory
 	@XmlElement(name = "CustomizationID", namespace = CBC)
 	private String customizationID;
@@ -36,6 +40,7 @@ public class Catalogue {
 	@XmlElement(name = "ID", namespace = CBC)
 	private String id;
 
+	@AbsentOIOUBL
 	@XmlElement(name = "ActionCode", namespace = CBC)
 	private String actionCode;
 
@@ -56,6 +61,7 @@ public class Catalogue {
 	@XmlElement(name = "ReferencedContract", namespace = CAC)
 	private NestedID referencedContract;
 
+	@AbsentOIOUBL
 	@XmlElement(name = "SourceCatalogueReference", namespace = CAC)
 	private NestedID sourceCatalogueReference;
 

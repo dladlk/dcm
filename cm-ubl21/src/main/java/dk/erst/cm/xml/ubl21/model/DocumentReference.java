@@ -17,6 +17,12 @@ public class DocumentReference {
 
 	@XmlElement(name = "ID", namespace = CBC)
 	private String id;
+	
+	@XmlElement(name = "DocumentTypeCode", namespace = CBC)
+	private String documentTypeCode;
+
+	@XmlElement(name = "DocumentType", namespace = CBC)
+	private String documentType;
 
 	@XmlElement(name = "Attachment", namespace = CAC)
 	private Attachment attachment;

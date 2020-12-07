@@ -17,12 +17,25 @@ import lombok.Setter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PostalAddress {
 
+	@XmlElement(name = "ID", namespace = CBC)
+	private String id;
+
+	@MandatoryOIOUBL
+	@XmlElement(name = "AddressFormatCode", namespace = CBC)
+	private ListID addressFormatCode;
+
+	@XmlElement(name = "Postbox", namespace = CBC)
+	private String postbox;
+
 	@XmlElement(name = "StreetName", namespace = CBC)
 	private String streetName;
 
 	@XmlElement(name = "AdditionalStreetName", namespace = CBC)
 	private String additionalStreetName;
 
+	@XmlElement(name = "BuildingNumber", namespace = CBC)
+	private String buildingNumber;
+	
 	@XmlElement(name = "CityName", namespace = CBC)
 	private String cityName;
 

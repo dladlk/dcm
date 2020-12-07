@@ -13,6 +13,9 @@ import lombok.Setter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EmbeddedDocumentBinaryObject {
 
+	@XmlAttribute(name = "format")
+	private String format;
+
 	@XmlAttribute(name = "mimeCode")
 	private String mimeCode;
 

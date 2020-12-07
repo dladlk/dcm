@@ -46,6 +46,7 @@ public class Item {
 	@XmlElement(name = "BuyersItemIdentification", namespace = CAC)
 	private NestedID buyersItemIdentification;
 
+	@MandatoryOIOUBL // [F-CAT223] One SellersItemIdentification class must be present
 	@XmlElement(name = "SellersItemIdentification", namespace = CAC)
 	private NestedID sellersItemIdentification;
 
@@ -61,6 +62,7 @@ public class Item {
 	@XmlElement(name = "OriginCountry", namespace = CAC)
 	private Country originCountry;
 
+	@MandatoryOIOUBL // [F-CAT230] At least one CommodityClassification class must be present
 	@XmlElement(name = "CommodityClassification", namespace = CAC)
 	private List<CommodityClassification> commodityClassificationList;
 
@@ -82,9 +84,11 @@ public class Item {
 	@XmlElement(name = "ItemInstance", namespace = CAC)
 	private List<ItemInstance> itemInstanceList;
 
+	@AbsentOIOUBL
 	@XmlElement(name = "Certificate", namespace = CAC)
 	private List<Certificate> certificateList;
 
+	@AbsentOIOUBL
 	@XmlElement(name = "Dimension", namespace = CAC)
 	private List<Dimension> dimensionList;
 

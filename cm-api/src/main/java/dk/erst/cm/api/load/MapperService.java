@@ -1,9 +1,6 @@
 package dk.erst.cm.api.load;
 
-import java.util.List;
-
 import org.modelmapper.ModelMapper;
-import org.modelmapper.spi.Mapping;
 
 public class MapperService {
 
@@ -42,25 +39,11 @@ public class MapperService {
 		// });
 
 		dk.erst.cm.xml.ubl20.model.Catalogue c20 = modelMapper.map(c21, dk.erst.cm.xml.ubl20.model.Catalogue.class);
-		c20.setUblVersionID("2.0");
-		c20.getProfileID().setId("Catalogue-CatAdv-1.0");
-		c20.getProfileID().setSchemeAgencyId("320");
-		c20.getProfileID().setSchemeId("urn:oioubl:id:profileid-1.2");
+		// c20.setUblVersionID("2.0");
+		// c20.getProfileID().setId("Catalogue-CatAdv-1.0");
+		// c20.getProfileID().setSchemeAgencyId("320");
+		// c20.getProfileID().setSchemeId("urn:oioubl:id:profileid-1.2");
 		return c20;
-	}
-
-	private void dump(List<Mapping> mappings) {
-		System.out.println("Mappings: " + mappings.size());
-		for (Mapping mapping : mappings) {
-			if ("actionCode.".equals(mapping.getPath())) {
-				System.out.println(mapping.hashCode());
-			}
-			System.out.println("\t" + mapping);
-		}
-	}
-
-	private String convertICD(String v) {
-		return "NO:ORGNR";
 	}
 
 	public dk.erst.cm.xml.ubl20.model.CatalogueLine convert(dk.erst.cm.xml.ubl21.model.CatalogueLine c21) {
