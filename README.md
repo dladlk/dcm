@@ -2,7 +2,7 @@
 
 ### Schema changes from UBL 2.0 XML to UBL 2.1 XML
 
-docs.oasis-open.org/ubl/os-UBL-2.1/UBL-2.1.html#S-CHANGES-FROM-UBL-2.0-TO-UBL-2.1
+[docs.oasis-open.org/ubl/os-UBL-2.1/UBL-2.1.html#S-CHANGES-FROM-UBL-2.0-TO-UBL-2.1]
 
 > All changes in 2.1 schemas are backward-compatible with valid UBL 2.0 instances. Changes include:
 > - the addition of new elements and attributes; 
