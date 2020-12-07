@@ -1,5 +1,15 @@
 # DELIS - Catalogue Manager
 
+## Specifications
+
+### Catalogue
+
+OIOUBL <http://www.oioubl.info/Classes/en/Catalogue.html>
+
+Peppol <https://docs.peppol.eu/poacc/upgrade-3/syntax/Catalogue/tree/>
+
+EHF <https://anskaffelser.dev/postaward/g3/spec/current/syntax/catalogue-3.0/tree/>
+
 ### Schema changes from UBL 2.0 XML to UBL 2.1 XML
 
 <http://docs.oasis-open.org/ubl/os-UBL-2.1/UBL-2.1.html#S-CHANGES-FROM-UBL-2.0-TO-UBL-2.1>
