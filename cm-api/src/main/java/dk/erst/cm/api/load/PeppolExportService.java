@@ -26,23 +26,31 @@ public class PeppolExportService {
 	private Marshaller lineMarshaller;
 
 	public PeppolExportService() throws JAXBException {
+		this(true);
+	}
+
+	public PeppolExportService(boolean nice) throws JAXBException {
 		headMarshaller = JAXBContext.newInstance(Catalogue.class).createMarshaller();
 		headMarshaller.setProperty(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.displayName());
-		if (true) {
+		if (nice) {
 			headMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			headMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new UblNamespacePrefixMapper());
 		}
+		headMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new UblNamespacePrefixMapper());
 
 		lineMarshaller = JAXBContext.newInstance(CatalogueLine.class).createMarshaller();
 		lineMarshaller.setProperty(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.displayName());
-	}
-
-	public void marshallLine(CatalogueLine line, OutputStream out) throws JAXBException {
-		lineMarshaller.marshal(line, out);
+		if (nice) {
+			lineMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		}
+		lineMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new UblNamespacePrefixMapper());
 	}
 
 	public void marshallHead(Catalogue head, OutputStream out) throws JAXBException {
 		headMarshaller.marshal(head, out);
+	}
+
+	public void marshallLine(CatalogueLine line, OutputStream out) throws JAXBException {
+		lineMarshaller.marshal(line, out);
 	}
 
 	public void export(CatalogProducer<Catalogue, CatalogueLine> catalogProducer, OutputStream out) throws JAXBException {
@@ -67,7 +75,10 @@ public class PeppolExportService {
 		}
 	}
 
-	private static class UblNamespacePrefixMapper extends NamespacePrefixMapper {
+	public void exportHead(Catalogue catalog, OutputStream out) {
+	}
+
+	public static class UblNamespacePrefixMapper extends NamespacePrefixMapper {
 		/**
 		 * Added just to get nice namespace aliases, equal to used in tests
 		 */
@@ -87,6 +98,11 @@ public class PeppolExportService {
 		public String[] getPreDeclaredNamespaceUris() {
 			return new String[] { CATALOGUE, CAC, CBC };
 		}
+
+	}
+
+	public void marshallEnd() {
+		// TODO Auto-generated method stub
 
 	}
 }
