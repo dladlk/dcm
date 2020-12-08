@@ -232,6 +232,9 @@ public class Peppol2OIOUBLCatalogueConverter implements CatalogueConverter {
 
 			if (item.getSellersItemIdentification() == null) {
 				// [F-CAT223] One SellersItemIdentification class must be present
+
+				// PEPPOL-T19-R012 Each item in a Catalogue line SHALL be identifiable by either "item sellers identifier" or "item standard identifier"
+				// ( https://docs.peppol.eu/poacc/upgrade-3/syntax/Catalogue/cac-CatalogueLine/cac-Item/cac-SellersItemIdentification/ )
 				NestedID nestedID = new NestedID();
 				nestedID.setId(item.getStandardItemIdentification().getId().getId());
 				item.setSellersItemIdentification(nestedID);
