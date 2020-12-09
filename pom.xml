@@ -9,10 +9,10 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
     
-    <name>Delis Catalogue Manager :: Parent</name>
+    <name>Catalog Manager :: Parent</name>
     
     <modules>
-        <module>cm-ubl21</module>
+        <module>cm-ubl</module>
         <module>cm-api</module>
         <module>cm-webapi</module>
     </modules>

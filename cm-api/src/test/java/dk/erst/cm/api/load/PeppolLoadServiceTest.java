@@ -209,34 +209,6 @@ class PeppolLoadServiceTest {
 			loadedXml = prettyFormatXml(loadedXml);
 
 			assertEquals(xml, loadedXml);
-
-			MapperService ms = new MapperService();
-			UBL20ExportService ubl20Export = new UBL20ExportService();
-			final dk.erst.cm.xml.ubl20.model.Catalogue c20 = ms.convert(resCat[0]);
-
-			assertEquals("AddTEST", c20.getActionCode());
-
-			final List<dk.erst.cm.xml.ubl20.model.CatalogueLine> c20LineList = new ArrayList<dk.erst.cm.xml.ubl20.model.CatalogueLine>();
-			for (int i = 0; i < firstLines.size(); i++) {
-				c20LineList.add(ms.convert(firstLines.get(i)));
-			}
-
-			ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-			ubl20Export.export(new CatalogProducer<dk.erst.cm.xml.ubl20.model.Catalogue, dk.erst.cm.xml.ubl20.model.CatalogueLine>() {
-				@Override
-				public dk.erst.cm.xml.ubl20.model.Catalogue produceHead() {
-					return c20;
-				}
-
-				@Override
-				public Iterator<dk.erst.cm.xml.ubl20.model.CatalogueLine> lineIterator() {
-					return c20LineList.iterator();
-				}
-			}, baos2, true);
-
-			String loadedXml20 = new String(baos2.toByteArray(), StandardCharsets.UTF_8);
-			System.out.println(loadedXml20);
-
 		} catch (Exception e) {
 			log.error("Failed", e);
 			throw e;

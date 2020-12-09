@@ -5,10 +5,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>dk.erst</groupId>
-	<artifactId>cm-ubl21</artifactId>
+	<artifactId>cm-ubl</artifactId>
 	<version>1.0.0</version>
 
-	<name>Catalog Manager :: UBL2.1 Model</name>
+	<name>Catalog Manager :: UBL Model (up to 2.1)</name>
 	<properties>
 		<java.version>1.8</java.version>
 		<cm.version>1.0.0</cm.version>
