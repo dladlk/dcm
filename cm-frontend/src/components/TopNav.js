@@ -22,7 +22,7 @@ link: {
     color: "inherit",
     textDecoration: "none",
     "&:hover": {
-      color: "rgba(0,0,0,1)"
+      color: "#d3d3d3"
     }
   },
 
