@@ -7,11 +7,9 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { Link } from "react-router-dom";
-import axios from "axios";
-import { Snackbar } from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -28,24 +26,31 @@ const useStyles = makeStyles(theme => ({
     margin: "10px",
     height: "100%",
     width: "99%",
-    marginTop: theme.spacing(7)
-  },
-  link: {
-    color: "rgba(0,0,0,0.65)",
-    textDecoration: "none",
-    "&:hover": {
-      color: "rgba(0,0,0,1)"
-    }
+    marginTop: theme.spacing(2)
   }
 }));
+
+const StyledTableCell = withStyles((theme) => ({
+  head: {
+    fontWeight: 'bold',
+  },
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    cursor: 'pointer'
+  },
+}))(TableRow);
 
 export default function SimpleTable() {
   const classes = useStyles();
 
   const [data, updateData] = React.useState(null);
   const [firstLoad, setLoad] = React.useState(true);
-  const [selectedFile, setSelectedFile] = React.useState(null);
-  const [snakBarOpen, setSnakBarOpen] = React.useState(false);
+  const { push } = useHistory();
   let isLoading = true;
 
   async function loadProducts() {
@@ -58,74 +63,72 @@ export default function SimpleTable() {
     loadProducts();
     setLoad(false);
   }
-
-  function itemNumber(d) {
-    if (d && d.item) {
-      return d.item.sellersItemIdentification.id;
+  function itemOriginCountry(item) {
+    if (item && item.originCountry) {
+      return item.originCountry.identificationCode;
+    }
+    return null;
+  }
+  function itemUNSPSC(item) {
+    if (item && item.commodityClassificationList) {
+      if (item.commodityClassificationList.length > 0) {
+        let code = item.commodityClassificationList[0];
+        if (code && code.itemClassificationCode) {
+          return code.itemClassificationCode.value;
+        }
+      }
+    }
+    return null;
+  }
+  function itemSellerNumber(item) {
+    if (item) {
+      if (item.sellersItemIdentification) {
+        return item.sellersItemIdentification.id;
+      }
+    }
+    return null;
+  }
+  function itemStandardNumber(item) {
+    if (item) {
+      if (item.standardItemIdentification && item.standardItemIdentification.id) {
+        return item.standardItemIdentification.id.id;
+      }
     }
     return null;
   }
 
-  function onFileChange(event) {
-    setSelectedFile(event.target.files[0]); 
-  }
-  function onFileUpload() { 
-    const formData = new FormData(); 
-    console.log(selectedFile); 
-    formData.append( 
-      "file", 
-      selectedFile, 
-      selectedFile.name 
-    ); 
-    axios.post("http://localhost:8080/upload", formData).then((res) => {
-      console.log(res);
-      setSnakBarOpen(true);
-      updateData(null);
-      loadProducts();
-    });
-  };
-
-  function handleSnakBarClose(event, reason) {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnakBarOpen(false);
+  const showRowDetails = (rowId) => {
+    console.log('Clicked '+rowId);
+    push('/product/view/'+rowId);
   }
 
   if (data != null) isLoading = false;
 
   return (
     <div className={classes.paper}>
-      <Typography component="h1" variant="h5" className={classes.header}>
-        <Link to="/" className={classes.link}>DELIS Catalogue</Link>
-      </Typography>
-
-      <div>
-          <input type="file" onChange={onFileChange}/><button onClick={onFileUpload}>Upload</button>
-      </div>
-
       {isLoading ? (
         <CircularProgress />
       ) : (
         <TableContainer
-          style={{ width: "80%", margin: "0 10px" }}
           component={Paper}
         >
           <Table className={classes.table} size="small" aria-label="Items table">
             <TableHead>
               <TableRow>
-                <TableCell >Number</TableCell>
-                <TableCell >Unit</TableCell>
-                <TableCell >Name</TableCell>
-                <TableCell align="left">Description</TableCell>
+                <StyledTableCell align="center">Seller number</StyledTableCell>
+                <StyledTableCell align="center">Standard number</StyledTableCell>
+                <StyledTableCell align="center">Unit</StyledTableCell>
+                <StyledTableCell align="left">Name</StyledTableCell>
+                <StyledTableCell align="left">Description</StyledTableCell>
+                <StyledTableCell align="left">UNSPSC</StyledTableCell>
+                <StyledTableCell align="left">Country</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data?.map(row => (
-                <TableRow key={row.id}>
-                  <TableCell >
-                    {itemNumber(row.document)}
-                  </TableCell>
+                <StyledTableRow key={row.id} onClick={() => showRowDetails(row.id)}>
+                  <TableCell >{itemSellerNumber(row.document.item)}</TableCell>
+                  <TableCell >{itemStandardNumber(row.document.item)}</TableCell>
                   <TableCell >{row.document.orderableUnit}</TableCell>
                   <TableCell >{row.document.item.name}</TableCell>
                   <TableCell align="left">
@@ -133,19 +136,14 @@ export default function SimpleTable() {
                       <Fragment key={row.id+'_'+i}>{d}</Fragment>
                     ))}
                   </TableCell>
-                </TableRow>
+                  <TableCell >{itemUNSPSC(row.document.item)}</TableCell>
+                  <TableCell >{itemOriginCountry(row.document.item)}</TableCell>
+                </StyledTableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       )}
-
-      <Snackbar open={snakBarOpen} autoHideDuration={1000} onClose={handleSnakBarClose}>
-        <Typography component="h6">
-          File is successfully uploaded
-        </Typography>
-      </Snackbar>
-
     </div>
   );
 }
