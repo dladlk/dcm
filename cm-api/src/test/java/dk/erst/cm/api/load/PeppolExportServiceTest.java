@@ -24,12 +24,14 @@ import dk.erst.cm.xml.ubl21.model.CatalogueLine;
 
 class PeppolExportServiceTest {
 
-	private static int repeatCount = 10;
-	private static int linesCount = 100 * 1000;
+	private static int repeatCount = 1;
+	private static int linesCount = 1;
 	private Catalogue c;
 	private CatalogueLine cl;
 
 	PeppolExportServiceTest() {
+		// repeatCount = 10;
+		// linesCount = 100 * 1000;
 
 		PeppolLoadService pls = new PeppolLoadService();
 		ListCatalogConsumer<Catalogue, CatalogueLine> listCatalogConsumer = new ListCatalogConsumer<Catalogue, CatalogueLine>();

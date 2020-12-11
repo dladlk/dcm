@@ -75,8 +75,8 @@ public class Peppol2OIOUBLCatalogueConverter implements CatalogueConverter {
 		c.getProfileID().setId("Catalogue-CatAdv-1.0");
 		c.getProfileID().setSchemeAgencyId("320");
 		c.getProfileID().setSchemeId("urn:oioubl:id:profileid-1.2");
-		c.setActionCode(null);
-		c.setSourceCatalogueReference(null);
+		c.setActionCode(null); // XSD
+		c.setSourceCatalogueReference(null); // XSD
 
 		convertParty(c.getProviderParty());
 		convertParty(c.getReceiverParty());
