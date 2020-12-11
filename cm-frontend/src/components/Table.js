@@ -41,6 +41,9 @@ const StyledTableRow = withStyles((theme) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover,
     },
+    '&:hover': {
+      backgroundColor: 'rgba(0,0,0,.08)',
+    },
     cursor: 'pointer'
   },
 }))(TableRow);
