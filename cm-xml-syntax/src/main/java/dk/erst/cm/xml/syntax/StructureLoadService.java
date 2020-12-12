@@ -1,5 +1,7 @@
 package dk.erst.cm.xml.syntax;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import javax.xml.bind.JAXBContext;
@@ -20,4 +22,12 @@ public class StructureLoadService {
 		return o.getValue();
 	}
 
+	public StructureType loadPeppolCatalogueStructure() {
+		String pathname = "../cm-resources/structure/syntax/ubl-catalogue.xml";
+		try (InputStream is = new FileInputStream(new File(pathname))) {
+			return this.loadStructure(is, pathname);
+		} catch (Exception e) {
+			throw new IllegalStateException("Failed to load Peppol Catalogue structure by path " + pathname, e);
+		}
+	}
 }

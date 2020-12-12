@@ -4,17 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javax.xml.bind.JAXBException;
 
 import org.junit.jupiter.api.Test;
 
@@ -27,14 +22,9 @@ import lombok.Setter;
 public class StructureLoadServiceTest {
 
 	@Test
-	public void testSyntax() throws JAXBException, FileNotFoundException, IOException {
+	public void testSyntax() throws IOException {
 		StructureLoadService service = new StructureLoadService();
-
-		String pathname = "../cm-resources/structure/syntax/ubl-catalogue.xml";
-		StructureType s = null;
-		try (InputStream is = new FileInputStream(new File(pathname))) {
-			s = service.loadStructure(is, pathname);
-		}
+		StructureType s = service.loadPeppolCatalogueStructure();
 		assertNotNull(s);
 
 		StructureDumpService sd = new StructureDumpService();

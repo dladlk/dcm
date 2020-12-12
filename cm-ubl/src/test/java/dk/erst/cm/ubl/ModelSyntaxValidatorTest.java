@@ -4,11 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -19,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -53,13 +47,9 @@ class ModelSyntaxValidatorTest {
 	}
 
 	@Test
-	void validateModel() throws JAXBException, FileNotFoundException, IOException {
+	void validateModel() {
 		StructureLoadService structureLoadService = new StructureLoadService();
-		String pathname = "../cm-resources/structure/syntax/ubl-catalogue.xml";
-		StructureType s = null;
-		try (InputStream is = new FileInputStream(new File(pathname))) {
-			s = structureLoadService.loadStructure(is, pathname);
-		}
+		StructureType s = structureLoadService.loadPeppolCatalogueStructure();
 		differenceList = new ArrayList<ModelSyntaxValidatorTest.ModelDifference>();
 		namespaceToPrefixMap = s.getNamespace().stream().collect(Collectors.toMap(NamespaceType::getValue, NamespaceType::getPrefix));
 		validateStructure(Catalogue.class, s.getDocument(), 0, "", "");
