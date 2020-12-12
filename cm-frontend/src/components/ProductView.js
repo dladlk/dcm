@@ -26,7 +26,18 @@ function DataView (props) {
             <div className={classes.value}>{value}</div>
         </div>
     )
+}
 
+function Quantity (props) {
+    const {name, value} = props;
+    function quantityValue(quantity) {
+        return (
+            <>{quantity.quantity} {quantity.unitCode}</>
+        )
+    }
+    return (
+        <DataView name = {name} value={quantityValue(value)}></DataView>
+    )
 }
 
 export default function ProductView(props) {
@@ -39,6 +50,10 @@ export default function ProductView(props) {
             <DataView name="Created" value={product.createTime}></DataView>
             <DataView name="Updated" value={product.updateTime}></DataView>
             <DataView name="Version" value={product.version}></DataView>
+            <DataView name="Orderable Indicator" value={product.document.orderableIndicator}></DataView>
+            <Quantity name="Content Quantity" value={product.document.contentUnitQuantity}></Quantity>
+            <Quantity name="Minimum Quantity" value={product.document.minimumOrderQuantity}></Quantity>
+            <Quantity name="Maximum Quantity" value={product.document.maximumOrderQuantity}></Quantity>
         </>
     )
 }
