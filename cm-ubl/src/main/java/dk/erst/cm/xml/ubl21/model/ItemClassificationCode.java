@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
+import dk.erst.cm.xml.ubl21.model.annotations.Mandatory;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ public class ItemClassificationCode {
 	@XmlValue
 	private String value;
 
+	@Mandatory
 	@XmlAttribute(name = "listID")
 	private String listID;
 	@XmlAttribute(name = "listVersionID")

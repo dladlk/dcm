@@ -20,11 +20,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.junit.jupiter.api.Test;
 
 import dk.erst.cm.xml.syntax.StructureLoadService;
+import dk.erst.cm.xml.syntax.structure.AttributeType;
 import dk.erst.cm.xml.syntax.structure.ElementType;
 import dk.erst.cm.xml.syntax.structure.NamespaceType;
 import dk.erst.cm.xml.syntax.structure.StructureType;
@@ -32,7 +34,7 @@ import dk.erst.cm.xml.ubl21.model.Catalogue;
 import dk.erst.cm.xml.ubl21.model.annotations.Mandatory;
 import lombok.Data;
 
-class ModelSyntaxValidator {
+class ModelSyntaxValidatorTest {
 
 	private Map<String, String> namespaceToPrefixMap;
 
@@ -47,6 +49,7 @@ class ModelSyntaxValidator {
 		String expected;
 		String actual;
 		String field;
+		String tag;
 	}
 
 	@Test
@@ -57,7 +60,7 @@ class ModelSyntaxValidator {
 		try (InputStream is = new FileInputStream(new File(pathname))) {
 			s = structureLoadService.loadStructure(is, pathname);
 		}
-		differenceList = new ArrayList<ModelSyntaxValidator.ModelDifference>();
+		differenceList = new ArrayList<ModelSyntaxValidatorTest.ModelDifference>();
 		namespaceToPrefixMap = s.getNamespace().stream().collect(Collectors.toMap(NamespaceType::getValue, NamespaceType::getPrefix));
 		validateStructure(Catalogue.class, s.getDocument(), 0, "", "");
 
@@ -65,9 +68,9 @@ class ModelSyntaxValidator {
 			System.out.println("Found " + this.differenceList.size() + " model differences:");
 			for (int i = 0; i < differenceList.size(); i++) {
 				ModelDifference md = differenceList.get(i);
-				System.out.println((i + 1) + ")\t" + md.getModelPath() + "." + md.getField() + "(" + md.getXmlPath() + ")" + " - " + md.getCheckType() + " should be " + md.getExpected());
+				System.out.println((i + 1) + ")\t" + md.getModelPath() + "." + md.getField() + "(" + md.getXmlPath() + "/" + md.getTag() + ")" + " - " + md.getCheckType() + " should be " + md.getExpected());
 			}
-			assertEquals(5, this.differenceList.size());
+			assertEquals(11, this.differenceList.size());
 		}
 	}
 
@@ -88,7 +91,15 @@ class ModelSyntaxValidator {
 				String xmlElementName = prefix + ":" + name;
 				xmlElementNameToFieldMap.put(xmlElementName, field);
 			}
+			XmlAttribute xmlAttributeAnnotation = field.getAnnotation(XmlAttribute.class);
+			if (xmlAttributeAnnotation != null) {
+				String name = xmlAttributeAnnotation.name();
+				String xmlElementName = "@" + name;
+				xmlElementNameToFieldMap.put(xmlElementName, field);
+			}
 		}
+
+		validateAttributes(element, level, currentModelPath, currentXmlPath, xmlElementNameToFieldMap);
 
 		for (Object elementOrInclude : element.getElementOrInclude()) {
 			if (elementOrInclude instanceof ElementType) {
@@ -108,7 +119,7 @@ class ModelSyntaxValidator {
 
 				String errorPrefix = currentModelPath + ": field " + modelField.getName() + " with tag name " + name;
 
-				assertEqualsLater(mandatory, mandatoryModel, errorPrefix + " has different mandatory mark in syntax and model", currentModelPath, currentXmlPath, "mandatory", modelField.getName());
+				assertEqualsLater(mandatory, mandatoryModel, errorPrefix + " has different mandatory mark in syntax and model", currentModelPath, currentXmlPath, "mandatory", modelField.getName(), name);
 
 				if (multiple && !multipleModel) {
 					// As we want to support more than single model, it could be ok if model is multiple, but syntax is not.
@@ -116,7 +127,7 @@ class ModelSyntaxValidator {
 					assertTrue(multiple, errorPrefix + " is not marked multiple, as it is required by syntax");
 				}
 
-				if (el.getElementOrInclude().size() > 0) {
+				if (el.getElementOrInclude().size() > 0 || el.getAttribute().size() > 0) {
 					Class<?> actualType = modelField.getType();
 					if (multipleModel) {
 						Type genericType = modelField.getGenericType();
@@ -141,17 +152,38 @@ class ModelSyntaxValidator {
 		}
 	}
 
-	private void assertEqualsLater(boolean expected, boolean actual, String string, String currentModelPath, String currentXmlPath, String checkType, String field) {
+	public void validateAttributes(ElementType element, int level, String currentModelPath, String currentXmlPath, Map<String, Field> xmlElementNameToFieldMap) {
+		if (element.getAttribute().size() > 0) {
+			List<AttributeType> attributeList = element.getAttribute();
+			for (AttributeType attribute : attributeList) {
+				String name = "@" + attribute.getTerm().getValue();
+				boolean mandatory = attribute.getUsage() == null ? true : "M".equals(attribute.getUsage().substring(0, 1));
+				System.out.println(String.join("\t", mandatory ? "M" : "O", "@", levelPrefix(level + 1), name));
+
+				Field modelField = xmlElementNameToFieldMap.get(name);
+				assertFalse(modelField == null, currentModelPath + ": model misses attribute " + name);
+
+				boolean mandatoryModel = modelField.getAnnotationsByType(Mandatory.class).length > 0;
+
+				String errorPrefix = currentModelPath + ": field " + modelField.getName() + " with attribute name " + name;
+
+				assertEqualsLater(mandatory, mandatoryModel, errorPrefix + " has different mandatory mark in syntax and model", currentModelPath, currentXmlPath, "mandatory", modelField.getName(), name);
+			}
+		}
+	}
+
+	private void assertEqualsLater(boolean expected, boolean actual, String message, String currentModelPath, String currentXmlPath, String checkType, String field, String tag) {
 		if (expected != actual) {
-			System.out.println(string);
+			System.out.println(message);
 			ModelDifference md = new ModelDifference();
-			md.setMessage(string);
+			md.setMessage(message);
 			md.setModelPath(currentModelPath);
 			md.setXmlPath(currentXmlPath);
 			md.setField(field);
 			md.setCheckType(checkType);
 			md.setExpected(String.valueOf(expected));
 			md.setActual(String.valueOf(actual));
+			md.setTag(tag);
 			this.differenceList.add(md);
 		}
 	}
