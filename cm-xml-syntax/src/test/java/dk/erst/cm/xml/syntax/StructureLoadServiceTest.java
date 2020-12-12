@@ -29,7 +29,7 @@ public class StructureLoadServiceTest {
 	@Test
 	public void testSyntax() throws JAXBException, FileNotFoundException, IOException {
 		StructureLoadService service = new StructureLoadService();
-		
+
 		String pathname = "../cm-resources/structure/syntax/ubl-catalogue.xml";
 		StructureType s = null;
 		try (InputStream is = new FileInputStream(new File(pathname))) {

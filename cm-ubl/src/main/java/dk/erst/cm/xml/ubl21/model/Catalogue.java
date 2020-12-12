@@ -30,7 +30,7 @@ public class Catalogue {
 	@MandatoryOIOUBL
 	@XmlElement(name = "UBLVersionID", namespace = CBC)
 	private String ublVersionID;
-	
+
 	@Mandatory
 	@XmlElement(name = "CustomizationID", namespace = CBC)
 	private String customizationID;

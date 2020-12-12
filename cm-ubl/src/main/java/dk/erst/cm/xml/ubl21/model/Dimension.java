@@ -26,7 +26,7 @@ public class Dimension {
 
 	@XmlElement(name = "Description", namespace = CBC)
 	private List<String> descriptionList;
-	
+
 	@XmlElement(name = "MinimumMeasure", namespace = CBC)
 	private UnitQuantity minimumMeasure;
 

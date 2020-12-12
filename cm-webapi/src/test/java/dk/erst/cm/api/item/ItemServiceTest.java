@@ -30,10 +30,12 @@ class ItemServiceTest {
 		try (InputStream inputStream = TestDocument.CATALOGUE_PEPPOL.getInputStream()) {
 			peppolLoadService.loadXml(inputStream, "Test file", new CatalogConsumer<Catalogue, CatalogueLine>() {
 				private Catalogue catalogue;
+
 				@Override
 				public void consumeHead(Catalogue catalog) {
 					this.catalogue = catalog;
 				}
+
 				@Override
 				public void consumeLine(CatalogueLine line) {
 					Product item = itemService.saveCatalogUpdateItem(this.catalogue, line);

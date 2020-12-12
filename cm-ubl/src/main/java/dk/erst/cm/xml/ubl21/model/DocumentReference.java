@@ -21,7 +21,7 @@ public class DocumentReference {
 	@Mandatory
 	@XmlElement(name = "ID", namespace = CBC)
 	private String id;
-	
+
 	@XmlElement(name = "DocumentTypeCode", namespace = CBC)
 	private String documentTypeCode;
 
