@@ -14,35 +14,30 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.junit.jupiter.api.Test;
 
 import dk.erst.cm.xml.syntax.structure.AttributeType;
 import dk.erst.cm.xml.syntax.structure.ElementType;
-import dk.erst.cm.xml.syntax.structure.ObjectFactory;
 import dk.erst.cm.xml.syntax.structure.StructureType;
 import lombok.Getter;
 import lombok.Setter;
 
-public class TestCatalogueSyntaxLoadTest {
+public class StructureLoadServiceTest {
 
 	@Test
 	public void testSyntax() throws JAXBException, FileNotFoundException, IOException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+		StructureLoadService service = new StructureLoadService();
+		
+		String pathname = "../cm-resources/structure/syntax/ubl-catalogue.xml";
 		StructureType s = null;
-		try (InputStream is = new FileInputStream(new File("../cm-resources/structure/syntax/ubl-catalogue.xml"))) {
-			@SuppressWarnings("unchecked")
-			JAXBElement<StructureType> o = (JAXBElement<StructureType>) unmarshaller.unmarshal(is);
-			s = o.getValue();
+		try (InputStream is = new FileInputStream(new File(pathname))) {
+			service.parseStructure(is, pathname);
 		}
 		assertNotNull(s);
 
-		StructureDumper sd = new StructureDumper();
+		StructureDumpService sd = new StructureDumpService();
 		sd.setRemoveTagNsAlias(true);
 		String dumpedStructure = sd.dump(s);
 
@@ -57,7 +52,7 @@ public class TestCatalogueSyntaxLoadTest {
 		}
 	}
 
-	private static class StructureDumper {
+	private static class StructureDumpService {
 		@Getter
 		@Setter
 		private boolean removeTagNsAlias = false;
