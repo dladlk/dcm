@@ -70,7 +70,7 @@ class ModelSyntaxValidatorTest {
 				ModelDifference md = differenceList.get(i);
 				System.out.println((i + 1) + ")\t" + md.getModelPath() + "." + md.getField() + "(" + md.getXmlPath() + "/" + md.getTag() + ")" + " - " + md.getCheckType() + " should be " + md.getExpected());
 			}
-			assertEquals(11, this.differenceList.size());
+			assertEquals(0, this.differenceList.size());
 		}
 	}
 
@@ -114,7 +114,7 @@ class ModelSyntaxValidatorTest {
 				Field modelField = xmlElementNameToFieldMap.get(name);
 				assertFalse(modelField == null, currentModelPath + ": model misses tag " + name);
 
-				boolean mandatoryModel = modelField.getAnnotationsByType(Mandatory.class).length > 0;
+				boolean mandatoryModel = isMandatory(modelField, currentXmlPath);
 				boolean multipleModel = modelField.getType().isAssignableFrom(List.class);
 
 				String errorPrefix = currentModelPath + ": field " + modelField.getName() + " with tag name " + name;
@@ -152,6 +152,21 @@ class ModelSyntaxValidatorTest {
 		}
 	}
 
+	public boolean isMandatory(Field modelField, String currentXmlPath) {
+		Mandatory mandatoryAnnotation = modelField.getAnnotation(Mandatory.class);
+		if (mandatoryAnnotation != null) {
+			if (mandatoryAnnotation.exceptParents().length > 0) {
+				for (String exceptParent : mandatoryAnnotation.exceptParents()) {
+					if (currentXmlPath.contains(exceptParent)) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	public void validateAttributes(ElementType element, int level, String currentModelPath, String currentXmlPath, Map<String, Field> xmlElementNameToFieldMap) {
 		if (element.getAttribute().size() > 0) {
 			List<AttributeType> attributeList = element.getAttribute();
@@ -163,7 +178,7 @@ class ModelSyntaxValidatorTest {
 				Field modelField = xmlElementNameToFieldMap.get(name);
 				assertFalse(modelField == null, currentModelPath + ": model misses attribute " + name);
 
-				boolean mandatoryModel = modelField.getAnnotationsByType(Mandatory.class).length > 0;
+				boolean mandatoryModel = isMandatory(modelField, currentXmlPath);
 
 				String errorPrefix = currentModelPath + ": field " + modelField.getName() + " with attribute name " + name;
 

@@ -15,7 +15,7 @@ import lombok.Setter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Country {
 
-	@Mandatory
+	@Mandatory(exceptParents = "cac:ReceiverParty/cac:PartyLegalEntity/cac:RegistrationAddress/cac:Country")
 	@XmlElement(name = "IdentificationCode", namespace = CBC)
 	private String identificationCode;
 

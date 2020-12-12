@@ -16,11 +16,11 @@ public class SchemeID {
 
 	@XmlValue
 	private String id;
-	
+
 	@XmlAttribute(name = "schemeAgencyID")
 	private String schemeAgencyId;
 
-	@Mandatory
+	@Mandatory(exceptParents = { "cac:PartyIdentification/cbc:ID", "cac:PartyLegalEntity/cbc:CompanyID" })
 	@XmlAttribute(name = "schemeID")
 	private String schemeId;
 

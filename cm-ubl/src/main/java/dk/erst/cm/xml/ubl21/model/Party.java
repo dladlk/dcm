@@ -16,7 +16,7 @@ import lombok.Setter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Party {
 
-	@Mandatory
+	@Mandatory(exceptParents = { "cac:SellerSupplierParty/cac:Party", "cac:ContractorCustomerParty/cac:Party" })
 	@XmlElement(name = "EndpointID", namespace = CBC)
 	private SchemeID endpointID;
 

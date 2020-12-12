@@ -22,5 +22,5 @@ public class RegistrationAddress {
 	private String cityName;
 
 	@XmlElement(name = "Country", namespace = CAC)
-	private RegistrationCountry country;
+	private Country country;
 }

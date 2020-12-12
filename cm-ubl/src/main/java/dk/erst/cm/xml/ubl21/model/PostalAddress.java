@@ -37,7 +37,7 @@ public class PostalAddress {
 
 	@XmlElement(name = "BuildingNumber", namespace = CBC)
 	private String buildingNumber;
-	
+
 	@XmlElement(name = "CityName", namespace = CBC)
 	private String cityName;
 
@@ -50,7 +50,7 @@ public class PostalAddress {
 	@XmlElement(name = "AddressLine", namespace = CAC)
 	private List<Line> addressLine;
 
-	@Mandatory
+	@Mandatory(exceptParents = { "cac:ApplicableTerritoryAddress" })
 	@XmlElement(name = "Country", namespace = CAC)
 	private Country country;
 

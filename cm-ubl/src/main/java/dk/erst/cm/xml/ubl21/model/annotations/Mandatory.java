@@ -13,7 +13,13 @@ import java.lang.annotation.Target;
  * 
  * If assigned on a list - at least one element should be present.
  */
-@Retention(RUNTIME) @Target({FIELD, METHOD, PARAMETER})
+@Retention(RUNTIME)
+@Target({ FIELD, METHOD, PARAMETER })
 public @interface Mandatory {
+
+	/**
+	 * Name of any parent tag, for which it is not mandatory
+	 */
+	String[] exceptParents() default {};
 
 }
