@@ -1,7 +1,7 @@
 package dk.erst.cm.ubl;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,7 +67,7 @@ class ModelSyntaxValidator {
 				System.out.println(String.join("\t", mandatory ? "M" : "O", name));
 
 				Field modelField = xmlElementNameToFieldMap.get(name);
-				assertFalse("Model misses tag " + name, modelField == null);
+				assertFalse(modelField == null, "Model misses tag " + name);
 
 				boolean mandatoryModel = modelField.getAnnotationsByType(Mandatory.class).length > 0;
 
