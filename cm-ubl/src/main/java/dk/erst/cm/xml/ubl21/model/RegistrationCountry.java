@@ -13,10 +13,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExternalReference {
+public class RegistrationCountry {
 
 	@Mandatory
-	@XmlElement(name = "URI", namespace = CBC)
-	private String uri;
+	@XmlElement(name = "IdentificationCode", namespace = CBC)
+	private String identificationCode;
 
 }

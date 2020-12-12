@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import dk.erst.cm.xml.ubl21.model.annotations.Mandatory;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ import lombok.Setter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PartyLegalEntity {
 
+	@Mandatory
 	@XmlElement(name = "RegistrationName", namespace = CBC)
 	private String registrationName;
 
@@ -22,6 +24,6 @@ public class PartyLegalEntity {
 	private SchemeID CompanyID;
 
 	@XmlElement(name = "RegistrationAddress", namespace = CAC)
-	private PostalAddress registrationAddress;
+	private RegistrationAddress registrationAddress;
 
 }

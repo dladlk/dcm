@@ -29,6 +29,7 @@ public class Party {
 	@XmlElement(name = "PostalAddress", namespace = CAC)
 	private PostalAddress postalAddress;
 
+	@Mandatory
 	@XmlElement(name = "PartyLegalEntity", namespace = CAC)
 	private PartyLegalEntity partyLegalEntity;
 

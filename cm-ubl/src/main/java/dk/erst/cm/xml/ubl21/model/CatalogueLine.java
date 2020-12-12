@@ -66,6 +66,8 @@ public class CatalogueLine implements LogicIdentifiable {
 	private List<RelatedItem> accessoryRelatedItem;
 	@XmlElement(name = "RequiredRelatedItem", namespace = CAC)
 	private List<RelatedItem> requiredRelatedItem;
+	@XmlElement(name = "ReplacedRelatedItem", namespace = CAC)
+	private List<RelatedItem> replacedRelatedItem;
 
 	@XmlElement(name = "RequiredItemLocationQuantity", namespace = CAC)
 	private RequiredItemLocationQuantity itemPrice;
