@@ -1,0 +1,1 @@
+structure-1.xsd - copied from <https://github.com/OpenPEPPOL/poacc-upgrade-3/tree/master/structure>
