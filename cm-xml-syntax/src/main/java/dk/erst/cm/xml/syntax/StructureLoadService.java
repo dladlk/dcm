@@ -12,7 +12,7 @@ import dk.erst.cm.xml.syntax.structure.StructureType;
 
 public class StructureLoadService {
 
-	public StructureType parseStructure(InputStream is, String description) throws JAXBException {
+	public StructureType loadStructure(InputStream is, String description) throws JAXBException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
 		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 		@SuppressWarnings("unchecked")

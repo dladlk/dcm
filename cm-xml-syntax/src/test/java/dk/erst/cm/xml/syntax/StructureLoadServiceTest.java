@@ -33,7 +33,7 @@ public class StructureLoadServiceTest {
 		String pathname = "../cm-resources/structure/syntax/ubl-catalogue.xml";
 		StructureType s = null;
 		try (InputStream is = new FileInputStream(new File(pathname))) {
-			service.parseStructure(is, pathname);
+			service.loadStructure(is, pathname);
 		}
 		assertNotNull(s);
 

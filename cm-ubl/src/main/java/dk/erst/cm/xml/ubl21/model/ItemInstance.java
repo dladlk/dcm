@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import dk.erst.cm.xml.ubl21.model.annotations.AbsentOIOUBL;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -12,6 +12,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import dk.erst.cm.xml.ubl21.model.annotations.AbsentOIOUBL;
+import dk.erst.cm.xml.ubl21.model.annotations.Mandatory;
+import dk.erst.cm.xml.ubl21.model.annotations.MandatoryOIOUBL;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
