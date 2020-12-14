@@ -40,12 +40,17 @@ const itemPictureURL = (item) => {
                 const isdr = item.itemSpecificationDocumentReferenceList[0];
                 if (isdr.externalReference && isdr.externalReference.uri) {
                     return isdr.externalReference.uri;
-
                 }
             }
         }
     }
     return null;
+}
+const itemCertificates = (item) => {
+    if (item && item.certificateList) {
+        return item.certificateList;
+    }
+    return [];
 }
 
 const ItemDetailsService = {
@@ -54,6 +59,7 @@ const ItemDetailsService = {
     itemSellerNumber,
     itemStandardNumber,
     itemPictureURL,
+    itemCertificates,
 }
 
 export default ItemDetailsService;

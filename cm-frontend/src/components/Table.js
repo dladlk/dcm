@@ -86,10 +86,10 @@ export default function SimpleTable() {
           <Table className={classes.table} size="small" aria-label="Items table">
             <TableHead>
               <TableRow>
-                <StyledTableCell align="center">Seller number</StyledTableCell>
-                <StyledTableCell align="center">Standard number</StyledTableCell>
-                <StyledTableCell align="center">Unit</StyledTableCell>
+                <StyledTableCell align="left">Standard number</StyledTableCell>
+                <StyledTableCell align="left">Seller number</StyledTableCell>
                 <StyledTableCell align="left">Name</StyledTableCell>
+                <StyledTableCell align="left">Certificates</StyledTableCell>
                 <StyledTableCell align="left">UNSPSC</StyledTableCell>
                 <StyledTableCell align="left">Origin</StyledTableCell>
               </TableRow>
@@ -97,10 +97,14 @@ export default function SimpleTable() {
             <TableBody>
               {data?.map(row => (
                 <StyledTableRow key={row.id} onClick={() => showRowDetails(row.id)}>
-                  <TableCell >{ItemDetailsService.itemSellerNumber(row.document.item)}</TableCell>
                   <TableCell >{ItemDetailsService.itemStandardNumber(row.document.item)}</TableCell>
-                  <TableCell >{row.document.orderableUnit}</TableCell>
+                  <TableCell >{ItemDetailsService.itemSellerNumber(row.document.item)}</TableCell>
                   <TableCell >{row.document.item.name}</TableCell>
+                  <TableCell >{ItemDetailsService.itemCertificates(row.document.item).map(cert => (
+                    <span key={cert.id}>
+                    {cert.certificateType} {cert.issuerParty.partyName.name}
+                    </span>
+                  ))}</TableCell>
                   <TableCell >{ItemDetailsService.itemUNSPSC(row.document.item)}</TableCell>
                   <TableCell >{ItemDetailsService.itemOriginCountry(row.document.item)}</TableCell>
                 </StyledTableRow>
