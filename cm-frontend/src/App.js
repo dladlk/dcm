@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, BrowserRouter as Router } from "react-router-dom";
 import Table from "./components/Table";
+import Banner from "./components/Banner";
 import Upload from "./components/Upload";
 import ProductDetail from "./components/ProductDetail";
 import TopNav from "./components/TopNav";
@@ -36,7 +37,8 @@ function App() {
         <div className={classes.layoutWrapper}>
           <div className={classes.flexWrapper}>
           <Router>
-            <TopNav></TopNav>
+            <TopNav />
+            <Banner open={true}/>
             <Route exact path="/" component={Table} />
             <Route exact path="/upload" component={Upload} />
             <Route path="/product/view/:id" component={ProductDetail} />

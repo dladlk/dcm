@@ -122,9 +122,8 @@ export default function SimpleTable() {
                 <StyledTableCell align="center">Standard number</StyledTableCell>
                 <StyledTableCell align="center">Unit</StyledTableCell>
                 <StyledTableCell align="left">Name</StyledTableCell>
-                <StyledTableCell align="left">Description</StyledTableCell>
                 <StyledTableCell align="left">UNSPSC</StyledTableCell>
-                <StyledTableCell align="left">Country</StyledTableCell>
+                <StyledTableCell align="left">Origin</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -134,11 +133,6 @@ export default function SimpleTable() {
                   <TableCell >{itemStandardNumber(row.document.item)}</TableCell>
                   <TableCell >{row.document.orderableUnit}</TableCell>
                   <TableCell >{row.document.item.name}</TableCell>
-                  <TableCell align="left">
-                    {row.document.item.descriptionList?.map((d, i) => (
-                      <Fragment key={row.id+'_'+i}>{d}</Fragment>
-                    ))}
-                  </TableCell>
                   <TableCell >{itemUNSPSC(row.document.item)}</TableCell>
                   <TableCell >{itemOriginCountry(row.document.item)}</TableCell>
                 </StyledTableRow>
