@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -10,6 +10,8 @@ import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { withStyles } from "@material-ui/core";
 import { useHistory } from "react-router";
+import ItemDetailsService from "../services/ItemDetailsService";
+
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -66,40 +68,6 @@ export default function SimpleTable() {
     loadProducts();
     setLoad(false);
   }
-  function itemOriginCountry(item) {
-    if (item && item.originCountry) {
-      return item.originCountry.identificationCode;
-    }
-    return null;
-  }
-  function itemUNSPSC(item) {
-    if (item && item.commodityClassificationList) {
-      if (item.commodityClassificationList.length > 0) {
-        let code = item.commodityClassificationList[0];
-        if (code && code.itemClassificationCode) {
-          return code.itemClassificationCode.value;
-        }
-      }
-    }
-    return null;
-  }
-  function itemSellerNumber(item) {
-    if (item) {
-      if (item.sellersItemIdentification) {
-        return item.sellersItemIdentification.id;
-      }
-    }
-    return null;
-  }
-  function itemStandardNumber(item) {
-    if (item) {
-      if (item.standardItemIdentification && item.standardItemIdentification.id) {
-        return item.standardItemIdentification.id.id;
-      }
-    }
-    return null;
-  }
-
   const showRowDetails = (rowId) => {
     console.log('Clicked '+rowId);
     push('/product/view/'+rowId);
@@ -129,12 +97,12 @@ export default function SimpleTable() {
             <TableBody>
               {data?.map(row => (
                 <StyledTableRow key={row.id} onClick={() => showRowDetails(row.id)}>
-                  <TableCell >{itemSellerNumber(row.document.item)}</TableCell>
-                  <TableCell >{itemStandardNumber(row.document.item)}</TableCell>
+                  <TableCell >{ItemDetailsService.itemSellerNumber(row.document.item)}</TableCell>
+                  <TableCell >{ItemDetailsService.itemStandardNumber(row.document.item)}</TableCell>
                   <TableCell >{row.document.orderableUnit}</TableCell>
                   <TableCell >{row.document.item.name}</TableCell>
-                  <TableCell >{itemUNSPSC(row.document.item)}</TableCell>
-                  <TableCell >{itemOriginCountry(row.document.item)}</TableCell>
+                  <TableCell >{ItemDetailsService.itemUNSPSC(row.document.item)}</TableCell>
+                  <TableCell >{ItemDetailsService.itemOriginCountry(row.document.item)}</TableCell>
                 </StyledTableRow>
               ))}
             </TableBody>

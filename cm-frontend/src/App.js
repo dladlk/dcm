@@ -8,7 +8,12 @@ import ProductDetail from "./components/ProductDetail";
 import TopNav from "./components/TopNav";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
+import './App.css';
+
 const theme = createMuiTheme({
+  typography: {
+    fontFamily: ['IBM Plex Sans']
+  },
   palette: {
     primary: {
       main: '#0B78D0'
@@ -31,14 +36,24 @@ const useStyles = makeStyles(theme => ({
 
 function App() {
   const classes = useStyles();
+
+  const [showBanner, setShowBanner] = React.useState(true);
+
+  const setBannerClosed = () => {
+    setShowBanner(false);
+  }
+  const setBannerOpened = () => {
+    setShowBanner(true);
+  }
+
   return (
     <React.StrictMode>
       <MuiThemeProvider theme={theme}>
         <div className={classes.layoutWrapper}>
           <div className={classes.flexWrapper}>
           <Router>
-            <TopNav />
-            <Banner open={true}/>
+            <TopNav aboutAction = {setBannerOpened} />
+            <Banner opened={showBanner} closeAction = { setBannerClosed } />
             <Route exact path="/" component={Table} />
             <Route exact path="/upload" component={Upload} />
             <Route path="/product/view/:id" component={ProductDetail} />

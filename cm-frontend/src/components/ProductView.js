@@ -1,5 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import { Fragment } from "react";
+import ItemDetailsService from '../services/ItemDetailsService';
 
 const useStyles = makeStyles(theme => ({
     row: {
@@ -71,21 +72,31 @@ function Quantity (props) {
 
 export default function ProductView(props) {
 
+    const showTech = false;
+
     const {product} = props;
 
     return (
         <>
-            <DataView name="ID" value={product.id}></DataView>
-            <DataView name="Created" value={product.createTime}></DataView>
-            <DataView name="Updated" value={product.updateTime}></DataView>
-            <DataView name="Version" value={product.version}></DataView>
-            <DataView name="Orderable Indicator" value={product.document.orderableIndicator}></DataView>
-            <Quantity name="Content Quantity" value={product.document.contentUnitQuantity}></Quantity>
-            <Quantity name="Minimum Quantity" value={product.document.minimumOrderQuantity}></Quantity>
-            <Quantity name="Maximum Quantity" value={product.document.maximumOrderQuantity}></Quantity>
+            { showTech ? (
+                <>
+                <DataView name="ID" value={product.id}></DataView>
+                <DataView name="Created" value={product.createTime}></DataView>
+                <DataView name="Updated" value={product.updateTime}></DataView>
+                <DataView name="Version" value={product.version}></DataView>
+                <DataView name="Orderable Indicator" value={product.document.orderableIndicator}></DataView>
+                <Quantity name="Content Quantity" value={product.document.contentUnitQuantity}></Quantity>
+                <Quantity name="Minimum Quantity" value={product.document.minimumOrderQuantity}></Quantity>
+                <Quantity name="Maximum Quantity" value={product.document.maximumOrderQuantity}></Quantity>
+                </>
+            ) : ( <></> ) }
+
             <DataView name="Name" value={product.document.item.name}></DataView>
             <DataView name="Description" value={product.document.item.descriptionList}></DataView>
             <DataListView name="Keywords" value={product.document.item.keywordList}></DataListView>
+            <DataView name="UNSPSC" value={ItemDetailsService.itemUNSPSC(product.document.item)}></DataView>
+            <DataView name="Origin Country" value={ItemDetailsService.itemOriginCountry(product.document.item)}></DataView>
+            <DataView name="URL" value={ItemDetailsService.itemPictureURL(product.document.item)}></DataView>
         </>
     )
 }

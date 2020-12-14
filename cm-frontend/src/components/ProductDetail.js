@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useParams } from "react-router";
 import ProductView from "./ProductView";
+import DetailHeader from "./DetailHeader";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup } from "@material-ui/core";
 
@@ -47,6 +48,8 @@ export default function ProductDetail() {
   if (data != null) isLoading = false;
 
   return (
+    <>
+    <DetailHeader name="Product details" />
     <Paper className={classes.paper}>
       {isLoading ? (
         <CircularProgress />
@@ -70,5 +73,6 @@ export default function ProductDetail() {
         </>
       )}
     </Paper>
+    </>
   );
 }

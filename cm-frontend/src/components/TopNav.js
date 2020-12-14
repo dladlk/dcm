@@ -68,8 +68,10 @@ link: {
 
 }));
 
-export default function ButtonAppBar() {
+export default function TopNav(props) {
   const classes = useStyles();
+
+  const { aboutAction } = props;
 
   return (
     <div className={classes.root}>
@@ -78,6 +80,7 @@ export default function ButtonAppBar() {
           <Typography variant="h6" className={classes.title}>
             <Link to="/" className={classes.link}>DELIS Catalogue</Link>
           </Typography>
+          <Button color="inherit" onClick={ () => aboutAction() }>About</Button>
           <Link to="/upload" className={classes.link}>
               <Button color="inherit">Upload</Button>
           </Link>
