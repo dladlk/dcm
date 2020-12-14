@@ -2,38 +2,26 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import axios from "axios";
-import { Snackbar } from "@material-ui/core";
+import { Box, Paper, Snackbar } from "@material-ui/core";
+import {DropzoneArea} from 'material-ui-dropzone'
 
 const useStyles = makeStyles(theme => ({
-  table: {
-    minWidth: 600,
-  },
-  header: {
-    marginBottom: '1em'
-  },
   paper: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    margin: "10px",
-    height: "100%",
-    width: "99%",
-    marginTop: theme.spacing(7)
+    marginTop: theme.spacing(3),
+    padding: theme.spacing(4),
+    width: '50%',
+    minWidth: '400px',
   }
 }));
 
 export default function Upload() {
   const classes = useStyles();
 
-  const [selectedFile, setSelectedFile] = React.useState(null);
   const [snakBarOpen, setSnakBarOpen] = React.useState(false);
 
-  function onFileChange(event) {
-    setSelectedFile(event.target.files[0]); 
-  }
-  function onFileUpload() { 
+  function uploadFile(files) { 
     const formData = new FormData(); 
+    let selectedFile = files[0];
     console.log(selectedFile); 
     formData.append( 
       "file", 
@@ -46,6 +34,12 @@ export default function Upload() {
     });
   };
 
+  function handleChange(files) {
+    if (files && files.length > 0) {
+      uploadFile(files);
+    }
+  }  
+
   function handleSnakBarClose(event, reason) {
     if (reason === 'clickaway') {
       return;
@@ -54,17 +48,23 @@ export default function Upload() {
   }
 
   return (
-    <div className={classes.paper}>
-      <div>
-          <input type="file" onChange={onFileChange}/><button onClick={onFileUpload}>Upload</button>
-      </div>
+    <Box display="flex" justifyContent="center">
+    <Paper className={classes.paper}>
+      <DropzoneArea
+        onChange={handleChange}
+        acceptedFiles={['application/xml', 'text/xml']}
+        filesLimit = {10}
+        showPreviewsInDropzone = {false}
+        showAlerts = {false}
+        dropzoneText = {"Drag and drop a file here or click icon"}
+        />
 
       <Snackbar open={snakBarOpen} autoHideDuration={1000} onClose={handleSnakBarClose}>
         <Typography component="h6">
           File is successfully uploaded
         </Typography>
       </Snackbar>
-
-    </div>
+    </Paper>
+    </Box>
   );
 }
