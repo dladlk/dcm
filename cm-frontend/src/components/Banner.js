@@ -31,7 +31,7 @@ export default function Banner(props) {
             >
             </CardHeader>
             <CardContent style={{ }}>
-              <Typography color="textPrimary" variant="body">
+              <Typography color="textPrimary" variant="body1">
                 Here you can search for published products, delivered via Peppol in Catalogue transaction 3.1 format by different sellers, and find aggregated information by standard identifier for next concerns:
                 <ul>
                   <li>product descriptions</li>

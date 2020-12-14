@@ -6,42 +6,27 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import dk.erst.cm.api.dao.mongo.ProductRepository;
-import dk.erst.cm.api.data.Product;
 import dk.erst.cm.api.load.PeppolLoadService;
-import dk.erst.cm.api.load.handler.CatalogConsumer;
 import dk.erst.cm.test.TestDocument;
-import dk.erst.cm.xml.ubl21.model.Catalogue;
-import dk.erst.cm.xml.ubl21.model.CatalogueLine;
+import dk.erst.cm.webapi.FileUploadConsumer;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @SpringBootTest
+@Slf4j
 class ItemServiceTest {
 
 	@Autowired
-	private ProductRepository itemRepository;
+	private LoadCatalogService loadCatalogService;
 
 	@Test
 	void testSaveCatalogUpdateItem() throws Exception {
-		ProductService itemService = new ProductService(this.itemRepository);
+
 		PeppolLoadService peppolLoadService = new PeppolLoadService();
 
 		try (InputStream inputStream = TestDocument.CATALOGUE_PEPPOL.getInputStream()) {
-			peppolLoadService.loadXml(inputStream, "Test file", new CatalogConsumer<Catalogue, CatalogueLine>() {
-				private Catalogue catalogue;
-
-				@Override
-				public void consumeHead(Catalogue catalog) {
-					this.catalogue = catalog;
-				}
-
-				@Override
-				public void consumeLine(CatalogueLine line) {
-					Product item = itemService.saveCatalogUpdateItem(this.catalogue, line);
-					log.info("Saved item " + item.getId());
-				}
-			});
+			FileUploadConsumer consumer = new FileUploadConsumer(loadCatalogService);
+			peppolLoadService.loadXml(inputStream, "Test file", consumer);
+			log.info("Loaded " + consumer.getLineCount() + " lines");
 		}
 	}
 

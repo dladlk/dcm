@@ -21,13 +21,15 @@ export default function Upload() {
 
   function uploadFile(files) { 
     const formData = new FormData(); 
-    let selectedFile = files[0];
-    console.log(selectedFile); 
-    formData.append( 
-      "file", 
-      selectedFile, 
-      selectedFile.name 
-    ); 
+    for (const file of files) {
+      let selectedFile = file;
+      console.log(selectedFile); 
+      formData.append( 
+        "files", 
+        selectedFile, 
+        selectedFile.name 
+      ); 
+    }
     axios.post("http://localhost:8080/upload", formData).then((res) => {
       console.log(res);
       setSnakBarOpen(true);
@@ -54,7 +56,7 @@ export default function Upload() {
         onChange={handleChange}
         acceptedFiles={['application/xml', 'text/xml']}
         filesLimit = {10}
-        showPreviewsInDropzone = {false}
+        showPreviewsInDropzone = {true}
         showAlerts = {false}
         dropzoneText = {"Drag and drop a file here or click icon"}
         />

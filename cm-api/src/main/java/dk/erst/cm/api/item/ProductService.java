@@ -9,10 +9,8 @@ import org.springframework.stereotype.Service;
 
 import dk.erst.cm.api.dao.mongo.ProductRepository;
 import dk.erst.cm.api.data.Product;
-import dk.erst.cm.xml.ubl21.model.Catalogue;
+import dk.erst.cm.api.data.ProductCatalogUpdate;
 import dk.erst.cm.xml.ubl21.model.CatalogueLine;
-import dk.erst.cm.xml.ubl21.model.Party;
-import dk.erst.cm.xml.ubl21.model.SchemeID;
 
 @Service
 public class ProductService {
@@ -24,11 +22,13 @@ public class ProductService {
 		this.productRepository = itemRepository;
 	}
 
-	public Product saveCatalogUpdateItem(Catalogue catalogue, CatalogueLine line) {
+	public Product saveCatalogUpdateItem(ProductCatalogUpdate catalog, CatalogueLine line) {
 		String lineLogicalId = line.getLogicalId();
-		String sellerLogicalId = buildSellerLocalId(catalogue);
+		String productCatalogId = catalog.getProductCatalogId();
 
-		String itemLogicalId = sellerLogicalId + "_" + lineLogicalId;
+		String itemLogicalId = productCatalogId + "_" + lineLogicalId;
+
+		boolean deleteAction = line.getActionCode() != null && "Delete".equals(line.getActionCode().getId());
 
 		Product product;
 		Optional<Product> optional = productRepository.findById(itemLogicalId);
@@ -36,35 +36,25 @@ public class ProductService {
 			product = optional.get();
 			product.setUpdateTime(Instant.now());
 			product.setVersion(product.getVersion() + 1);
-			product.setDocumentVersion(ProductDocumentVersion.PEPPOL_1_0);
-			product.setDocument(line);
 		} else {
 			product = new Product();
 			product.setId(itemLogicalId);
 			product.setCreateTime(Instant.now());
 			product.setUpdateTime(null);
 			product.setVersion(1);
-			product.setDocumentVersion(ProductDocumentVersion.PEPPOL_1_0);
-			product.setDocument(line);
+		}
+		product.setDocumentVersion(ProductDocumentVersion.PEPPOL_CATALOGUE_3_1);
+		product.setProductCatalogId(catalog.getId());
+		product.setDocument(line);
+
+		if (deleteAction) {
+			if (optional.isPresent()) {
+				productRepository.delete(product);
+			}
+			return null;
 		}
 		productRepository.save(product);
 		return product;
-	}
-
-	private String buildSellerLocalId(Catalogue catalogue) {
-		if (catalogue.getSellerSupplierParty() != null) {
-			Party sellerParty = catalogue.getSellerSupplierParty().getParty();
-			if (sellerParty.getPartyIdentification() != null) {
-				SchemeID schemeID = sellerParty.getPartyIdentification().getId();
-				if (schemeID != null) {
-					return schemeID.getLogicalId();
-				}
-			}
-			if (sellerParty.getEndpointID() != null) {
-				return sellerParty.getEndpointID().getLogicalId();
-			}
-		}
-		return null;
 	}
 
 	public long countItems() {

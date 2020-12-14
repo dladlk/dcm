@@ -12,16 +12,16 @@ import lombok.NoArgsConstructor;
 @Document
 @Data
 @NoArgsConstructor
-public class Product {
+public class ProductCatalogUpdate {
 
 	@Id
 	private String id;
 	private Instant createTime;
-	private Instant updateTime;
 	private int version;
-
-	private String productCatalogId;
 
 	private ProductDocumentVersion documentVersion;
 	private Object document;
+
+	private String productCatalogId;
+
 }

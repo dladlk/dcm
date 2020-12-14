@@ -10,43 +10,35 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import dk.erst.cm.api.item.ProductService;
+import dk.erst.cm.api.item.LoadCatalogService;
 import dk.erst.cm.api.load.PeppolLoadService;
-import dk.erst.cm.api.load.handler.CatalogConsumer;
-import dk.erst.cm.xml.ubl21.model.Catalogue;
-import dk.erst.cm.xml.ubl21.model.CatalogueLine;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @CrossOrigin(maxAge = 3600)
+@Slf4j
 public class UploadController {
 
 	@Autowired
 	private PeppolLoadService loadService;
 
 	@Autowired
-	private ProductService productService;
+	private LoadCatalogService loadCatalogService;
 
 	@PostMapping(value = "/upload")
-	public ResponseEntity<Integer> upload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-		final int[] count = new int[1];
+	public ResponseEntity<Integer> upload(@RequestParam("files") MultipartFile files[], RedirectAttributes redirectAttributes) {
+		int totalLines = 0;
 		try {
-			final Catalogue[] cat = new Catalogue[1];
-			loadService.loadXml(file.getInputStream(), file.getName(), new CatalogConsumer<Catalogue, CatalogueLine>() {
-				@Override
-				public void consumeHead(Catalogue catalog) {
-					cat[0] = catalog;
-				}
-
-				@Override
-				public void consumeLine(CatalogueLine line) {
-					productService.saveCatalogUpdateItem(cat[0], line);
-					count[0]++;
-				}
-
-			});
+			for (MultipartFile file : files) {
+				log.info("Start reading file " + file.getOriginalFilename());
+				FileUploadConsumer fileUploadConsumer = new FileUploadConsumer(loadCatalogService);
+				loadService.loadXml(file.getInputStream(), file.getName(), fileUploadConsumer);
+				log.info("Loaded file " + file.getOriginalFilename() + " with " + fileUploadConsumer.getLineCount() + " lines");
+				totalLines += fileUploadConsumer.getLineCount();
+			}
 		} catch (Exception e) {
 			return new ResponseEntity<Integer>(-1, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<Integer>(count[0], HttpStatus.OK);
+		return new ResponseEntity<Integer>(totalLines, HttpStatus.OK);
 	}
 }
