@@ -5,8 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import dk.erst.cm.xml.syntax.StructureLoadService;
 import dk.erst.cm.xml.syntax.structure.AttributeType;
 import dk.erst.cm.xml.syntax.structure.ElementType;
+import dk.erst.cm.xml.syntax.structure.ReferenceType;
 import dk.erst.cm.xml.syntax.structure.SomeType;
 import dk.erst.cm.xml.syntax.structure.StructureType;
 
@@ -28,10 +32,12 @@ public class ModelItemListTest {
 		assertTrue(catalogueLine.isPresent());
 
 		list((ElementType) catalogueLine.get(), 0);
+		
+		System.out.println(referenceTypes);
 	}
 
-	private void dump(String mandatory, String multiple, int level, String name, String description) {
-		System.out.println(String.join("", mandatory, multiple, "\t", levelPrefix(level), name, "\t\t\t" + cleanText(description)));
+	private void dump(String mandatory, String multiple, int level, String name, String reference, String description) {
+		System.out.println(String.join("", mandatory, multiple, "\t", levelPrefix(level), name, "\t"+reference, "\t\t\t" + cleanText(description)));
 	}
 
 	private String cleanText(String s) {
@@ -47,15 +53,17 @@ public class ModelItemListTest {
 			boolean mandatory = element.getCardinality() == null || element.getCardinality().startsWith("1..");
 			boolean multiple = element.getCardinality() != null && element.getCardinality().endsWith("..n");
 			String description = getDescription(element);
-			dump(mandatory ? "M" : "O", multiple ? "N" : "1", level, name, description);
+			String reference = getReference(element);
+			dump(mandatory ? "M" : "O", multiple ? "N" : "1", level, name, reference, description);
 		}
 		if (element.getAttribute().size() > 0) {
 			List<AttributeType> attributeList = element.getAttribute();
 			for (AttributeType attribute : attributeList) {
 				String name = "@" + attribute.getTerm().getValue();
 				String description = getDescription(attribute);
+				String reference = getReference(attribute);
 				boolean mandatory = attribute.getUsage() == null ? true : "M".equals(attribute.getUsage().substring(0, 1));
-				dump(mandatory ? "M" : "O", "@", level + 1, name, description);
+				dump(mandatory ? "M" : "O", "@", level + 1, name, reference, description);
 			}
 		}
 
@@ -66,6 +74,25 @@ public class ModelItemListTest {
 			}
 		}
 
+	}
+	
+	private Set<String> referenceTypes = new HashSet<String>();
+
+	private String getReference(SomeType t) {
+		Set<String> codeLists = null;
+		List<ReferenceType> referenceList = t.getReference();
+		if (referenceList != null) {
+			for (ReferenceType reference : referenceList) {
+				referenceTypes.add(reference.getType());
+				if ("CODE_LIST".equals(reference.getType())) {
+					if (codeLists == null) {
+						codeLists = new HashSet<String>();
+					}
+					codeLists.add(reference.getValue());
+				}
+			}
+		}
+		return codeLists == null ? "" : codeLists.stream().collect(Collectors.joining(", ", "[", "]"));
 	}
 
 	private String getDescription(SomeType attribute) {
