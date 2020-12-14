@@ -13,6 +13,7 @@
     
     <modules>
         <module>cm-xml-syntax</module>
+        <module>cm-xml-codelist</module>
         <module>cm-ubl</module>
         <module>cm-api</module>
         <module>cm-webapi</module>

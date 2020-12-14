@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -24,20 +25,32 @@ import dk.erst.cm.xml.syntax.structure.StructureType;
 
 public class ModelItemListTest {
 
+	private boolean onlyCatalogueLine = false;
+	
+	private Set<String> allCodeLists = new TreeSet<String>();
+
 	@Test
 	public void test() throws FileNotFoundException, IOException, JAXBException {
 		StructureLoadService structureLoadService = new StructureLoadService();
 		StructureType structure = structureLoadService.loadPeppolCatalogueStructure();
-		Optional<Object> catalogueLine = findChild(structure, "cac:CatalogueLine");
-		assertTrue(catalogueLine.isPresent());
+		ElementType element;
 
-		list((ElementType) catalogueLine.get(), 0);
-		
-		System.out.println(referenceTypes);
+		if (onlyCatalogueLine) {
+			Optional<Object> catalogueLine = findChild(structure, "cac:CatalogueLine");
+			assertTrue(catalogueLine.isPresent());
+			element = (ElementType) catalogueLine.get();
+		} else {
+			element = structure.getDocument();
+		}
+
+		list(element, 0);
+
+		System.out.println("All used code lists ("+allCodeLists.size()+"): ");
+		System.out.println(allCodeLists);
 	}
 
 	private void dump(String mandatory, String multiple, int level, String name, String reference, String description) {
-		System.out.println(String.join("", mandatory, multiple, "\t", levelPrefix(level), name, "\t"+reference, "\t\t\t" + cleanText(description)));
+		System.out.println(String.join("", mandatory, multiple, "\t", levelPrefix(level), name, "\t" + reference, "\t\t\t" + cleanText(description)));
 	}
 
 	private String cleanText(String s) {
@@ -75,16 +88,14 @@ public class ModelItemListTest {
 		}
 
 	}
-	
-	private Set<String> referenceTypes = new HashSet<String>();
 
 	private String getReference(SomeType t) {
 		Set<String> codeLists = null;
 		List<ReferenceType> referenceList = t.getReference();
 		if (referenceList != null) {
 			for (ReferenceType reference : referenceList) {
-				referenceTypes.add(reference.getType());
 				if ("CODE_LIST".equals(reference.getType())) {
+					allCodeLists.add(reference.getValue());
 					if (codeLists == null) {
 						codeLists = new HashSet<String>();
 					}
