@@ -45,6 +45,9 @@ function App() {
   const setBannerOpened = () => {
     setShowBanner(true);
   }
+  const onSearchSubmit = (e) => {
+    console.log(e);
+  }
 
   return (
     <React.StrictMode>
@@ -52,7 +55,7 @@ function App() {
         <div className={classes.layoutWrapper}>
           <div className={classes.flexWrapper}>
           <Router>
-            <TopNav aboutAction = {setBannerOpened} />
+            <TopNav aboutAction = {setBannerOpened} onSearchSubmit = { onSearchSubmit } />
             <Banner opened={showBanner} closeAction = { setBannerClosed } />
             <Route exact path="/" component={Table} />
             <Route exact path="/upload" component={Upload} />

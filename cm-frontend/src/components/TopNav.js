@@ -88,6 +88,7 @@ export default function TopNav(props) {
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
+            <form noValidate autoComplete="off" onSubmit= { (e) => { props.onSearchSubmit(e.target.value); e.preventDefault();} }>
             <InputBase
               placeholder="Search…"
               classes={{
@@ -95,7 +96,8 @@ export default function TopNav(props) {
                 input: classes.inputInput,
               }}
               inputProps={{ 'aria-label': 'search' }}
-            />
+              />
+              </form>
           </div>          
         </Toolbar>
       </AppBar>

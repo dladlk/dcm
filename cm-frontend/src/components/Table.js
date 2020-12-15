@@ -50,7 +50,7 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-export default function SimpleTable() {
+export default function SimpleTable(props) {
   const classes = useStyles();
 
   const [data, updateData] = React.useState(null);

@@ -51,6 +51,10 @@ export default function Upload() {
     setSelectedFiles(files);
   }
 
+  function isEmpty() {
+    return selectedFiles.length === 0;
+  }
+
   function handleClear() {
     setSelectedFiles([]);
     setDropzoneKey(dropzoneKey + 1);
@@ -81,9 +85,9 @@ export default function Upload() {
         />
 
         <Box m={3} display="flex" justifyContent="center">
-          <Button variant="contained" color="primary" onClick = {() => handleUpload()} disabled = { selectedFiles.length == 0 } >Upload</Button>
+          <Button variant="contained" color="primary" onClick = {() => handleUpload()} disabled = { isEmpty() } >Upload</Button>
           <Box pl={1}>
-            <Button variant="contained" onClick = {() => handleClear()} disabled = { selectedFiles.length == 0 }>Clear</Button>
+            <Button variant="contained" onClick = {() => handleClear()} disabled = { isEmpty() }>Clear</Button>
           </Box>
         </Box>
 

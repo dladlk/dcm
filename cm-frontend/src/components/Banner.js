@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button, Card, CardContent, CardHeader, IconButton } from '@material-ui/core';
 
@@ -31,7 +30,6 @@ export default function Banner(props) {
             >
             </CardHeader>
             <CardContent style={{ }}>
-              <Typography color="textPrimary" variant="body1">
                 Here you can search for published products, delivered via Peppol in Catalogue transaction 3.1 format by different sellers, and find aggregated information by standard identifier for next concerns:
                 <ul>
                   <li>product descriptions</li>
@@ -42,7 +40,6 @@ export default function Banner(props) {
                   <li>pictures</li>
                   <li>country of origin</li>
                 </ul>
-              </Typography>
               <Button size="small" color="primary" variant="outlined" onClick={() => { closeAction() }}>
                 Hide
               </Button>
