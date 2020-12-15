@@ -5,6 +5,7 @@ import ProductView from "./ProductView";
 import DetailHeader from "./DetailHeader";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup } from "@material-ui/core";
+import DataService from "../services/DataService";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -31,7 +32,7 @@ export default function ProductDetail() {
   let isLoading = true;
 
   async function loadProduct() {
-    let response = await fetch("http://localhost:8080/product/"+id);
+    let response = await DataService.fetchProductDetails(id);
     let body = await response.json();
     updateData(body);
   }

@@ -11,7 +11,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { withStyles } from "@material-ui/core";
 import { useHistory } from "react-router";
 import ItemDetailsService from "../services/ItemDetailsService";
-
+import DataService from "../services/DataService";
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -59,7 +59,7 @@ export default function SimpleTable(props) {
   let isLoading = true;
 
   async function loadProducts() {
-    let response = await fetch("http://localhost:8080/products");
+    let response = await DataService.fetchProducts();
     let body = await response.json();
     updateData(body);
   }

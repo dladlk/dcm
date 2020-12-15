@@ -1,9 +1,9 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import axios from "axios";
 import { Box, Button, Paper, Snackbar } from "@material-ui/core";
 import { DropzoneArea } from 'material-ui-dropzone'
+import DataService from "../services/DataService";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -28,14 +28,13 @@ export default function Upload() {
     const formData = new FormData();
     for (const file of files) {
       let selectedFile = file;
-      console.log(selectedFile);
       formData.append(
         "files",
         selectedFile,
         selectedFile.name
       );
     }
-    axios.post("http://localhost:8080/upload", formData).then((res) => {
+    DataService.uploadFiles(formData).then((res) => {
       console.log(res);
       setSnakBarOpen(true);
     });
