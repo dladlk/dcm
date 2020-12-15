@@ -38,7 +38,6 @@ class PeppolExportServiceTest {
 		try {
 			pls.loadXml(TestDocument.CATALOGUE_PEPPOL.getInputStream(), null, listCatalogConsumer);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

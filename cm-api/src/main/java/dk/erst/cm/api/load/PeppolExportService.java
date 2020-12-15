@@ -102,7 +102,5 @@ public class PeppolExportService {
 	}
 
 	public void marshallEnd() {
-		// TODO Auto-generated method stub
-
 	}
 }
