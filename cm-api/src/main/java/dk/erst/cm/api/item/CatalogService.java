@@ -58,6 +58,9 @@ public class CatalogService {
 
 		if (catalogue.getActionCode() != null) {
 			if ("Delete".equalsIgnoreCase(catalogue.getActionCode())) {
+				Long countProducts = productRepository.countByProductCatalogId(productCatalog.getId());
+				log.info("Found " + countProducts + " in catalogue " + productCatalog.getId());
+
 				Long deletedProducts = productRepository.deleteByProductCatalogId(productCatalog.getId());
 				log.info("Deleted " + deletedProducts + " products from catalog " + productCatalog.getId());
 

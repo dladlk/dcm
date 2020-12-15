@@ -8,4 +8,6 @@ public interface ProductRepository extends MongoRepository<Product, String> {
 
 	Long deleteByProductCatalogId(String productCatalogId);
 
+	Long countByProductCatalogId(String id);
+
 }

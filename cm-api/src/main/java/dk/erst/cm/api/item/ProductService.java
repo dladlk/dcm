@@ -44,7 +44,7 @@ public class ProductService {
 			product.setVersion(1);
 		}
 		product.setDocumentVersion(ProductDocumentVersion.PEPPOL_CATALOGUE_3_1);
-		product.setProductCatalogId(catalog.getId());
+		product.setProductCatalogId(productCatalogId);
 		product.setDocument(line);
 
 		if (deleteAction) {
