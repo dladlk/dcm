@@ -102,7 +102,7 @@ export default function SimpleTable(props) {
                   <TableCell >{row.document.item.name}</TableCell>
                   <TableCell >{ItemDetailsService.itemCertificates(row.document.item).map(cert => (
                     <span key={cert.id}>
-                    {cert.certificateType} {cert.issuerParty.partyName.name}
+                      {cert.id} {cert.certificateType}
                     </span>
                   ))}</TableCell>
                   <TableCell >{ItemDetailsService.itemUNSPSC(row.document.item)}</TableCell>

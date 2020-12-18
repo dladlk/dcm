@@ -92,6 +92,8 @@ export default function ProductView(props) {
             ) : ( <></> ) }
 
             <DataView name="Name" value={product.document.item.name}></DataView>
+            <DataView name="Standard number" value={ItemDetailsService.itemStandardNumber(product.document.item)}></DataView>
+            <DataView name="Seller number" value={ItemDetailsService.itemSellerNumber(product.document.item)}></DataView>
             <DataView name="Description" value={product.document.item.descriptionList}></DataView>
             <DataListView name="Keywords" value={product.document.item.keywordList}></DataListView>
             <DataView name="UNSPSC" value={ItemDetailsService.itemUNSPSC(product.document.item)}></DataView>

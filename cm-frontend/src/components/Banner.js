@@ -56,7 +56,7 @@ export default function Banner(props) {
                 </Box>
               </Box>
               <Button size="small" color="primary" variant="outlined" onClick={() => { closeAction() }}>
-                Hide welcome dialog
+                Close
                 </Button>
             </CardContent>
           </Card>
