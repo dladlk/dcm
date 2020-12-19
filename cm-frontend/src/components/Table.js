@@ -11,7 +11,6 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { withStyles } from "@material-ui/core";
 import { useHistory } from "react-router";
 import ItemDetailsService from "../services/ItemDetailsService";
-import DataService from "../services/DataService";
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -50,30 +49,18 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-export default function SimpleTable(props) {
+export default function ProductTable(props) {
+
+  const { isLoading, list } = props;
+
   const classes = useStyles();
 
-  const [data, updateData] = React.useState(null);
-  const [firstLoad, setLoad] = React.useState(true);
   const { push } = useHistory();
-  let isLoading = true;
 
-  async function loadProducts() {
-    let response = await DataService.fetchProducts();
-    let body = await response.json();
-    updateData(body);
-  }
-
-  if (firstLoad) {
-    loadProducts();
-    setLoad(false);
-  }
   const showRowDetails = (rowId) => {
     console.log('Clicked '+rowId);
     push('/product/view/'+rowId);
   }
-
-  if (data != null) isLoading = false;
 
   return (
     <div className={classes.paper}>
@@ -95,7 +82,7 @@ export default function SimpleTable(props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data?.map(row => (
+              {list?.map(row => (
                 <StyledTableRow key={row.id} onClick={() => showRowDetails(row.id)}>
                   <TableCell >{ItemDetailsService.itemStandardNumber(row.document.item)}</TableCell>
                   <TableCell >{ItemDetailsService.itemSellerNumber(row.document.item)}</TableCell>

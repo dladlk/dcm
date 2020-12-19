@@ -7,6 +7,8 @@ import Upload from "./components/Upload";
 import ProductDetail from "./components/ProductDetail";
 import TopNav from "./components/TopNav";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import DataService from "./services/DataService";
+
 
 import './App.css';
 
@@ -35,9 +37,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function App() {
+
   const classes = useStyles();
 
   const [showBanner, setShowBanner] = React.useState(true);
+  const [productList, setProductList] = React.useState([]);
+  const [productListLoading, setProductListLoading] = React.useState(false);
 
   const setBannerClosed = () => {
     setShowBanner(false);
@@ -46,7 +51,19 @@ function App() {
     setShowBanner(true);
   }
   const onSearchSubmit = (e) => {
-    console.log(e);
+    loadProducts();
+  }
+
+  React.useEffect(() => {
+    loadProducts();
+  }, []);
+
+  async function loadProducts() {
+    setProductListLoading(true);
+    let response = await DataService.fetchProducts();
+    let body = await response.json();
+    setProductList(body);
+    setProductListLoading(false);
   }
 
   return (
@@ -54,18 +71,20 @@ function App() {
       <MuiThemeProvider theme={theme}>
         <div className={classes.layoutWrapper}>
           <div className={classes.flexWrapper}>
-          <Router>
-            <TopNav aboutAction = {setBannerOpened} searchAction = { onSearchSubmit } />
-            <Banner opened={showBanner} closeAction = { setBannerClosed } />
-            <Route exact path="/" component={Table} />
-            <Route exact path="/upload" component={Upload} />
-            <Route path="/product/view/:id" component={ProductDetail} />
-          </Router>
+            <Router>
+              <TopNav aboutAction={setBannerOpened} searchAction={onSearchSubmit} />
+              <Banner opened={showBanner} closeAction={setBannerClosed} />
+              <Route exact path="/" >
+                <Table list={productList} isLoading={productListLoading} />
+              </Route>
+              <Route exact path="/upload" component={Upload} />
+              <Route path="/product/view/:id" component={ProductDetail} />
+            </Router>
           </div>
         </div>
       </MuiThemeProvider>
     </React.StrictMode>
-);
+  );
 }
 
 export default App;
