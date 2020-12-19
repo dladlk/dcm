@@ -49,7 +49,7 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-export default function ProductTable(props) {
+export default function ProductList(props) {
 
   const { isLoading, list } = props;
 

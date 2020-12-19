@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, BrowserRouter as Router } from "react-router-dom";
-import Table from "./components/Table";
+import ProductList from "./components/ProductList";
 import Banner from "./components/Banner";
 import Upload from "./components/Upload";
 import ProductDetail from "./components/ProductDetail";
@@ -75,7 +75,7 @@ function App() {
               <TopNav aboutAction={setBannerOpened} searchAction={onSearchSubmit} />
               <Banner opened={showBanner} closeAction={setBannerClosed} />
               <Route exact path="/" >
-                <Table list={productList} isLoading={productListLoading} />
+                <ProductList list={productList} isLoading={productListLoading} />
               </Route>
               <Route exact path="/upload" component={Upload} />
               <Route path="/product/view/:id" component={ProductDetail} />
