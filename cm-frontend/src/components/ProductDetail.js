@@ -25,34 +25,31 @@ export default function ProductDetail() {
 
   const classes = useStyles();
 
-  const [data, updateData] = React.useState(null);
-  const [firstLoad, setLoad] = React.useState(true);
+  const [data, setData] = React.useState(null);
+  const [dataLoading, setDataLoading] = React.useState(true);
   const [viewMode, setViewMode] = React.useState("table");
 
-  let isLoading = true;
+  React.useEffect(() => {
+    loadProduct();
+  }, []);
 
   async function loadProduct() {
+    setDataLoading(true);
     let response = await DataService.fetchProductDetails(id);
     let body = await response.json();
-    updateData(body);
-  }
-
-  if (firstLoad) {
-    loadProduct();
-    setLoad(false);
+    setData(body);
+    setDataLoading(false);
   }
 
   const handleViewChange = (event) => {
     setViewMode(event.target.value);
   };  
 
-  if (data != null) isLoading = false;
-
   return (
     <>
     <DetailHeader name="Product details" />
     <Paper className={classes.paper}>
-      {isLoading ? (
+      {dataLoading ? (
         <CircularProgress />
       ) : (
 

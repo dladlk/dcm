@@ -8,7 +8,7 @@ const fetchProductDetails = (productId) => {
 }
 
 const fetchProducts = (search) => {
-    return fetch(apiUrl + "/products?" + search);
+    return fetch(apiUrl + "/products" + (search ? "?"+search : ""));
 }
 
 const uploadFiles = (formData) => {
