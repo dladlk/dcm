@@ -8,6 +8,7 @@ import ProductDetail from "./components/ProductDetail";
 import TopNav from "./components/TopNav";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import DataService from "./services/DataService";
+import useStickyState from './utils/useStickyState';
 
 
 import './App.css';
@@ -49,7 +50,7 @@ function App() {
 
   const classes = useStyles();
 
-  const [showBanner, setShowBanner] = React.useState(true);
+  const [showBanner, setShowBanner] = useStickyState(true, 'dcm-banner');
   const [productList, setProductList] = React.useState([]);
   const [productListLoading, setProductListLoading] = React.useState(false);
 
