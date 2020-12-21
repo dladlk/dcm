@@ -6,6 +6,7 @@ const useStyles = makeStyles(theme => ({
     row: {
         display: "flex",
         alignItems: "flex-start",
+        marginBottom: theme.spacing(1),
     },
     name: {
         fontWeight: 'bold',

@@ -36,10 +36,10 @@ const useStyles = makeStyles((theme) => ({
       paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
       transition: theme.transitions.create('width'),
       width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: '12ch',
+      [theme.breakpoints.up('md')]: {
+        width: '30ch',
         '&:focus': {
-          width: '20ch',
+          width: '50ch',
         },
       },
     },
@@ -56,7 +56,7 @@ export default function SearchBar(props) {
           <SearchIcon />
         </div>
         <InputBase
-          placeholder="Search…"
+          placeholder="Search by number, name, UNSPSC etc."
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,

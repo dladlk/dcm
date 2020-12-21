@@ -11,6 +11,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { withStyles } from "@material-ui/core";
 import { useHistory } from "react-router";
 import ItemDetailsService from "../services/ItemDetailsService";
+import ProductListHeader from './ProductListHeader';
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -20,14 +21,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: '1em'
   },
   paper: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    margin: "10px",
-    height: "100%",
-    width: "99%",
-    marginTop: theme.spacing(2)
+    padding: theme.spacing(2),
   }
 }));
 
@@ -63,13 +57,13 @@ export default function ProductList(props) {
   }
 
   return (
-    <div className={classes.paper}>
+    <>
+    <ProductListHeader name="Products"/>
+    <Paper className = {classes.paper}>
       {isLoading ? (
         <CircularProgress />
       ) : (
-        <TableContainer
-          component={Paper}
-        >
+        <TableContainer>
           <Table className={classes.table} size="small" aria-label="Items table">
             <TableHead>
               <TableRow>
@@ -100,6 +94,7 @@ export default function ProductList(props) {
           </Table>
         </TableContainer>
       )}
-    </div>
+    </Paper>
+    </>
   );
 }
