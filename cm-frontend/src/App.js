@@ -76,9 +76,9 @@ function App() {
         setProductListLoading(false);
       }
     ).catch( error => {
-      console.log(error);
-    }
-    )
+      console.log('Error occured: '+error.message);
+      setProductListLoading(false);
+    });
   }
 
   return (
