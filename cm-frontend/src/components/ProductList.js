@@ -45,7 +45,7 @@ const StyledTableRow = withStyles((theme) => ({
 
 export default function ProductList(props) {
 
-  const { isLoading, list } = props;
+  const { isLoading, list, refreshAction } = props;
 
   const classes = useStyles();
 
@@ -58,7 +58,7 @@ export default function ProductList(props) {
 
   return (
     <>
-    <ProductListHeader name="Products"/>
+    <ProductListHeader name="Products" refreshAction = {refreshAction}/>
     <Paper className = {classes.paper}>
       {isLoading ? (
         <CircularProgress />

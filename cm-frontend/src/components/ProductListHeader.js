@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ProductListHeader(prop) {
-    const { name } = prop;
+    const { name, refreshAction } = prop;
 
     const classes = useStyles();
 
@@ -40,7 +40,7 @@ export default function ProductListHeader(prop) {
 
                     <div className={classes.buttons}>
                         <Fab color="primary" aria-label="Refresh" size="small">
-                            <RefreshIcon />
+                            <RefreshIcon onClick = {refreshAction}/>
                         </Fab>
                     </div>
                 </div>
