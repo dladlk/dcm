@@ -31,8 +31,10 @@ function ViewToggle(props) {
   )
 }
 
-export default function ProductDetail() {
+export default function ProductDetail(props) {
   
+  const { navigator } = props;
+
   let { id } = useParams();
 
   const classes = useStyles();
@@ -42,14 +44,13 @@ export default function ProductDetail() {
   const [viewMode, setViewMode] = React.useState("table");
 
   React.useEffect(() => {
-    loadProduct();
-  }, []);
+    loadProduct(id);
+  }, [id]);
 
-  async function loadProduct() {
+  async function loadProduct(id) {
     setDataLoading(true);
     let response = await DataService.fetchProductDetails(id);
     let body = await response.json();
-    console.log(body);
     setData(body);
     setDataLoading(false);
   }
@@ -60,7 +61,7 @@ export default function ProductDetail() {
 
   return (
     <>
-    <DetailHeader name="Product details" />
+    <DetailHeader name="Product details" navigator = { navigator } />
 
     <ViewToggle viewMode={viewMode} handleViewChange={handleViewChange}/>
 

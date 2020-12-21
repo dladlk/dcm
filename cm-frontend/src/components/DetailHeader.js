@@ -28,16 +28,27 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const _emptyNavigator = {
+    hasNext: () => {return false},
+    hasPrevious: () => {return false},
+    getNext: () => { return null},
+    getPrevious: () => { return null},
+}
+
 export default function DetailHeader(prop) {
-    const { name } = prop;
+
+    const { name, navigator = _emptyNavigator } = prop;
 
     const classes = useStyles();
 
     const history = useHistory();
 
     const handleBack = () => {
-        console.log('Go back');
-        history.goBack();
+        history.push('/');
+    }
+
+    const navigateTo = (path) => {
+        history.push(path);
     }
 
     return (
@@ -48,11 +59,11 @@ export default function DetailHeader(prop) {
                         <Typography variant="h4">{name}</Typography>
                     </div>
                     <div className={classes.buttons}>
-                        <Fab color="primary" aria-label="Previous" size="small">
-                            <ArrowIcon style={{ transform: 'rotate(90deg)' }} />
+                        <Fab color="primary" aria-label="Previous" size="small" disabled = {!navigator.hasPrevious()}>
+                            <ArrowIcon style={{ transform: 'rotate(90deg)' }} onClick = { () => navigateTo(navigator.getPrevious()) } />
                         </Fab>
-                        <Fab color="primary" aria-label="Next" size="small">
-                            <ArrowIcon style={{ transform: 'rotate(270deg)' }} />
+                        <Fab color="primary" aria-label="Next" size="small" disabled = {!navigator.hasNext()}>
+                            <ArrowIcon style={{ transform: 'rotate(270deg)' }} onClick = { () => navigateTo(navigator.getNext()) }  />
                         </Fab>
                         <Fab color="primary" aria-label="Refresh" size="small">
                             <RefreshIcon />

@@ -23,6 +23,15 @@ const theme = createMuiTheme({
   }
 });
 
+const listNavigator = (list, currentPosition) => {
+  return {
+    hasNext: () => { return currentPosition < list.length - 1},
+    hasPrevious: () => { return currentPosition > 0},
+    getNext: () => { return '/product/view/'+ list[currentPosition++].id},
+    getPrevious: () => { return '/product/view/'+ list[currentPosition--].id},
+  }
+}
+
 const useStyles = makeStyles(theme => ({
   layoutWrapper: {
     display: 'flex',
@@ -75,11 +84,11 @@ function App() {
               <TopNav aboutAction={setBannerOpened} searchAction={searchAction} />
               <Banner opened={showBanner} closeAction={setBannerClosed} />
               <Route exact path="/" >
-                <ProductList list={productList} isLoading={productListLoading} />
+                <ProductList list={productList} isLoading={productListLoading} refreshAction = {() => searchAction('')} />
               </Route>
               <Route exact path="/upload" component={Upload} />
               <Route path="/product/view/:id">
-                <ProductDetail />
+                <ProductDetail navigator = { listNavigator(productList, 1) }/>
               </Route>
             </Router>
           </div>
