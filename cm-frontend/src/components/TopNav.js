@@ -42,7 +42,7 @@ export default function TopNav(props) {
           <Link to="/upload" className={classes.link}>
               <Button color="inherit">Upload</Button>
           </Link>
-          <SearchBar onSearchSubmit = { searchAction } />
+          <SearchBar searchAction = { searchAction } />
         </Toolbar>
       </AppBar>
     </div>

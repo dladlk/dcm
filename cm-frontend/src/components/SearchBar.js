@@ -62,7 +62,7 @@ export default function SearchBar(props) {
             input: classes.inputInput,
           }}
           inputProps={{ 'aria-label': 'search' }}
-          onKeyPress = { (e) => e.key === 'Enter' && props.onSearchSubmit(e.target.value)}
+          onKeyPress = { (e) => e.key === 'Enter' && props.searchAction(e.target.value)}
           />
       </div>          
 

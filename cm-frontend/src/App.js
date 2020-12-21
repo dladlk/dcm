@@ -50,17 +50,17 @@ function App() {
   const setBannerOpened = () => {
     setShowBanner(true);
   }
-  const onSearchSubmit = (e) => {
-    loadProducts();
+  const searchAction = (s) => {
+    loadProducts(s);
   }
 
   React.useEffect(() => {
     loadProducts();
   }, []);
 
-  async function loadProducts() {
+  async function loadProducts(search) {
     setProductListLoading(true);
-    let response = await DataService.fetchProducts();
+    let response = await DataService.fetchProducts(search);
     let body = await response.json();
     setProductList(body);
     setProductListLoading(false);
@@ -72,13 +72,15 @@ function App() {
         <div className={classes.layoutWrapper}>
           <div className={classes.flexWrapper}>
             <Router>
-              <TopNav aboutAction={setBannerOpened} searchAction={onSearchSubmit} />
+              <TopNav aboutAction={setBannerOpened} searchAction={searchAction} />
               <Banner opened={showBanner} closeAction={setBannerClosed} />
               <Route exact path="/" >
                 <ProductList list={productList} isLoading={productListLoading} />
               </Route>
               <Route exact path="/upload" component={Upload} />
-              <Route path="/product/view/:id" component={ProductDetail} />
+              <Route path="/product/view/:id">
+                <ProductDetail />
+              </Route>
             </Router>
           </div>
         </div>

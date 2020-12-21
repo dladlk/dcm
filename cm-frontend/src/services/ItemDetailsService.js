@@ -35,12 +35,11 @@ const itemStandardNumber = (item) => {
 }
 const itemPictureURL = (item) => {
     if (item) {
-        if (item.itemSpecificationDocumentReferenceList) {
-            if (item.itemSpecificationDocumentReferenceList.length > 0) {
-                const isdr = item.itemSpecificationDocumentReferenceList[0];
-                if (isdr.externalReference && isdr.externalReference.uri) {
-                    return isdr.externalReference.uri;
-                }
+        const isdrl = item.itemSpecificationDocumentReferenceList;
+        if (isdrl && isdrl.length > 0) {
+            const isdr = isdrl[0];
+            if (isdr.attachment && isdr.attachment.externalReference && isdr.attachment.externalReference.uri) {
+                return isdr.attachment.externalReference.uri;
             }
         }
     }

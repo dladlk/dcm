@@ -37,6 +37,7 @@ export default function ProductDetail() {
     setDataLoading(true);
     let response = await DataService.fetchProductDetails(id);
     let body = await response.json();
+    console.log(body);
     setData(body);
     setDataLoading(false);
   }

@@ -9,21 +9,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dk.erst.cm.api.data.Product;
 import dk.erst.cm.api.item.ProductService;
+import lombok.extern.slf4j.Slf4j;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
+@Slf4j
 public class ProductController {
 
 	@Autowired
 	private ProductService productService;
 
 	@RequestMapping(value = "/products")
-	public List<Product> getAllEmployees() {
-		return productService.findAll();
+	public List<Product> getProducts(@RequestParam(required = false) String search) {
+		log.info("Search products by "+search);
+		return productService.findAll(search);
 	}
 
 	@RequestMapping(value = "/product/{id}")

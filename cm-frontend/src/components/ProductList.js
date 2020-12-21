@@ -77,7 +77,7 @@ export default function ProductList(props) {
                 <StyledTableCell align="left">Seller number</StyledTableCell>
                 <StyledTableCell align="left">Name</StyledTableCell>
                 <StyledTableCell align="left">Certificates</StyledTableCell>
-                <StyledTableCell align="left">UNSPSC</StyledTableCell>
+                <StyledTableCell align="left">Categorization</StyledTableCell>
                 <StyledTableCell align="left">Origin</StyledTableCell>
               </TableRow>
             </TableHead>
