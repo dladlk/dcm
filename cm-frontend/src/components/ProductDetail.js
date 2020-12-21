@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import ProductView from "./ProductView";
 import DetailHeader from "./DetailHeader";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup } from "@material-ui/core";
+import { Box, FormControl, FormControlLabel, Paper, Radio, RadioGroup } from "@material-ui/core";
 import DataService from "../services/DataService";
 
 const useStyles = makeStyles(theme => ({
@@ -15,9 +15,21 @@ const useStyles = makeStyles(theme => ({
     alignItems: "left",
     height: "100%",
     padding: theme.spacing(2),
-    marginTop: theme.spacing(3),
   }
 }));
+
+function ViewToggle(props) {
+  return (
+    <Box display="flex" flex="1" justifyContent="flex-end">
+      <FormControl component="fieldset">
+          <RadioGroup row aria-label="view" name="view" value={props.viewMode} onChange={props.handleViewChange}>
+            <FormControlLabel value="table" control={<Radio />} label="Table" />
+            <FormControlLabel value="json" control={<Radio />} label="JSON" />
+          </RadioGroup>
+        </FormControl>
+    </Box>    
+  )
+}
 
 export default function ProductDetail() {
   
@@ -49,20 +61,14 @@ export default function ProductDetail() {
   return (
     <>
     <DetailHeader name="Product details" />
+
+    <ViewToggle viewMode={viewMode} handleViewChange={handleViewChange}/>
+
     <Paper className={classes.paper}>
       {dataLoading ? (
         <CircularProgress />
       ) : (
-
         <>
-        <FormControl component="fieldset">
-          <FormLabel>View</FormLabel>
-          <RadioGroup row aria-label="view" name="view" value={viewMode} onChange={handleViewChange}>
-            <FormControlLabel value="table" control={<Radio />} label="Table" />
-            <FormControlLabel value="json" control={<Radio />} label="JSON" />
-          </RadioGroup>
-        </FormControl>
-
         {viewMode === "json" ? (
           <pre>{JSON.stringify(data, null, 2)}</pre>
         ) : (
