@@ -67,9 +67,9 @@ export default function ProductList(props) {
           <Table className={classes.table} size="small" aria-label="Items table">
             <TableHead>
               <TableRow>
+                <StyledTableCell align="left">Name</StyledTableCell>
                 <StyledTableCell align="left">Standard number</StyledTableCell>
                 <StyledTableCell align="left">Seller number</StyledTableCell>
-                <StyledTableCell align="left">Name</StyledTableCell>
                 <StyledTableCell align="left">Certificates</StyledTableCell>
                 <StyledTableCell align="left">Categorization</StyledTableCell>
                 <StyledTableCell align="left">Origin</StyledTableCell>
@@ -78,9 +78,9 @@ export default function ProductList(props) {
             <TableBody>
               {list?.map(row => (
                 <StyledTableRow key={row.id} onClick={() => showRowDetails(row.id)}>
+                  <TableCell >{row.document.item.name}</TableCell>
                   <TableCell >{ItemDetailsService.itemStandardNumber(row.document.item)}</TableCell>
                   <TableCell >{ItemDetailsService.itemSellerNumber(row.document.item)}</TableCell>
-                  <TableCell >{row.document.item.name}</TableCell>
                   <TableCell >{ItemDetailsService.itemCertificates(row.document.item).map(ItemDetailsService.renderItemCertificate)}</TableCell>
                   <TableCell >{ItemDetailsService.itemUNSPSC(row.document.item)}</TableCell>
                   <TableCell >{ItemDetailsService.itemOriginCountry(row.document.item)}</TableCell>
