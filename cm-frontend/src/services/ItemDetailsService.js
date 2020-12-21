@@ -52,6 +52,14 @@ const itemCertificates = (item) => {
     return [];
 }
 
+const renderItemCertificate = (cert) => {
+    return (
+       <span key={cert.id}>
+        {cert.id} - {cert.certificateType}
+      </span>
+    )
+}
+
 const ItemDetailsService = {
     itemOriginCountry,
     itemUNSPSC,
@@ -59,6 +67,8 @@ const ItemDetailsService = {
     itemStandardNumber,
     itemPictureURL,
     itemCertificates,
+
+    renderItemCertificate,
 }
 
 export default ItemDetailsService;

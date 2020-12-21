@@ -19,15 +19,18 @@ const useStyles = makeStyles(theme => ({
   }));
 
 function DataView (props) {
+
+    const _isValueDefined = (value) => value ? true : false;
+    const _renderValue = (v, i) => { return v };
     
-    const {name, value} = props;
+    const {name, value, isValueDefined = _isValueDefined, renderValue = _renderValue} = props;
     const classes = useStyles();
 
     return ( 
-        <> {value ? (
+        <> {isValueDefined(value) ? (
         <div className={classes.row}>
             <div className={classes.name}>{name}</div>
-            <div className={classes.value}>{value}</div>
+            <div className={classes.value}>{renderValue(value)}</div>
         </div>
         ) : ( <></> ) } 
         </>
@@ -35,24 +38,17 @@ function DataView (props) {
 }
 
 function DataListView (props) {
-    
-    const {name, value} = props;
-    const classes = useStyles();
-
+    const _isValueDefined = (value) => value && value.length > 0 ? true : false;
+    const _renderListValue = (v, i) => {
+        return (
+            <Fragment key={i}>
+                <div>{v}</div>
+            </Fragment>
+        )
+    }
+    const {name, value, isValueDefined = _isValueDefined, renderListValue = _renderListValue} = props;
     return ( 
-        <> {value ? (
-        <div className={classes.row}>
-            <div className={classes.name}>{name}</div>
-            <div className={classes.value}>
-                {value.map((v, i) => (
-                    <Fragment key={i}>
-                    <div>{v}</div>
-                    </Fragment>
-                ))}
-            </div>
-        </div>
-        ) : ( <></> ) } 
-        </>
+        <DataView name={name} value = {value} isValueDefined = {isValueDefined} renderValue={(value) => value.map(renderListValue)} />
     )
 }
 
@@ -100,6 +96,7 @@ export default function ProductView(props) {
             <DataView name="UNSPSC" value={ItemDetailsService.itemUNSPSC(product.document.item)}></DataView>
             <DataView name="Origin Country" value={ItemDetailsService.itemOriginCountry(product.document.item)}></DataView>
             <DataView name="URL" value={ItemDetailsService.itemPictureURL(product.document.item)}></DataView>
+            <DataListView name="Certificates" value={ItemDetailsService.itemCertificates(product.document.item)} renderListValue={ItemDetailsService.renderItemCertificate}></DataListView>
         </>
     )
 }

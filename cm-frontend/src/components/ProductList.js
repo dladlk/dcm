@@ -81,11 +81,7 @@ export default function ProductList(props) {
                   <TableCell >{ItemDetailsService.itemStandardNumber(row.document.item)}</TableCell>
                   <TableCell >{ItemDetailsService.itemSellerNumber(row.document.item)}</TableCell>
                   <TableCell >{row.document.item.name}</TableCell>
-                  <TableCell >{ItemDetailsService.itemCertificates(row.document.item).map(cert => (
-                    <span key={cert.id}>
-                      {cert.id} {cert.certificateType}
-                    </span>
-                  ))}</TableCell>
+                  <TableCell >{ItemDetailsService.itemCertificates(row.document.item).map(ItemDetailsService.renderItemCertificate)}</TableCell>
                   <TableCell >{ItemDetailsService.itemUNSPSC(row.document.item)}</TableCell>
                   <TableCell >{ItemDetailsService.itemOriginCountry(row.document.item)}</TableCell>
                 </StyledTableRow>
