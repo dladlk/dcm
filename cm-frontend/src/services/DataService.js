@@ -8,7 +8,7 @@ const fetchProductDetails = (productId) => {
 }
 
 const fetchProducts = (search) => {
-    return fetch(apiUrl + "/products" + (search ? "?search="+search : ""));
+    return Axios.get(apiUrl + "/products" + (search ? "?search="+search : ""));
 }
 
 const uploadFiles = (formData) => {

@@ -70,10 +70,15 @@ function App() {
 
   async function loadProducts(search) {
     setProductListLoading(true);
-    let response = await DataService.fetchProducts(search);
-    let body = await response.json();
-    setProductList(body);
-    setProductListLoading(false);
+    await DataService.fetchProducts(search).then(response => {
+        let body = response.data;
+        setProductList(body);
+        setProductListLoading(false);
+      }
+    ).catch( error => {
+      console.log(error);
+    }
+    )
   }
 
   return (
