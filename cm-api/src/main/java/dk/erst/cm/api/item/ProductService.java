@@ -79,7 +79,7 @@ public class ProductService {
 
 		Page<ProductES> result;
 		if (searchParam != null) {
-			result = productESRepository.findByName(searchParam, p);
+			result = productESRepository.findByNameOrDescriptionOrCertificatesOrOriginOrStandardNumberOrCategoriesOrKeywords(searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, p);
 		} else {
 			result = productESRepository.findAll(p);
 		}
