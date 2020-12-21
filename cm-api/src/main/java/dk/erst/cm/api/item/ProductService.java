@@ -75,7 +75,7 @@ public class ProductService {
 	}
 
 	public List<Product> findAll(String searchParam) {
-		PageRequest p = PageRequest.of(0, 10);
+		PageRequest p = PageRequest.of(0, 20);
 
 		Page<ProductES> result;
 		if (searchParam != null) {
