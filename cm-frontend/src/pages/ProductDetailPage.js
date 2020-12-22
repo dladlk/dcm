@@ -61,7 +61,7 @@ export default function ProductDetailPage(props) {
 
   return (
     <>
-    <DetailHeader name="Product details" navigator = { navigator } id = { id } />
+    <DetailHeader name="Product details" navigator = { navigator } id = { id } refreshAction={loadProduct} />
 
     <ViewToggle viewMode={viewMode} handleViewChange={handleViewChange}/>
 

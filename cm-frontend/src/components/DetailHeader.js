@@ -37,7 +37,7 @@ const _emptyNavigator = {
 
 export default function DetailHeader(prop) {
 
-    const { name, navigator = _emptyNavigator, id } = prop;
+    const { name, navigator = _emptyNavigator, id, refreshAction } = prop;
 
     const classes = useStyles();
 
@@ -66,7 +66,7 @@ export default function DetailHeader(prop) {
                             <ArrowIcon style={{ transform: 'rotate(270deg)' }} onClick = { () => navigateTo(navigator.getNext(id)) }  />
                         </Fab>
                         <Fab color="primary" aria-label="Refresh" size="small">
-                            <RefreshIcon />
+                            <RefreshIcon onClick={() => refreshAction(id)}/>
                         </Fab>
                         <Fab color="primary" aria-label="Back" size="small" onClick={ handleBack }>
                             <ArrowIcon />
