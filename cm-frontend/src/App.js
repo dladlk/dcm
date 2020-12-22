@@ -1,10 +1,10 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Route, BrowserRouter as Router, useHistory } from "react-router-dom";
-import ProductList from "./components/ProductList";
+import ProductListPage from "./pages/ProductListPage";
 import Banner from "./components/Banner";
-import Upload from "./components/Upload";
-import ProductDetail from "./components/ProductDetail";
+import UploadPage from "./pages/UploadPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
 import TopNav from "./components/TopNav";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import DataService from "./services/DataService";
@@ -107,11 +107,11 @@ function ProductListContainer(props) {
     <TopNav aboutAction={setBannerOpened} searchAction={searchAction} />
     <Banner opened={showBanner} closeAction={setBannerClosed} />
     <Route exact path="/" >
-      <ProductList list={productList} isLoading={productListLoading} refreshAction = {() => searchAction('')} />
+      <ProductListPage list={productList} isLoading={productListLoading} refreshAction = {() => searchAction('')} />
     </Route>
-    <Route exact path="/upload" component={Upload} />
+    <Route exact path="/upload" component={UploadPage} />
     <Route path="/product/view/:id">
-      <ProductDetail navigator = { listNavigator(productList, 1) }/>
+      <ProductDetailPage navigator = { listNavigator(productList, 1) }/>
     </Route>
     </>
   )

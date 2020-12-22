@@ -4,6 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import { Box, Button, Paper, Snackbar } from "@material-ui/core";
 import { DropzoneArea } from 'material-ui-dropzone'
 import DataService from "../services/DataService";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -22,6 +23,8 @@ export default function Upload() {
   const [snakBarOpen, setSnakBarOpen] = React.useState(false);
   const [selectedFiles, setSelectedFiles] = React.useState([]);
   const [dropzoneKey, setDropzoneKey] = React.useState(0);
+
+  const history = useHistory();
 
 
   function uploadFile(files) {
@@ -66,6 +69,10 @@ export default function Upload() {
     setSnakBarOpen(false);
   }
 
+  function handleBack() {
+    history.push('/');
+  }
+
   return (
     <Box display="flex" justifyContent="center">
       <Paper className={classes.paper}>
@@ -87,6 +94,9 @@ export default function Upload() {
           <Button variant="contained" color="primary" onClick = {() => handleUpload()} disabled = { isEmpty() } >Upload</Button>
           <Box pl={1}>
             <Button variant="contained" onClick = {() => handleClear()} disabled = { isEmpty() }>Clear</Button>
+          </Box>
+          <Box pl={1}>
+            <Button variant="contained" onClick = {() => handleBack()}>Back</Button>
           </Box>
         </Box>
 

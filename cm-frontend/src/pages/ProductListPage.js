@@ -11,7 +11,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { withStyles } from "@material-ui/core";
 import { useHistory } from "react-router";
 import ItemDetailsService from "../services/ItemDetailsService";
-import ProductListHeader from './ProductListHeader';
+import ProductListHeader from '../components/ProductListHeader';
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -43,7 +43,7 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-export default function ProductList(props) {
+export default function ProductListPage(props) {
 
   const { isLoading, list, refreshAction } = props;
 

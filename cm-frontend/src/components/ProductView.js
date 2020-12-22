@@ -70,7 +70,7 @@ export default function ProductView(props) {
 
     return (
         <>
-            { showTech ? (
+            { showTech && (
                 <>
                     <DataView name="ID" value={product.id}></DataView>
                     <DataView name="Created" value={product.createTime}></DataView>
@@ -81,7 +81,7 @@ export default function ProductView(props) {
                     <Quantity name="Minimum Quantity" value={product.document.minimumOrderQuantity}></Quantity>
                     <Quantity name="Maximum Quantity" value={product.document.maximumOrderQuantity}></Quantity>
                 </>
-            ) : (<></>)}
+            )}
 
             <DataView name="Name" value={product.document.item.name}></DataView>
             <DataView name="Standard number" value={ItemDetailsService.itemStandardNumber(product.document.item)}></DataView>

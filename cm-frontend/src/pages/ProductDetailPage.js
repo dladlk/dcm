@@ -1,8 +1,8 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useParams } from "react-router";
-import ProductView from "./ProductView";
-import DetailHeader from "./DetailHeader";
+import ProductView from "../components/ProductView";
+import DetailHeader from "../components/DetailHeader";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { Box, FormControl, FormControlLabel, Paper, Radio, RadioGroup } from "@material-ui/core";
 import DataService from "../services/DataService";
@@ -31,7 +31,7 @@ function ViewToggle(props) {
   )
 }
 
-export default function ProductDetail(props) {
+export default function ProductDetailPage(props) {
   
   const { navigator } = props;
 
