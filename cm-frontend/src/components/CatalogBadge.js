@@ -13,8 +13,8 @@ export default function CatalogBadge(props) {
     const classes = useStyles();
 
     return (
-        <Badge key={code} badgeContent={(index + 1)} color="primary" className={classes.badge}>
-            <CatalogIcon color="secondary" />
+        <Badge key={code} badgeContent={(index + 1)} color="primary" className={classes.badge} title={code}>
+            <CatalogIcon color="secondary" fontSize="small"/>
         </Badge>
     )
 } 

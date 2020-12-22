@@ -1,7 +1,7 @@
 import { Box } from "@material-ui/core";
 
 const mergeProducts = (list) => {
-    let merged =  null;
+    let merged = null;
     let mergedItem = null;
     if (list && list.length > 0) {
         for (let index = 0; index < list.length; index++) {
@@ -16,30 +16,81 @@ const mergeProducts = (list) => {
                 }
                 merged._source.push(listElement.productCatalogId);
                 let curIndex = merged._source.length - 1;
-                if (item.itemSpecificationDocumentReferenceList) {
-                    if (!mergedItem.itemSpecificationDocumentReferenceList) {
-                        mergedItem.itemSpecificationDocumentReferenceList = item.itemSpecificationDocumentReferenceList;
-                    } else {
-                        for (const e of mergedItem.itemSpecificationDocumentReferenceList) {
-                            e._source = {
-                                code: merged.productCatalogId,
-                                index: 0
-                            };
-                        }
-                        for (const e of item.itemSpecificationDocumentReferenceList) {
-                            e._source =  {
-                                code: listElement.productCatalogId,
-                                index: curIndex
-                            };
-                            mergedItem.itemSpecificationDocumentReferenceList.push(e)
-                        };
-                    }
+
+                const baseSource = {
+                    code: merged.productCatalogId,
+                    index: 0
+                };
+                const curSource = {
+                    code: listElement.productCatalogId,
+                    index: curIndex
                 }
+                mergedItem.name = mergeString(baseSource, curSource, mergedItem.name, item.name);
+                mergedItem.descriptionList = mergeStringList(baseSource, curSource, mergedItem.descriptionList, item.descriptionList);
+                mergedItem.itemSpecificationDocumentReferenceList = mergeObjectList(baseSource, curSource, mergedItem.itemSpecificationDocumentReferenceList, item.itemSpecificationDocumentReferenceList);
             }
 
         }
     }
     return merged;
+}
+
+const mergeString = (baseSource, curSource, baseList, e) => {
+    baseList = Array.isArray(baseList) ? baseList : baseList ? [baseList]: []
+    for (let i=0; i < baseList.length; i++) {
+        let e = baseList[i];
+        if (!e._source) {
+            baseList[i] = {
+                value: e,
+                _source: baseSource
+            }
+        }
+    }
+    if (e) {
+        baseList.push(
+            {
+                value: e,
+                _source: curSource
+            }
+        )
+    }
+    return baseList;
+}
+const mergeStringList = (baseSource, curSource, baseList, list) => {
+    baseList = baseList || [];
+    list = list || [];
+    for (let i=0; i < baseList.length; i++) {
+        let e = baseList[i];
+        if (!e._source) {
+            baseList[i] = {
+                value: e,
+                _source: baseSource
+            }
+        }
+    }
+    for (const e of list) {
+        baseList.push(
+            {
+                value: e,
+                _source: curSource
+            }
+        )
+    }
+    return baseList;
+}
+const mergeObjectList = (baseSource, curSource, baseList, list) => {
+    baseList = baseList || [];
+    list = list || [];
+    for (const e of baseList) {
+        if (!e._source) {
+            e._source = baseSource;
+        }
+    }
+    for (const e of list) {
+        e._source = curSource;
+        baseList.push(e)
+    }
+    return baseList;
 }
 
 const itemOriginCountry = (item) => {
@@ -138,20 +189,20 @@ const renderItemCertificate = (cert) => {
 const renderItemSpecification = (s) => {
     return (
         <div>
-            {s.documentTypeCode && (<Box pr={2} display="inline" style={{fontWeight: "bold"}}>{s.documentTypeCode}</Box>)}
+            {s.documentTypeCode && (<Box pr={2} display="inline" style={{ fontWeight: "bold" }}>{s.documentTypeCode}</Box>)}
             {renderUrl(s.attachment.externalReference.uri)}
-        </div> 
+        </div>
     )
 }
 const renderItemAdditionalProperty = (s) => {
     return (
         <div>
-            {s.name && (<span style={{fontWeight: "bold"}}>{s.name}</span>)}
-            {s.nameCode && ( <span style={{fontWeight: "bold"}}>{' '}{s.nameCode}</span>)}
+            {s.name && (<span style={{ fontWeight: "bold" }}>{s.name}</span>)}
+            {s.nameCode && (<span style={{ fontWeight: "bold" }}>{' '}{s.nameCode}</span>)}
             {(s.name || s.nameCode) && (":")}
-            {s.value && ( <span>{' '}{s.value}</span>)}
-            {s.valueQuantity && ( <span>{' '}{s.valueQuantity.quantity}{' '} {s.valueQuantity.unitCode}</span>)}
-        </div> 
+            {s.value && (<span>{' '}{s.value}</span>)}
+            {s.valueQuantity && (<span>{' '}{s.valueQuantity.quantity}{' '} {s.valueQuantity.unitCode}</span>)}
+        </div>
     )
 }
 

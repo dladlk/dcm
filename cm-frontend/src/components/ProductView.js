@@ -83,6 +83,14 @@ const renderCatalogs = (source) => {
     )
 }
 
+const renderSourcedValue = (v) => {
+    return (
+        <div>
+        {v._source ? (<><CatalogBadge code={v._source.code} index={v._source.index}/>{' '}<span>{v.value}</span></>) : {v}}
+        </div>
+    )
+}
+
 export default function ProductView(props) {
 
     const showTech = false;
@@ -106,10 +114,10 @@ export default function ProductView(props) {
 
             <DataView name="Catalogs" value={product._source} renderValue={renderCatalogs}></DataView>
             <DataView name="Standard number" value={ItemDetailsService.itemStandardNumber(product.document.item)}></DataView>
-            <DataView name="Name" value={product.document.item.name}></DataView>
+            <DataListView name="Name" value={product.document.item.name} renderListValue={renderSourcedValue}></DataListView>
             <DataView name="Seller number" value={ItemDetailsService.itemSellerNumber(product.document.item)}></DataView>
             <DataView name="Manufacturer" value={ItemDetailsService.itemManufacturerName(product.document.item)}></DataView>
-            <DataView name="Description" value={product.document.item.descriptionList}></DataView>
+            <DataListView name="Description" value={product.document.item.descriptionList} renderListValue={renderSourcedValue}></DataListView>
             <DataListView name="Keywords" value={product.document.item.keywordList}></DataListView>
             <DataView name="UNSPSC" value={ItemDetailsService.itemUNSPSC(product.document.item)}></DataView>
             <DataView name="Origin Country" value={ItemDetailsService.itemOriginCountry(product.document.item)}></DataView>
