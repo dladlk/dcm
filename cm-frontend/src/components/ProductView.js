@@ -52,7 +52,7 @@ function DataListView(props) {
     }
     const { name, value, isValueDefined = _isValueDefined, renderListValue = _renderListValue } = props;
     return (
-        <DataView name={name} value={value} isValueDefined={isValueDefined} renderValue={(value) => value.map(renderListValue)} />
+        <DataView name={name} value={value} isValueDefined={isValueDefined} renderValue={(value) => Array.isArray(value) ? value.map(renderListValue) : renderListValue(value)} />
     )
 }
 
@@ -86,7 +86,7 @@ const renderCatalogs = (source) => {
 const renderSourcedValue = (v) => {
     return (
         <div>
-        {v._source ? (<><CatalogBadge code={v._source.code} index={v._source.index}/>{' '}<span>{v.value}</span></>) : {v}}
+        {v._source ? (<><CatalogBadge code={v._source.code} index={v._source.index}/>{' '}<span>{v.value}</span></>) : <>{v}</>}
         </div>
     )
 }
