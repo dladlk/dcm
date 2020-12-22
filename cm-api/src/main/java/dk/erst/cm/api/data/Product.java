@@ -3,6 +3,7 @@ package dk.erst.cm.api.data;
 import java.time.Instant;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import dk.erst.cm.api.item.ProductDocumentVersion;
@@ -21,7 +22,10 @@ public class Product {
 	private int version;
 
 	private String productCatalogId;
-
 	private ProductDocumentVersion documentVersion;
+
+	@Indexed
+	private String standardNumber;
+
 	private Object document;
 }

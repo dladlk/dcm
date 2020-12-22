@@ -4,7 +4,7 @@ const apiUrl = "http://localhost:8080/api";
 //const apiUrl = "/api";
 
 const fetchProductDetails = (productId) => {
-    return fetch(apiUrl + "/product/" + productId);
+    return fetch(apiUrl + "/products/" + productId);
 }
 
 const fetchProducts = (search) => {

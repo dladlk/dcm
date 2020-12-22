@@ -6,6 +6,7 @@ import DetailHeader from "../components/DetailHeader";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { Box, FormControl, FormControlLabel, Paper, Radio, RadioGroup } from "@material-ui/core";
 import DataService from "../services/DataService";
+import ItemDetailsService from "../services/ItemDetailsService";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -49,9 +50,12 @@ export default function ProductDetailPage(props) {
 
   async function loadProduct(id) {
     setDataLoading(true);
-    let response = await DataService.fetchProductDetails(id);
-    let body = await response.json();
-    setData(body);
+    const response = await DataService.fetchProductDetails(id);
+    let res = await response.json();
+    if (Array.isArray(res)) {
+      res = ItemDetailsService.mergeProducts(res);
+    }
+    setData(res);
     setDataLoading(false);
   }
 

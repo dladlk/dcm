@@ -17,6 +17,7 @@ import dk.erst.cm.api.dao.mongo.ProductRepository;
 import dk.erst.cm.api.data.Product;
 import dk.erst.cm.api.data.ProductCatalogUpdate;
 import dk.erst.cm.xml.ubl21.model.CatalogueLine;
+import dk.erst.cm.xml.ubl21.model.NestedSchemeID;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -55,6 +56,7 @@ public class ProductService {
 		}
 		product.setDocumentVersion(ProductDocumentVersion.PEPPOL_CATALOGUE_3_1);
 		product.setProductCatalogId(productCatalogId);
+		product.setStandardNumber(getLineStandardNumber(line));
 		product.setDocument(line);
 
 		if (deleteAction) {
@@ -68,6 +70,18 @@ public class ProductService {
 		productESRepository.save(ProductES.by(product));
 
 		return product;
+	}
+
+	private String getLineStandardNumber(CatalogueLine line) {
+		if (line != null && line.getItem() != null) {
+			if (line.getItem().getStandardItemIdentification() != null) {
+				NestedSchemeID sn = line.getItem().getStandardItemIdentification();
+				if (sn.getId() != null && sn.getId().getId() != null) {
+					return sn.getId().getId().toUpperCase();
+				}
+			}
+		}
+		return null;
 	}
 
 	public long countItems() {
@@ -102,5 +116,9 @@ public class ProductService {
 
 	public Optional<Product> findById(String id) {
 		return productRepository.findById(id);
+	}
+
+	public List<Product> findByStandardNumber(String standardNumber) {
+		return productRepository.findByStandardNumber(standardNumber);
 	}
 }

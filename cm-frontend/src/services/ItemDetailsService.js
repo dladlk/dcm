@@ -1,5 +1,12 @@
 import { Box } from "@material-ui/core";
 
+const mergeProducts = (list) => {
+    if (list && list.length > 0) {
+        return list[0];
+    }
+    return null;
+}
+
 const itemOriginCountry = (item) => {
     if (item && item.originCountry) {
         return item.originCountry.identificationCode;
@@ -133,6 +140,8 @@ const ItemDetailsService = {
     renderItemCertificate,
     renderItemSpecification,
     renderItemAdditionalProperty,
+
+    mergeProducts,
 }
 
 export default ItemDetailsService;

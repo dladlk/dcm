@@ -1,8 +1,10 @@
 package dk.erst.cm.webapi;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +28,7 @@ public class ProductController {
 
 	@RequestMapping(value = "/products")
 	public List<Product> getProducts(@RequestParam(required = false) String search) {
-		log.info("Search products by "+search);
+		log.info("Search products by " + search);
 		return productService.findAll(search);
 	}
 
@@ -35,6 +37,22 @@ public class ProductController {
 		Optional<Product> findById = productService.findById(id);
 		if (findById.isPresent()) {
 			return new ResponseEntity<Product>(findById.get(), HttpStatus.OK);
+		}
+		return ResponseEntity.notFound().build();
+	}
+
+	@RequestMapping(value = "/products/{id}")
+	public ResponseEntity<List<Product>> getProductsById(@PathVariable("id") String id) {
+		Optional<Product> findById = productService.findById(id);
+		if (findById.isPresent()) {
+			Product product = findById.get();
+			List<Product> list;
+			if (!StringUtils.isEmpty(product.getStandardNumber())) {
+				list = productService.findByStandardNumber(product.getStandardNumber());
+			} else {
+				list = Arrays.asList(product);
+			}
+			return new ResponseEntity<List<Product>>(list, HttpStatus.OK);
 		}
 		return ResponseEntity.notFound().build();
 	}
