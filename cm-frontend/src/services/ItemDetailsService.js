@@ -57,14 +57,12 @@ const isPictureSpecification = (isdr) => {
 }
 
 const itemSpecifications = (item) => {
-    return itemSpecificationDocumentReferenceListFilter(item, (isdr)=> !isPictureSpecification(isdr));
+    return itemSpecificationDocumentReferenceListFilter(item, (isdr) => !isPictureSpecification(isdr));
 }
 
 const itemPictureURL = (item) => {
     return itemSpecificationDocumentReferenceListFilter(item, isPictureSpecification);
 }
-
-
 
 const itemCertificates = (item) => {
     if (item && item.certificateList) {
@@ -75,9 +73,9 @@ const itemCertificates = (item) => {
 
 const renderItemCertificate = (cert) => {
     return (
-       <span key={cert.id}>
-        {cert.id} - {cert.certificateType}
-      </span>
+        <span key={cert.id}>
+            {cert.id} - {cert.certificateType}
+        </span>
     )
 }
 const renderItemSpecification = (s) => {
@@ -86,7 +84,7 @@ const renderItemSpecification = (s) => {
     )
 }
 
-const renderUrlListValue = (v) => { return ( renderUrl(v.attachment.externalReference.uri) ) };
+const renderUrlListValue = (v) => { return (renderUrl(v.attachment.externalReference.uri)) };
 
 const renderUrl = (v) => { return (<a href={v} rel="noreferrer" target="_blank">{v}</a>) };
 

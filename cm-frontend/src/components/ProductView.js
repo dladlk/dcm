@@ -1,6 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import { Fragment } from "react";
 import ItemDetailsService from '../services/ItemDetailsService';
+import ProductPictureList from './ProductPictureList';
 
 const useStyles = makeStyles(theme => ({
     row: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     },
     value: {
         flex: '6',
-    }
+    },
 }));
 
 function DataView(props) {
@@ -37,8 +38,10 @@ function DataView(props) {
     )
 }
 
+const isListFilled = (list) => list && list.length > 0 ? true : false;
+
 function DataListView(props) {
-    const _isValueDefined = (value) => value && value.length > 0 ? true : false;
+    const _isValueDefined = isListFilled;
     const _renderListValue = (v, i) => {
         return (
             <Fragment key={i}>
@@ -56,6 +59,13 @@ function Quantity(props) {
     const renderQuantity = (quantity) => { return (<>{quantity.quantity} {quantity.unitCode}</>) };
     return (
         <DataView name={props.name} value={props.value} renderValue={renderQuantity} />
+    )
+}
+
+
+const renderPicture = (specList) => {
+    return (
+        <ProductPictureList specList = {specList}/>
     )
 }
 
@@ -87,7 +97,7 @@ export default function ProductView(props) {
             <DataListView name="Keywords" value={product.document.item.keywordList}></DataListView>
             <DataView name="UNSPSC" value={ItemDetailsService.itemUNSPSC(product.document.item)}></DataView>
             <DataView name="Origin Country" value={ItemDetailsService.itemOriginCountry(product.document.item)}></DataView>
-            <DataListView name="Picture" value={ItemDetailsService.itemPictureURL(product.document.item)} renderListValue={ItemDetailsService.renderUrlListValue} />
+            <DataView name="Pictures" value={ItemDetailsService.itemPictureURL(product.document.item)} renderValue={renderPicture} isValueDefined={isListFilled} />
             <DataListView name="Specifications" value={ItemDetailsService.itemSpecifications(product.document.item)} renderListValue={ItemDetailsService.renderItemSpecification} />
             <DataListView name="Certificates" value={ItemDetailsService.itemCertificates(product.document.item)} renderListValue={ItemDetailsService.renderItemCertificate}></DataListView>
         </>
