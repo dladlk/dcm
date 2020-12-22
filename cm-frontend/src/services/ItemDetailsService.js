@@ -1,3 +1,4 @@
+import { Box } from "@material-ui/core";
 
 const itemOriginCountry = (item) => {
     if (item && item.originCountry) {
@@ -80,7 +81,10 @@ const renderItemCertificate = (cert) => {
 }
 const renderItemSpecification = (s) => {
     return (
-        renderUrlListValue(s)
+        <div>
+            <Box pr={2} display="inline" style={{fontWeight: "bold"}}>{s.documentTypeCode && (s.documentTypeCode)}</Box>
+            {renderUrl(s.attachment.externalReference.uri)}
+        </div> 
     )
 }
 
