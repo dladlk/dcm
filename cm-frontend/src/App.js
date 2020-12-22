@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Route, BrowserRouter as Router } from "react-router-dom";
+import { Route, BrowserRouter as Router, useHistory } from "react-router-dom";
 import ProductList from "./components/ProductList";
 import Banner from "./components/Banner";
 import Upload from "./components/Upload";
@@ -9,6 +9,7 @@ import TopNav from "./components/TopNav";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import DataService from "./services/DataService";
 import useStickyState from './utils/useStickyState';
+
 
 
 import './App.css';
@@ -46,9 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function App() {
-
-  const classes = useStyles();
+function ProductListContainer(props) {
 
   const [showBanner, setShowBanner] = useStickyState(true, 'dcm-banner');
   const [productList, setProductList] = React.useState([]);
@@ -60,7 +59,10 @@ function App() {
   const setBannerOpened = () => {
     setShowBanner(true);
   }
+
+  const history = useHistory();
   const searchAction = (s) => {
+    history.push('/');
     loadProducts(s);
   }
 
@@ -82,20 +84,30 @@ function App() {
   }
 
   return (
+    <>
+    <TopNav aboutAction={setBannerOpened} searchAction={searchAction} />
+    <Banner opened={showBanner} closeAction={setBannerClosed} />
+    <Route exact path="/" >
+      <ProductList list={productList} isLoading={productListLoading} refreshAction = {() => searchAction('')} />
+    </Route>
+    <Route exact path="/upload" component={Upload} />
+    <Route path="/product/view/:id">
+      <ProductDetail navigator = { listNavigator(productList, 1) }/>
+    </Route>
+    </>
+  )
+}
+
+function App() {
+
+  const classes = useStyles();
+  return (
     <React.StrictMode>
       <MuiThemeProvider theme={theme}>
         <div className={classes.layoutWrapper}>
           <div className={classes.flexWrapper}>
             <Router>
-              <TopNav aboutAction={setBannerOpened} searchAction={searchAction} />
-              <Banner opened={showBanner} closeAction={setBannerClosed} />
-              <Route exact path="/" >
-                <ProductList list={productList} isLoading={productListLoading} refreshAction = {() => searchAction('')} />
-              </Route>
-              <Route exact path="/upload" component={Upload} />
-              <Route path="/product/view/:id">
-                <ProductDetail navigator = { listNavigator(productList, 1) }/>
-              </Route>
+              <ProductListContainer/>
             </Router>
           </div>
         </div>
