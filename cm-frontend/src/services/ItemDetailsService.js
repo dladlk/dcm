@@ -33,18 +33,39 @@ const itemStandardNumber = (item) => {
     }
     return null;
 }
-const itemPictureURL = (item) => {
+
+const itemSpecificationDocumentReferenceListFilter = (item, filter) => {
+    var res = [];
     if (item) {
         const isdrl = item.itemSpecificationDocumentReferenceList;
         if (isdrl && isdrl.length > 0) {
-            const isdr = isdrl[0];
-            if (isdr.attachment && isdr.attachment.externalReference && isdr.attachment.externalReference.uri) {
-                return isdr.attachment.externalReference.uri;
+            for (let i = 0; i < isdrl.length; i++) {
+                const isdr = isdrl[i];
+                if (filter(isdr)) {
+                    if (isdr.attachment && isdr.attachment.externalReference && isdr.attachment.externalReference.uri) {
+                        res.push(isdr);
+                    }
+                }
             }
         }
     }
-    return null;
+    return res;
 }
+
+const isPictureSpecification = (isdr) => {
+    return isdr && (isdr.documentTypeCode === 'Picture' || isdr.documentTypeCode === 'PRODUCT_IMAGE');
+}
+
+const itemSpecifications = (item) => {
+    return itemSpecificationDocumentReferenceListFilter(item, (isdr)=> !isPictureSpecification(isdr));
+}
+
+const itemPictureURL = (item) => {
+    return itemSpecificationDocumentReferenceListFilter(item, isPictureSpecification);
+}
+
+
+
 const itemCertificates = (item) => {
     if (item && item.certificateList) {
         return item.certificateList;
@@ -59,6 +80,15 @@ const renderItemCertificate = (cert) => {
       </span>
     )
 }
+const renderItemSpecification = (s) => {
+    return (
+        renderUrlListValue(s)
+    )
+}
+
+const renderUrlListValue = (v) => { return ( renderUrl(v.attachment.externalReference.uri) ) };
+
+const renderUrl = (v) => { return (<a href={v} rel="noreferrer" target="_blank">{v}</a>) };
 
 const ItemDetailsService = {
     itemOriginCountry,
@@ -67,8 +97,12 @@ const ItemDetailsService = {
     itemStandardNumber,
     itemPictureURL,
     itemCertificates,
+    itemSpecifications,
 
+    renderUrl,
+    renderUrlListValue,
     renderItemCertificate,
+    renderItemSpecification,
 }
 
 export default ItemDetailsService;

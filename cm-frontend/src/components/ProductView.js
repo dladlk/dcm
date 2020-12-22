@@ -59,9 +59,6 @@ function Quantity(props) {
     )
 }
 
-
-const renderUrl = (v) => { return (<a href={v} rel="noreferrer" target="_blank">{v}</a>) };
-
 export default function ProductView(props) {
 
     const showTech = false;
@@ -90,7 +87,8 @@ export default function ProductView(props) {
             <DataListView name="Keywords" value={product.document.item.keywordList}></DataListView>
             <DataView name="UNSPSC" value={ItemDetailsService.itemUNSPSC(product.document.item)}></DataView>
             <DataView name="Origin Country" value={ItemDetailsService.itemOriginCountry(product.document.item)}></DataView>
-            <DataView name="Picture" value={ItemDetailsService.itemPictureURL(product.document.item)} renderValue={renderUrl} />
+            <DataListView name="Picture" value={ItemDetailsService.itemPictureURL(product.document.item)} renderListValue={ItemDetailsService.renderUrlListValue} />
+            <DataListView name="Specifications" value={ItemDetailsService.itemSpecifications(product.document.item)} renderListValue={ItemDetailsService.renderItemSpecification} />
             <DataListView name="Certificates" value={ItemDetailsService.itemCertificates(product.document.item)} renderListValue={ItemDetailsService.renderItemCertificate}></DataListView>
         </>
     )
