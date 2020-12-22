@@ -1,5 +1,6 @@
 import { GridList, GridListTile, GridListTileBar, IconButton, makeStyles } from "@material-ui/core";
 import PageViewIcon from "@material-ui/icons/Pageview";
+import CatalogBadge from "./CatalogBadge";
 
 const useStyles = makeStyles(theme => ({
     gridList: {
@@ -30,6 +31,7 @@ export default function RenderPictureList(props) {
                         }}
                         actionIcon={
                             <a aria-label={`visit url`} href={spec.attachment.externalReference.uri} target="_blank" rel="noreferrer">
+                                {spec._source && (<CatalogBadge index={spec._source.index} code={spec._source.code}/>)}
                                 <IconButton>
                                     <PageViewIcon className={classes.title} />
                                 </IconButton>

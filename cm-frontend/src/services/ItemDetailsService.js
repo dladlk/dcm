@@ -1,10 +1,45 @@
 import { Box } from "@material-ui/core";
 
 const mergeProducts = (list) => {
+    let merged =  null;
+    let mergedItem = null;
     if (list && list.length > 0) {
-        return list[0];
+        for (let index = 0; index < list.length; index++) {
+            let listElement = list[index];
+            if (listElement.document.item) {
+                let item = listElement.document.item;
+                if (!merged) {
+                    merged = listElement;
+                    merged._source = [merged.productCatalogId];
+                    mergedItem = item;
+                    continue;
+                }
+                merged._source.push(listElement.productCatalogId);
+                let curIndex = merged._source.length - 1;
+                if (item.itemSpecificationDocumentReferenceList) {
+                    if (!mergedItem.itemSpecificationDocumentReferenceList) {
+                        mergedItem.itemSpecificationDocumentReferenceList = item.itemSpecificationDocumentReferenceList;
+                    } else {
+                        for (const e of mergedItem.itemSpecificationDocumentReferenceList) {
+                            e._source = {
+                                code: merged.productCatalogId,
+                                index: 0
+                            };
+                        }
+                        for (const e of item.itemSpecificationDocumentReferenceList) {
+                            e._source =  {
+                                code: listElement.productCatalogId,
+                                index: curIndex
+                            };
+                            mergedItem.itemSpecificationDocumentReferenceList.push(e)
+                        };
+                    }
+                }
+            }
+
+        }
     }
-    return null;
+    return merged;
 }
 
 const itemOriginCountry = (item) => {

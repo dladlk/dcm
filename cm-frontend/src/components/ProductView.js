@@ -1,6 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import { Fragment } from "react";
 import ItemDetailsService from '../services/ItemDetailsService';
+import CatalogBadge from "./CatalogBadge";
 import ProductPictureList from './ProductPictureList';
 
 const useStyles = makeStyles(theme => ({
@@ -69,6 +70,19 @@ const renderPicture = (specList) => {
     )
 }
 
+const renderCatalogs = (source) => {
+    return (
+        <>
+         <span>{source.length}{source.length > 1 ? ' catalog(s): ':' catalog'}</span>
+         {source.map((s,i) => {
+             return (
+                 <CatalogBadge code={s} index={i}/>
+             )
+        })}
+        </>
+    )
+}
+
 export default function ProductView(props) {
 
     const showTech = false;
@@ -90,8 +104,9 @@ export default function ProductView(props) {
                 </>
             )}
 
-            <DataView name="Name" value={product.document.item.name}></DataView>
+            <DataView name="Catalogs" value={product._source} renderValue={renderCatalogs}></DataView>
             <DataView name="Standard number" value={ItemDetailsService.itemStandardNumber(product.document.item)}></DataView>
+            <DataView name="Name" value={product.document.item.name}></DataView>
             <DataView name="Seller number" value={ItemDetailsService.itemSellerNumber(product.document.item)}></DataView>
             <DataView name="Manufacturer" value={ItemDetailsService.itemManufacturerName(product.document.item)}></DataView>
             <DataView name="Description" value={product.document.item.descriptionList}></DataView>
