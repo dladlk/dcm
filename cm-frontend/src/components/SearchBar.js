@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
+import ClearIcon from '@material-ui/icons/Clear';
 import InputBase from '@material-ui/core/InputBase';
+import { IconButton } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     search: {
@@ -49,6 +51,8 @@ const useStyles = makeStyles((theme) => ({
 export default function SearchBar(props) {
     const classes = useStyles();
 
+    const inputEl = useRef(null);
+
     return (
 
         <div className={classes.search}>
@@ -56,12 +60,20 @@ export default function SearchBar(props) {
           <SearchIcon />
         </div>
         <InputBase
+          inputRef = {inputEl}
           placeholder="Search by number, name, UNSPSC etc."
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,
           }}
-          inputProps={{ 'aria-label': 'search' }}
+          inputProps={{ 
+            'aria-label': 'search' ,
+          }}
+          endAdornment = {(
+            <IconButton onClick={() => {inputEl.current.value = ''; props.searchAction('');}} className = {classes.inputRoot} >
+              <ClearIcon />
+            </IconButton>              
+            )}
           onKeyPress = { (e) => e.key === 'Enter' && props.searchAction(e.target.value)}
           />
       </div>          
