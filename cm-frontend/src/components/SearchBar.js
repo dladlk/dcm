@@ -39,9 +39,9 @@ const useStyles = makeStyles((theme) => ({
       transition: theme.transitions.create('width'),
       width: '100%',
       [theme.breakpoints.up('md')]: {
-        width: '30ch',
+        width: '15ch',
         '&:focus': {
-          width: '50ch',
+          width: '30ch',
         },
       },
     },
@@ -61,7 +61,7 @@ export default function SearchBar(props) {
         </div>
         <InputBase
           inputRef = {inputEl}
-          placeholder="Search by number, name, UNSPSC etc."
+          placeholder="Search for products"
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,
