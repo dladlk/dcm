@@ -76,7 +76,7 @@ export default function ProductListPage(props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {list?.map(row => (
+              {(list && list.length > 0)? list?.map(row => (
                 <StyledTableRow key={row.id} onClick={() => showRowDetails(row.id)}>
                   <TableCell >{row.document.item.name}</TableCell>
                   <TableCell >{ItemDetailsService.itemStandardNumber(row.document.item)}</TableCell>
@@ -85,7 +85,11 @@ export default function ProductListPage(props) {
                   <TableCell >{ItemDetailsService.itemUNSPSC(row.document.item)}</TableCell>
                   <TableCell >{ItemDetailsService.itemOriginCountry(row.document.item)}</TableCell>
                 </StyledTableRow>
-              ))}
+              )) : (
+                <StyledTableRow key={'empty'}>
+                  <TableCell colSpan={6} align="center">No items are found</TableCell>
+                </StyledTableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
