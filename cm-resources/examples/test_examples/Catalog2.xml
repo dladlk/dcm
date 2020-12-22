@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Catalogue xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2">
+	<cbc:CustomizationID>urn:fdc:peppol.eu:poacc:trns:catalogue:3</cbc:CustomizationID>
+	<cbc:ProfileID>urn:fdc:peppol.eu:poacc:bis:catalogue_only:3</cbc:ProfileID>
+	<cbc:ID>1</cbc:ID>
+	<cbc:IssueDate>2020-12-22</cbc:IssueDate>
+	<cac:ValidityPeriod>
+		<cbc:StartDate>2020-12-01</cbc:StartDate>
+	</cac:ValidityPeriod>
+	<cac:ProviderParty>
+		<cbc:EndpointID schemeID="0184">DK19555305</cbc:EndpointID>
+		<cac:PartyLegalEntity>
+			<cbc:RegistrationName>Bauhaus Denmark A/S</cbc:RegistrationName>
+			<cbc:CompanyID schemeID="0184">DK19555305</cbc:CompanyID>
+		</cac:PartyLegalEntity>
+	</cac:ProviderParty>
+	<cac:ReceiverParty>
+		<cbc:EndpointID schemeID="0088">0000000000017</cbc:EndpointID>
+		<cac:PartyLegalEntity>
+			<cbc:RegistrationName>DELIS Catalogue</cbc:RegistrationName>
+		</cac:PartyLegalEntity>
+	</cac:ReceiverParty>
+	<cac:CatalogueLine>
+		<cbc:ID>1</cbc:ID>
+		<cac:Item>
+            <cbc:Description>Her får du en god, tynd arbejdshandske fra kvalitetsmærket GUIDE. Den kommer med touchscreen-funktion takket være de indstrikkede kobberfibre, så du kan bruge din telefon, tablet eller lignende uden at tage handskerne af. Disse fibre er i tommelfingeren, pegefingerspidsen samt langefingerspidsen.
+
+                Du får en smidig og luftig handske som sidder tæt om hånden og er halvdyppet i PU. Handsken er specielt velegnet til dig som er håndværker, og som bruger din smartphone eller tablet i løbet af arbejdsdagen.
+            </cbc:Description>
+            <cbc:Name>Guide Arbejdshandsker 589 Sort Str. 8-11</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>PC100059</cbc:ID>
+            </cac:SellersItemIdentification>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="0160">5790000000005</cbc:ID>
+			</cac:StandardItemIdentification>
+			<cac:ItemSpecificationDocumentReference>
+                <cbc:ID>1</cbc:ID>
+                <cbc:DocumentTypeCode>PRODUCT_IMAGE</cbc:DocumentTypeCode>
+				<cac:Attachment>
+					<cac:ExternalReference>
+						<cbc:URI>https://cdn.bauhaus.dk/media/catalog/product/cache/0aa8881122f7fd15f2f183ba935339cc/p/c/pc100059-17ec4b942-ac3a-443c-b20c-96d68050c20e_1.jpg</cbc:URI>
+					</cac:ExternalReference>
+				</cac:Attachment>
+			</cac:ItemSpecificationDocumentReference>
+			<cac:OriginCountry>
+				<cbc:IdentificationCode>DK</cbc:IdentificationCode>
+			</cac:OriginCountry>
+			<cac:CommodityClassification>
+				<cbc:ItemClassificationCode listID="MP" listVersionID="19.0501">46181504</cbc:ItemClassificationCode>
+			</cac:CommodityClassification>
+			<cac:HazardousItem>
+				<cbc:UNDGCode>ADR</cbc:UNDGCode>
+				<cbc:HazardClassID>Code</cbc:HazardClassID>
+			</cac:HazardousItem>
+			<cac:ManufacturerParty>
+				<cac:PartyName>
+					<cbc:Name>Manufacturer AS</cbc:Name>
+				</cac:PartyName>
+			</cac:ManufacturerParty>
+			<cac:Certificate>
+				<cbc:ID>123450</cbc:ID>
+				<cbc:CertificateTypeCode>NA</cbc:CertificateTypeCode>
+				<cbc:CertificateType>Environmental</cbc:CertificateType>
+				<cac:IssuerParty>
+					<cac:PartyName>
+						<cbc:Name>NA</cbc:Name>
+					</cac:PartyName>
+				</cac:IssuerParty>
+			</cac:Certificate>
+		</cac:Item>
+	</cac:CatalogueLine>
+</Catalogue>

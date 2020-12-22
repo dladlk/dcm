@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Catalogue xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Catalogue-2">
+	<cbc:CustomizationID>urn:fdc:peppol.eu:poacc:trns:catalogue:3</cbc:CustomizationID>
+	<cbc:ProfileID>urn:fdc:peppol.eu:poacc:bis:catalogue_only:3</cbc:ProfileID>
+	<cbc:ID>1</cbc:ID>
+	<cbc:IssueDate>2020-12-22</cbc:IssueDate>
+	<cac:ValidityPeriod>
+		<cbc:StartDate>2020-12-01</cbc:StartDate>
+	</cac:ValidityPeriod>
+	<cac:ProviderParty>
+		<cbc:EndpointID schemeID="0184">DK62545313</cbc:EndpointID>
+		<cac:PartyLegalEntity>
+			<cbc:RegistrationName>Lyreco Denmark A/S</cbc:RegistrationName>
+			<cbc:CompanyID schemeID="0184">DK62545313</cbc:CompanyID>
+		</cac:PartyLegalEntity>
+	</cac:ProviderParty>
+	<cac:ReceiverParty>
+		<cbc:EndpointID schemeID="0088">0000000000017</cbc:EndpointID>
+		<cac:PartyLegalEntity>
+			<cbc:RegistrationName>DELIS Catalogue</cbc:RegistrationName>
+		</cac:PartyLegalEntity>
+	</cac:ReceiverParty>
+	<cac:CatalogueLine>
+		<cbc:ID>1</cbc:ID>
+		<cac:Item>
+            <cbc:Description>Arbejdshandske, Guide® 589
+
+                Tynd, åndbar arbejdshandske, som er velegnet til montage og lignende opgaver. Håndfladen er dyppet i PU, hvilket giver et godt og fleksibelt greb i både tørre og våde omgivelser. Handskerne kan desuden bruges til touchskærme.
+                
+                Certificeret ifølge EN 388:2016 2121X.
+                
+                Er du i tvivl om, hvorvidt dette er det rette produkt til dine behov, kan du ringe eller skrive til vores kundeservice, som kan sætte dig i kontakt med en af vores PPE-specialister.
+                
+                Best.enhed: æske a 12 par
+            </cbc:Description>
+			<cbc:Name>Handsker Guide 589, str. 9, æske a pakke a 12 par</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>12.879.369</cbc:ID>
+            </cac:SellersItemIdentification>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="0160">5790000000005</cbc:ID>
+			</cac:StandardItemIdentification>
+			<cac:ItemSpecificationDocumentReference>
+                <cbc:ID>1</cbc:ID>
+                <cbc:DocumentTypeCode>PRODUCT_IMAGE</cbc:DocumentTypeCode>
+				<cac:Attachment>
+					<cac:ExternalReference>
+						<cbc:URI>https://assets.lyreco.com/is/image/lyrecows/2018-12879369?locale=DA_da&amp;id=qkCqH3&amp;fmt=jpg&amp;fit=constrain,1&amp;wid=430&amp;hei=430</cbc:URI>
+					</cac:ExternalReference>
+				</cac:Attachment>
+			</cac:ItemSpecificationDocumentReference>
+			<cac:OriginCountry>
+				<cbc:IdentificationCode>DK</cbc:IdentificationCode>
+			</cac:OriginCountry>
+			<cac:CommodityClassification>
+				<cbc:ItemClassificationCode listID="MP" listVersionID="19.0501">46181504</cbc:ItemClassificationCode>
+			</cac:CommodityClassification>
+			<cac:HazardousItem>
+				<cbc:UNDGCode>ADR</cbc:UNDGCode>
+				<cbc:HazardClassID>Code</cbc:HazardClassID>
+			</cac:HazardousItem>
+			<cac:ManufacturerParty>
+				<cac:PartyName>
+					<cbc:Name>Manufacturer AS</cbc:Name>
+				</cac:PartyName>
+			</cac:ManufacturerParty>
+			<cac:Certificate>
+				<cbc:ID>123450</cbc:ID>
+				<cbc:CertificateTypeCode>NA</cbc:CertificateTypeCode>
+				<cbc:CertificateType>Environmental</cbc:CertificateType>
+				<cac:IssuerParty>
+					<cac:PartyName>
+						<cbc:Name>NA</cbc:Name>
+					</cac:PartyName>
+				</cac:IssuerParty>
+			</cac:Certificate>
+		</cac:Item>
+	</cac:CatalogueLine>
+</Catalogue>
