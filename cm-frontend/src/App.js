@@ -13,6 +13,7 @@ import useStickyState from './utils/useStickyState';
 
 
 import './App.css';
+import GenerateCatalogPage from "./pages/GenerateCatalogPage";
 
 const theme = createMuiTheme({
   typography: {
@@ -127,6 +128,9 @@ function App() {
           <div className={classes.flexWrapper}>
             <Router>
               <ProductListContainer/>
+              <Route exact path="/generate">
+                <GenerateCatalogPage />
+              </Route>
             </Router>
           </div>
         </div>
