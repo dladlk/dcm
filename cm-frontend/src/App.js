@@ -25,12 +25,31 @@ const theme = createMuiTheme({
   }
 });
 
-const listNavigator = (list, currentPosition) => {
+const currentPosition = (list, id) => {
+  if (list._cachedPos) {
+    if (list._cachedPos[id]) {
+      return list._cachedPos[id] - 1; // Cache position with + 1 - so 0 is not considered as absent
+    }
+  } else {
+    list._cachedPos = {};
+  }
+  if (!list) {
+    return 0;
+  }
+  for (var i = 0; i < list.length; i++) if (list[i].id === id) {
+    list._cachedPos[id] = (i + 1);
+    // console.log('Current pos: '+i); 
+    return i;
+  };
+  return 0;
+};
+
+const listNavigator = (list) => {
   return {
-    hasNext: () => { return currentPosition < list.length - 1},
-    hasPrevious: () => { return currentPosition > 0},
-    getNext: () => { return '/product/view/'+ list[currentPosition++].id},
-    getPrevious: () => { return '/product/view/'+ list[currentPosition--].id},
+    hasNext: (id) => { return currentPosition(list, id) < list.length - 1},
+    hasPrevious: (id) => { return currentPosition(list, id) > 0},
+    getNext: (id) => { return '/product/view/'+ list[currentPosition(list, id)+1].id},
+    getPrevious: (id) => { return '/product/view/'+ list[currentPosition(list, id)-1].id},
   }
 }
 

@@ -29,15 +29,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const _emptyNavigator = {
-    hasNext: () => {return false},
-    hasPrevious: () => {return false},
-    getNext: () => { return null},
-    getPrevious: () => { return null},
+    hasNext: (id) => {return false},
+    hasPrevious: (id) => {return false},
+    getNext: (id) => { return null},
+    getPrevious: (id) => { return null},
 }
 
 export default function DetailHeader(prop) {
 
-    const { name, navigator = _emptyNavigator } = prop;
+    const { name, navigator = _emptyNavigator, id } = prop;
 
     const classes = useStyles();
 
@@ -59,11 +59,11 @@ export default function DetailHeader(prop) {
                         <Typography variant="h4">{name}</Typography>
                     </div>
                     <div className={classes.buttons}>
-                        <Fab color="primary" aria-label="Previous" size="small" disabled = {!navigator.hasPrevious()}>
-                            <ArrowIcon style={{ transform: 'rotate(90deg)' }} onClick = { () => navigateTo(navigator.getPrevious()) } />
+                        <Fab color="primary" aria-label="Previous" size="small" disabled = {!navigator.hasPrevious(id)}>
+                            <ArrowIcon style={{ transform: 'rotate(90deg)' }} onClick = { () => navigateTo(navigator.getPrevious(id)) } />
                         </Fab>
-                        <Fab color="primary" aria-label="Next" size="small" disabled = {!navigator.hasNext()}>
-                            <ArrowIcon style={{ transform: 'rotate(270deg)' }} onClick = { () => navigateTo(navigator.getNext()) }  />
+                        <Fab color="primary" aria-label="Next" size="small" disabled = {!navigator.hasNext(id)}>
+                            <ArrowIcon style={{ transform: 'rotate(270deg)' }} onClick = { () => navigateTo(navigator.getNext(id)) }  />
                         </Fab>
                         <Fab color="primary" aria-label="Refresh" size="small">
                             <RefreshIcon />

@@ -61,7 +61,7 @@ export default function ProductDetail(props) {
 
   return (
     <>
-    <DetailHeader name="Product details" navigator = { navigator } />
+    <DetailHeader name="Product details" navigator = { navigator } id = { id } />
 
     <ViewToggle viewMode={viewMode} handleViewChange={handleViewChange}/>
 
