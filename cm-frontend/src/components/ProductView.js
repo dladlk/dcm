@@ -93,13 +93,15 @@ export default function ProductView(props) {
             <DataView name="Name" value={product.document.item.name}></DataView>
             <DataView name="Standard number" value={ItemDetailsService.itemStandardNumber(product.document.item)}></DataView>
             <DataView name="Seller number" value={ItemDetailsService.itemSellerNumber(product.document.item)}></DataView>
+            <DataView name="Manufacturer" value={ItemDetailsService.itemManufacturerName(product.document.item)}></DataView>
             <DataView name="Description" value={product.document.item.descriptionList}></DataView>
             <DataListView name="Keywords" value={product.document.item.keywordList}></DataListView>
             <DataView name="UNSPSC" value={ItemDetailsService.itemUNSPSC(product.document.item)}></DataView>
             <DataView name="Origin Country" value={ItemDetailsService.itemOriginCountry(product.document.item)}></DataView>
-            <DataView name="Pictures" value={ItemDetailsService.itemPictureURL(product.document.item)} renderValue={renderPicture} isValueDefined={isListFilled} />
             <DataListView name="Specifications" value={ItemDetailsService.itemSpecifications(product.document.item)} renderListValue={ItemDetailsService.renderItemSpecification} />
             <DataListView name="Certificates" value={ItemDetailsService.itemCertificates(product.document.item)} renderListValue={ItemDetailsService.renderItemCertificate}></DataListView>
+            <DataListView name="Additional properties" value={ItemDetailsService.itemAdditionalProperties(product.document.item)} renderListValue={ItemDetailsService.renderItemAdditionalProperty}></DataListView>
+            <DataView name="Pictures" value={ItemDetailsService.itemPictureURL(product.document.item)} renderValue={renderPicture} isValueDefined={isListFilled} />
         </>
     )
 }

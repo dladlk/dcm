@@ -26,6 +26,14 @@ const itemSellerNumber = (item) => {
     }
     return null;
 }
+const itemManufacturerName = (item) => {
+    if (item) {
+        if (item.manufacturerParty && item.manufacturerParty.partyName) {
+            return item.manufacturerParty.partyName.name;
+        }
+    }
+    return null;
+}
 const itemStandardNumber = (item) => {
     if (item) {
         if (item.standardItemIdentification && item.standardItemIdentification.id) {
@@ -71,6 +79,12 @@ const itemCertificates = (item) => {
     }
     return [];
 }
+const itemAdditionalProperties = (item) => {
+    if (item && item.additionalItemPropertyList) {
+        return item.additionalItemPropertyList;
+    }
+    return [];
+}
 
 const renderItemCertificate = (cert) => {
     return (
@@ -82,8 +96,19 @@ const renderItemCertificate = (cert) => {
 const renderItemSpecification = (s) => {
     return (
         <div>
-            <Box pr={2} display="inline" style={{fontWeight: "bold"}}>{s.documentTypeCode && (s.documentTypeCode)}</Box>
+            {s.documentTypeCode && (<Box pr={2} display="inline" style={{fontWeight: "bold"}}>{s.documentTypeCode}</Box>)}
             {renderUrl(s.attachment.externalReference.uri)}
+        </div> 
+    )
+}
+const renderItemAdditionalProperty = (s) => {
+    return (
+        <div>
+            {s.name && (<span style={{fontWeight: "bold"}}>{s.name}</span>)}
+            {s.nameCode && ( <span style={{fontWeight: "bold"}}>{' '}{s.nameCode}</span>)}
+            {(s.name || s.nameCode) && (":")}
+            {s.value && ( <span>{' '}{s.value}</span>)}
+            {s.valueQuantity && ( <span>{' '}{s.valueQuantity.quantity}{' '} {s.valueQuantity.unitCode}</span>)}
         </div> 
     )
 }
@@ -100,11 +125,14 @@ const ItemDetailsService = {
     itemPictureURL,
     itemCertificates,
     itemSpecifications,
+    itemManufacturerName,
+    itemAdditionalProperties,
 
     renderUrl,
     renderUrlListValue,
     renderItemCertificate,
     renderItemSpecification,
+    renderItemAdditionalProperty,
 }
 
 export default ItemDetailsService;
