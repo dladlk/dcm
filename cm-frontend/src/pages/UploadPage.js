@@ -1,7 +1,12 @@
 import React from "react";
+import clsx from 'clsx';
 import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import { Box, Button, Paper, Snackbar } from "@material-ui/core";
+import { Box, Button, Paper } from "@material-ui/core";
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Fab from '@material-ui/core/Fab';
+import CheckIcon from '@material-ui/icons/Check';
+import SaveIcon from '@material-ui/icons/Save';
+
 import { DropzoneArea } from 'material-ui-dropzone'
 import DataService from "../services/DataService";
 import { useHistory } from "react-router";
@@ -14,22 +19,42 @@ const useStyles = makeStyles(theme => ({
     minWidth: '480px',
   },
   previewChip: {
-  }
+  },
+  buttonSuccess: {
+    backgroundColor: theme.palette.success.main,
+  },
+  fabProgress: {
+    color: theme.palette.success.main,
+    position: 'absolute',
+    top: -6,
+    left: -6,
+    zIndex: 1,
+  },
+  buttonProgress: {
+    color: theme.palette.success.main,
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
+  },
 }));
 
 export default function Upload() {
   const classes = useStyles();
 
-  const [snakBarOpen, setSnakBarOpen] = React.useState(false);
   const [selectedFiles, setSelectedFiles] = React.useState([]);
   const [dropzoneKey, setDropzoneKey] = React.useState(0);
   const [dropzoneDisabled, setDropzoneDisabled] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const history = useHistory();
 
-
   function uploadFile(files) {
     setDropzoneDisabled(true);
+    setSuccess(false);
+    setLoading(true);    
     const formData = new FormData();
     for (const file of files) {
       let selectedFile = file;
@@ -42,12 +67,15 @@ export default function Upload() {
     DataService.uploadFiles(formData)
       .then((res) => {
         console.log(res);
-        setSnakBarOpen(true);
         setDropzoneDisabled(false);
+        setSuccess(true);
+        setLoading(false);        
       })
       .catch((e) => {
         console.log(e);
         setDropzoneDisabled(false);
+        setSuccess(false);
+        setLoading(false);        
       }
       )
   };
@@ -67,27 +95,25 @@ export default function Upload() {
   }
 
   function handleClear() {
+    setSuccess(false);
     setSelectedFiles([]);
     setDropzoneKey(dropzoneKey + 1);
-  }
-
-  function handleSnakBarClose(event, reason) {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnakBarOpen(false);
   }
 
   function handleBack() {
     history.push('/');
   }
 
+  const buttonClassname = clsx({
+    [classes.buttonSuccess]: success,
+  });
+
   return (
     <Box display="flex" justifyContent="center">
       <Paper className={classes.paper}>
         <DropzoneArea
-          disabled = {dropzoneDisabled}
-          key = {dropzoneKey}
+          disabled={dropzoneDisabled}
+          key={dropzoneKey}
           clearOnUnmount={false}
           onChange={handleChange}
           acceptedFiles={['application/xml', 'text/xml']}
@@ -102,21 +128,30 @@ export default function Upload() {
         />
 
         <Box m={3} display="flex" justifyContent="center">
-          <Button variant="contained" color="primary" onClick = {() => handleUpload()} disabled = { isEmpty() } >Upload</Button>
+          <div className={classes.wrapper}>
+            <Fab
+              size="small"
+              aria-label="save"
+              color="primary"
+              style = {{marginRight: '10px', width: '35px', height: '35px'}}
+              className={buttonClassname}
+              onClick={() => handleUpload()} disabled={isEmpty()}
+            >
+              {success ? <CheckIcon /> : <SaveIcon />}
+            </Fab>
+            {loading && <CircularProgress size={68} className={classes.fabProgress} />}
+          </div>
+          <Button variant="contained" color="primary" className={buttonClassname} onClick={() => handleUpload()} disabled={isEmpty()} >Upload</Button>
           <Box pl={1}>
-            <Button variant="contained" onClick = {() => handleClear()} disabled = { isEmpty() }>Clear</Button>
+            <Button variant="contained" onClick={() => handleClear()} disabled={isEmpty()}>Clear</Button>
           </Box>
           <Box pl={1}>
-            <Button variant="contained" onClick = {() => handleBack()}>Back</Button>
+            <Button variant="contained" onClick={() => handleBack()}>Back</Button>
           </Box>
         </Box>
 
       </Paper>
-      <Snackbar open={snakBarOpen} autoHideDuration={60000} onClose={handleSnakBarClose}>
-        <Typography component="h6">
-          File is successfully uploaded
-        </Typography>
-      </Snackbar>
+
     </Box>
   );
 }
