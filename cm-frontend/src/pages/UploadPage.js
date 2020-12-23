@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3),
     padding: theme.spacing(4),
     width: '50%',
-    minWidth: '400px',
+    minWidth: '480px',
   },
   previewChip: {
   }
@@ -23,11 +23,13 @@ export default function Upload() {
   const [snakBarOpen, setSnakBarOpen] = React.useState(false);
   const [selectedFiles, setSelectedFiles] = React.useState([]);
   const [dropzoneKey, setDropzoneKey] = React.useState(0);
+  const [dropzoneDisabled, setDropzoneDisabled] = React.useState(false);
 
   const history = useHistory();
 
 
   function uploadFile(files) {
+    setDropzoneDisabled(true);
     const formData = new FormData();
     for (const file of files) {
       let selectedFile = file;
@@ -37,10 +39,17 @@ export default function Upload() {
         selectedFile.name
       );
     }
-    DataService.uploadFiles(formData).then((res) => {
-      console.log(res);
-      setSnakBarOpen(true);
-    });
+    DataService.uploadFiles(formData)
+      .then((res) => {
+        console.log(res);
+        setSnakBarOpen(true);
+        setDropzoneDisabled(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setDropzoneDisabled(false);
+      }
+      )
   };
 
   function handleUpload() {
@@ -77,7 +86,9 @@ export default function Upload() {
     <Box display="flex" justifyContent="center">
       <Paper className={classes.paper}>
         <DropzoneArea
+          disabled = {dropzoneDisabled}
           key = {dropzoneKey}
+          clearOnUnmount={false}
           onChange={handleChange}
           acceptedFiles={['application/xml', 'text/xml']}
           filesLimit={10}
@@ -87,7 +98,7 @@ export default function Upload() {
           previewChipProps={{ classes: { root: classes.previewChip } }}
           previewText="Selected files"
           showAlerts={false}
-          dropzoneText={"Drag and drop a file here or click icon"}
+          dropzoneText={"Drag and drop XML files with Peppol Catalogue or click icon"}
         />
 
         <Box m={3} display="flex" justifyContent="center">
@@ -101,7 +112,7 @@ export default function Upload() {
         </Box>
 
       </Paper>
-      <Snackbar open={snakBarOpen} autoHideDuration={1000} onClose={handleSnakBarClose}>
+      <Snackbar open={snakBarOpen} autoHideDuration={60000} onClose={handleSnakBarClose}>
         <Typography component="h6">
           File is successfully uploaded
         </Typography>
