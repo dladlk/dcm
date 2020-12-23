@@ -59,14 +59,14 @@ export default function ProductDetailHeader(prop) {
                         <Typography variant="h4">{name}</Typography>
                     </div>
                     <div className={classes.buttons}>
-                        <Fab color="primary" aria-label="Previous" size="small" disabled = {!navigator.hasPrevious(id)}>
-                            <ArrowIcon style={{ transform: 'rotate(90deg)' }} onClick = { () => navigateTo(navigator.getPrevious(id)) } />
+                        <Fab color="primary" aria-label="Previous" size="small" disabled = {!navigator.hasPrevious(id)} onClick = { () => navigateTo(navigator.getPrevious(id)) } >
+                            <ArrowIcon style={{ transform: 'rotate(90deg)' }} />
                         </Fab>
-                        <Fab color="primary" aria-label="Next" size="small" disabled = {!navigator.hasNext(id)}>
-                            <ArrowIcon style={{ transform: 'rotate(270deg)' }} onClick = { () => navigateTo(navigator.getNext(id)) }  />
+                        <Fab color="primary" aria-label="Next" size="small" disabled = {!navigator.hasNext(id)} onClick = { () => navigateTo(navigator.getNext(id)) } >
+                            <ArrowIcon style={{ transform: 'rotate(270deg)' }} />
                         </Fab>
-                        <Fab color="primary" aria-label="Refresh" size="small">
-                            <RefreshIcon onClick={() => refreshAction(id)}/>
+                        <Fab color="primary" aria-label="Refresh" size="small" onClick={() => refreshAction(id)}>
+                            <RefreshIcon/>
                         </Fab>
                         <Fab color="primary" aria-label="Back" size="small" onClick={ handleBack }>
                             <ArrowIcon />
