@@ -1,8 +1,8 @@
-import CatalogIcon from '@material-ui/icons/Mail';
 import { Badge, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
     badge: {
+        paddingLeft: '10px',
         marginRight: '15px',
     },
 }));
@@ -13,8 +13,6 @@ export default function CatalogBadge(props) {
     const classes = useStyles();
 
     return (
-        <Badge key={code} badgeContent={(index + 1)} color="primary" className={classes.badge} title={code}>
-            <CatalogIcon color="secondary" fontSize="small"/>
-        </Badge>
+        <Badge key={code} badgeContent={(index + 1)} color="primary" className={classes.badge} title={code}/>
     )
 } 
