@@ -15,9 +15,8 @@ const mergeProducts = (list) => {
                         code: merged.productCatalogId,
                         index: 0
                     };
-                    mergedItem.name = mergeString(baseSource, null, mergedItem.name, null);
-                    mergedItem.descriptionList = mergeStringList(baseSource, null, mergedItem.descriptionList, null);
-                    mergedItem.itemSpecificationDocumentReferenceList = mergeObjectList(baseSource, null, mergedItem.itemSpecificationDocumentReferenceList, null);
+
+                    mergeItems(baseSource, null, mergedItem, null);
 
                     continue;
                 }
@@ -28,9 +27,7 @@ const mergeProducts = (list) => {
                     code: listElement.productCatalogId,
                     index: curIndex
                 }
-                mergedItem.name = mergeString(null, curSource, mergedItem.name, item.name);
-                mergedItem.descriptionList = mergeStringList(null, curSource, mergedItem.descriptionList, item.descriptionList);
-                mergedItem.itemSpecificationDocumentReferenceList = mergeObjectList(null, curSource, mergedItem.itemSpecificationDocumentReferenceList, item.itemSpecificationDocumentReferenceList);
+                mergeItems(null, curSource, mergedItem, item);
             }
 
         }
@@ -38,6 +35,13 @@ const mergeProducts = (list) => {
         merged = list[0];
     }
     return merged;
+}
+
+const mergeItems = (baseSource, curSource, mergedItem, item) => {
+    mergedItem.name = mergeString(baseSource, curSource, mergedItem.name, item?.name);
+    mergedItem.descriptionList = mergeStringList(baseSource, curSource, mergedItem.descriptionList, item?.descriptionList);
+    mergedItem.itemSpecificationDocumentReferenceList = mergeObjectList(baseSource, curSource, mergedItem.itemSpecificationDocumentReferenceList, item?.itemSpecificationDocumentReferenceList);
+
 }
 
 const mergeString = (baseSource, curSource, baseList, e) => {
