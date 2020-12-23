@@ -84,9 +84,6 @@ const renderCatalogs = (source) => {
 }
 
 const renderSourcedValue = (v, extractValue = (e)=> {return e.value}) => {
-    console.log(extractValue);
-    console.log(v);
-    console.log(extractValue(v));
     return (
         <div>
         {v._source ? (<><CatalogBadge code={v._source.code} index={v._source.index}/>{' '}<span>{extractValue(v)}</span></>) : <>{v}</>}

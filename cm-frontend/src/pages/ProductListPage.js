@@ -52,16 +52,13 @@ export default function ProductListPage(props) {
   const { push } = useHistory();
 
   const showRowDetails = (rowId) => {
-    console.log('Clicked '+rowId);
     push('/product/view/'+rowId);
   }
 
   const handleChangePage = (e, newPage)=> {
-    console.log('handleChangePage to '+newPage);
     refreshAction(null, newPage, pageSize);
   };
   const handleChangeRowsPerPage = (e)=> {
-    console.log('handleChangeRowsPerPage to '+e.target.value);
     refreshAction(null, page, e.target.value);
   };
 

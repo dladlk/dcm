@@ -81,7 +81,6 @@ export default function Upload() {
     }
     DataService.uploadFiles(formData)
       .then((res) => {
-        console.log(res);
         setUploadResultList(res.data);
         setDropzoneDisabled(false);
         setSuccess(true);
