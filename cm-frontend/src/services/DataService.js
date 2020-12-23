@@ -7,7 +7,7 @@ const fetchProductDetails = (productId) => {
     return fetch(apiUrl + "/products/" + productId);
 }
 
-const fetchProducts = (search, page = 0, size = 1) => {
+const fetchProducts = (search, page = 0, size = 20) => {
     const params = {
         page: page,
         size: size,
@@ -15,6 +15,7 @@ const fetchProducts = (search, page = 0, size = 1) => {
     if (search) {
         params.search = search;
     }
+    console.log(params);
     return Axios.get(apiUrl + "/products", {
         params: params
     });

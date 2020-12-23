@@ -40,7 +40,7 @@ export default function ProductListHeader(prop) {
 
                     <div className={classes.buttons}>
                         <Fab color="primary" aria-label="Refresh" size="small">
-                            <RefreshIcon onClick = {refreshAction}/>
+                            <RefreshIcon onClick = {() => refreshAction()}/>
                         </Fab>
                     </div>
                 </div>

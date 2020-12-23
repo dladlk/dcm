@@ -21,7 +21,6 @@ const currentPosition = (list, id) => {
     }
     for (var i = 0; i < list.length; i++) if (list[i].id === id) {
       list._cachedPos[id] = (i + 1);
-      // console.log('Current pos: '+i); 
       return i;
     };
     return 0;
@@ -40,6 +39,9 @@ export function ProductListContainer(props) {
 
   const [showBanner, setShowBanner] = useStickyState(true, 'dcm-banner');
   const [productList, setProductList] = React.useState([]);
+  const [productListPage, setProductListPage] = React.useState(0);
+  const [productListPageSize, setProductListPageSize] = React.useState(20);
+  const [productListTotal, setProductListTotal] = React.useState(0);
   const [productListLoading, setProductListLoading] = React.useState(false);
 
   const setBannerClosed = () => {
@@ -50,20 +52,25 @@ export function ProductListContainer(props) {
   };
 
   const history = useHistory();
-  const searchAction = (s) => {
+  const searchAction = (...params) => {
     history.push('/');
-    loadProducts(s);
+    loadProducts(...params);
   };
 
   React.useEffect(() => {
     loadProducts();
   }, []);
 
-  async function loadProducts(search) {
+  async function loadProducts(search = null, page = 0, size = 20) {
+    console.log("Load products: "+search+" "+page+" "+size);
     setProductListLoading(true);
-    await DataService.fetchProducts(search).then(response => {
-      let body = response.data;
-      setProductList(body);
+    await DataService.fetchProducts(search, page, size).then(response => {
+      let responseData = response.data;
+      console.log(responseData);
+      setProductList(responseData.content);
+      setProductListPage(responseData.number);
+      setProductListPageSize(responseData.size);
+      setProductListTotal(responseData.totalElements);
       setProductListLoading(false);
     }
     ).catch(error => {
@@ -77,7 +84,7 @@ export function ProductListContainer(props) {
       <TopNav aboutAction={setBannerOpened} searchAction={searchAction} />
       <Banner opened={showBanner} closeAction={setBannerClosed} />
       <Route exact path="/">
-        <ProductListPage list={productList} isLoading={productListLoading} refreshAction={() => searchAction('')} />
+        <ProductListPage list={productList} isLoading={productListLoading} refreshAction={searchAction} page={productListPage} pageSize={productListPageSize} total={productListTotal} />
       </Route>
       <Route exact path="/upload" component={UploadPage} />
       <Route path="/product/view/:id">

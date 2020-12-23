@@ -44,7 +44,7 @@ export default function GenerateCatalogPage(props) {
 
     return (
         <div className={classes.root}>
-            <Grid container spacing={0.1}>
+            <Grid container spacing={1}>
                 <Grid item lg={2}><Paper className={classes.paper} style = {{ fontWeight: "bold"}}>Catalog header</Paper></Grid>
                 <Grid item lg={1}><Paper className={classes.paper}>Number</Paper></Grid>
                 <Grid item lg={1}><Paper className={classes.paper}>Name</Paper></Grid>

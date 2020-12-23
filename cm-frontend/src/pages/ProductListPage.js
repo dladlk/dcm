@@ -45,12 +45,9 @@ const StyledTableRow = withStyles((theme) => ({
 
 export default function ProductListPage(props) {
 
-  const { isLoading, list, refreshAction } = props;
+  const { isLoading, list, refreshAction, page, pageSize, total } = props;
 
   const classes = useStyles();
-
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(20);
 
   const { push } = useHistory();
 
@@ -59,8 +56,14 @@ export default function ProductListPage(props) {
     push('/product/view/'+rowId);
   }
 
-  const handleChangePage = ()=> {};
-  const handleChangeRowsPerPage = ()=> {};
+  const handleChangePage = (e, newPage)=> {
+    console.log('handleChangePage to '+newPage);
+    refreshAction(null, newPage, pageSize);
+  };
+  const handleChangeRowsPerPage = (e)=> {
+    console.log('handleChangeRowsPerPage to '+e.target.value);
+    refreshAction(null, page, e.target.value);
+  };
 
   return (
     <>
@@ -105,8 +108,8 @@ export default function ProductListPage(props) {
         <TablePagination
           rowsPerPageOptions={[5, 20, 100]}
           component="div"
-          count={1000}
-          rowsPerPage={rowsPerPage}
+          count={total}
+          rowsPerPage={pageSize}
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}

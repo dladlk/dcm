@@ -9,6 +9,7 @@ import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -89,20 +90,21 @@ public class ProductService {
 		return productRepository.count();
 	}
 
-	public List<Product> findAll(String searchParam, Pageable pageable) {
-		List<Product> productList;
+	public Page<Product> findAll(String searchParam, Pageable pageable) {
+		Page<Product> productList;
 		if (!StringUtils.isEmpty(searchParam)) {
 			Page<ProductES> result;
 			result = productESRepository.findByNameOrDescriptionOrCertificatesOrOriginOrStandardNumberOrCategoriesOrKeywords(searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, pageable);
 			List<String> idList = result.stream().map(pes -> pes.getId()).collect(Collectors.toList());
-			log.info("Found " + idList.size() + " ids in ES");
+			log.info("Found " + idList.size() + " ids in ES, total " + result.getTotalElements());
 			Iterable<Product> byId = productRepository.findAllById(idList);
-			productList = StreamSupport.stream(byId.spliterator(), false).collect(Collectors.toList());
-			if (idList.size() != productList.size()) {
-				log.warn(String.format("Number of loaded products from Mongo (%d) is different to number of found ids in ES (%d)", idList.size(), productList.size()));
+			List<Product> productList2 = StreamSupport.stream(byId.spliterator(), false).collect(Collectors.toList());
+			if (idList.size() != productList2.size()) {
+				log.warn(String.format("Number of loaded products from Mongo (%d) is different to number of found ids in ES (%d)", idList.size(), productList2.size()));
 			}
+			productList = new PageImpl<>(productList2, pageable, result.getTotalElements());
 		} else {
-			productList = productRepository.findAll(pageable).getContent();
+			productList = productRepository.findAll(pageable);
 		}
 		return productList;
 	}
