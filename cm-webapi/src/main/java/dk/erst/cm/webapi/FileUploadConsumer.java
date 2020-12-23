@@ -51,7 +51,7 @@ public class FileUploadConsumer implements CatalogConsumer<Catalogue, CatalogueL
 		this.lineActionStat.put(action, this.lineActionStat.get(action) + 1);
 
 		if (this.lineCount % 100 == 0) {
-			log.info(String.format("Loaded %d lines, stat: ", this.lineCount, this.lineActionStat.toString()));
+			log.info(String.format("Loaded %d lines, stat: %s", this.lineCount, this.lineActionStat.toString()));
 		}
 	}
 }

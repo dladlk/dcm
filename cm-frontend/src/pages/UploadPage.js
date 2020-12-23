@@ -1,7 +1,7 @@
 import React from "react";
 import clsx from 'clsx';
 import { makeStyles } from "@material-ui/core/styles";
-import { Box, Button, Paper } from "@material-ui/core";
+import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Fab from '@material-ui/core/Fab';
 import CheckIcon from '@material-ui/icons/Check';
@@ -44,6 +44,7 @@ export default function Upload() {
   const classes = useStyles();
 
   const [selectedFiles, setSelectedFiles] = React.useState([]);
+  const [uploadResultList, setUploadResultList] = React.useState([]);
   const [dropzoneKey, setDropzoneKey] = React.useState(0);
   const [dropzoneDisabled, setDropzoneDisabled] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
@@ -54,7 +55,7 @@ export default function Upload() {
   function uploadFile(files) {
     setDropzoneDisabled(true);
     setSuccess(false);
-    setLoading(true);    
+    setLoading(true);
     const formData = new FormData();
     for (const file of files) {
       let selectedFile = file;
@@ -67,15 +68,16 @@ export default function Upload() {
     DataService.uploadFiles(formData)
       .then((res) => {
         console.log(res);
+        setUploadResultList(res.data);
         setDropzoneDisabled(false);
         setSuccess(true);
-        setLoading(false);        
+        setLoading(false);
       })
       .catch((e) => {
         console.log(e);
         setDropzoneDisabled(false);
         setSuccess(false);
-        setLoading(false);        
+        setLoading(false);
       }
       )
   };
@@ -88,6 +90,7 @@ export default function Upload() {
 
   function handleChange(files) {
     setSelectedFiles(files);
+    setSuccess(false);
   }
 
   function isEmpty() {
@@ -97,6 +100,7 @@ export default function Upload() {
   function handleClear() {
     setSuccess(false);
     setSelectedFiles([]);
+    setUploadResultList([]);
     setDropzoneKey(dropzoneKey + 1);
   }
 
@@ -109,49 +113,89 @@ export default function Upload() {
   });
 
   return (
-    <Box display="flex" justifyContent="center">
-      <Paper className={classes.paper}>
-        <DropzoneArea
-          disabled={dropzoneDisabled}
-          key={dropzoneKey}
-          clearOnUnmount={false}
-          onChange={handleChange}
-          acceptedFiles={['application/xml', 'text/xml']}
-          filesLimit={10}
-          showPreviewsInDropzone={true}
-          useChipsForPreview
-          previewGridProps={{ container: { spacing: 1, direction: 'row' } }}
-          previewChipProps={{ classes: { root: classes.previewChip } }}
-          previewText="Selected files"
-          showAlerts={false}
-          dropzoneText={"Drag and drop XML files with Peppol Catalogue or click icon"}
-        />
+    <>
+      <Box display="flex" justifyContent="center">
+        <Paper className={classes.paper}>
+          <DropzoneArea
+            disabled={dropzoneDisabled}
+            key={dropzoneKey}
+            clearOnUnmount={false}
+            onChange={handleChange}
+            acceptedFiles={['application/xml', 'text/xml']}
+            filesLimit={10}
+            showPreviewsInDropzone={true}
+            useChipsForPreview
+            previewGridProps={{ container: { spacing: 1, direction: 'row' } }}
+            previewChipProps={{ classes: { root: classes.previewChip } }}
+            previewText="Selected files"
+            showAlerts={false}
+            dropzoneText={"Drag and drop XML files with Peppol Catalogue or click icon"}
+          />
 
-        <Box m={3} display="flex" justifyContent="center">
-          <div className={classes.wrapper}>
-            <Fab
-              size="small"
-              aria-label="save"
-              color="primary"
-              style = {{marginRight: '10px', width: '35px', height: '35px'}}
-              className={buttonClassname}
-              onClick={() => handleUpload()} disabled={isEmpty()}
-            >
-              {success ? <CheckIcon /> : <SaveIcon />}
-            </Fab>
-            {loading && <CircularProgress size={68} className={classes.fabProgress} />}
-          </div>
-          <Button variant="contained" color="primary" className={buttonClassname} onClick={() => handleUpload()} disabled={isEmpty()} >Upload</Button>
-          <Box pl={1}>
-            <Button variant="contained" onClick={() => handleClear()} disabled={isEmpty()}>Clear</Button>
+          <Box m={3} display="flex" justifyContent="center">
+            <div className={classes.wrapper}>
+              <Fab
+                size="small"
+                aria-label="save"
+                color="primary"
+                style={{ marginRight: '10px', width: '35px', height: '35px' }}
+                className={buttonClassname}
+                onClick={() => handleUpload()} disabled={isEmpty()}
+              >
+                {success ? <CheckIcon /> : <SaveIcon />}
+              </Fab>
+              {loading && <CircularProgress size={68} className={classes.fabProgress} />}
+            </div>
+            <Button variant="contained" color="primary" className={buttonClassname} onClick={() => handleUpload()} disabled={isEmpty()} >Upload</Button>
+            <Box pl={1}>
+              <Button variant="contained" onClick={() => handleClear()} disabled={isEmpty()}>Clear</Button>
+            </Box>
+            <Box pl={1}>
+              <Button variant="contained" onClick={() => handleBack()}>Back</Button>
+            </Box>
           </Box>
-          <Box pl={1}>
-            <Button variant="contained" onClick={() => handleBack()}>Back</Button>
-          </Box>
-        </Box>
 
-      </Paper>
+        </Paper>
+      </Box>
 
-    </Box>
+      {uploadResultList?.length > 0 && (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableCell>File name</TableCell>
+              <TableCell>Version</TableCell>
+              <TableCell>Action</TableCell>
+              <TableCell>ID</TableCell>
+              <TableCell>Success</TableCell>
+              <TableCell>Error message</TableCell>
+              <TableCell>Line count</TableCell>
+              <TableCell>Add</TableCell>
+              <TableCell>Update</TableCell>
+              <TableCell>Delete</TableCell>
+            </TableHead>
+            <TableBody>
+              {uploadResultList?.map((u) => {
+                return (
+                  <TableRow key={u.fileName}>
+                    <TableCell component="th" scope="row">{u.fileName}</TableCell>
+                    <TableCell>{u.productCatalogUpdate?.documentVersion}</TableCell>
+                    <TableCell>{u.productCatalogUpdate?.document?.actionCode}</TableCell>
+                    <TableCell>{u.productCatalogUpdate?.document?.id}</TableCell>
+                    <TableCell>{u.success}</TableCell>
+                    <TableCell>{u.errorMessage}</TableCell>
+                    <TableCell>{u.lineCount}</TableCell>
+                    <TableCell>{u.lineActionStat.ADD}</TableCell>
+                    <TableCell>{u.lineActionStat.UPDATE}</TableCell>
+                    <TableCell>{u.lineActionStat.DELETE}</TableCell>
+                  </TableRow>
+                )
+              })}
+
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+
+    </>
   );
 }
