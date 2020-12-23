@@ -8,7 +8,16 @@ const fetchProductDetails = (productId) => {
 }
 
 const fetchProducts = (search) => {
-    return Axios.get(apiUrl + "/products" + (search ? "?search="+search : ""));
+    const params = {
+        page: 0,
+        size: 5,
+    }
+    if (search) {
+        params.search = search;
+    }
+    return Axios.get(apiUrl + "/products", {
+        params: params
+    });
 }
 
 const uploadFiles = (formData) => {

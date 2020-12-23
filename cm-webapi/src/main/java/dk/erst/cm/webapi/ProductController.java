@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,9 +28,9 @@ public class ProductController {
 	private ProductService productService;
 
 	@RequestMapping(value = "/products")
-	public List<Product> getProducts(@RequestParam(required = false) String search) {
-		log.info("Search products by " + search);
-		return productService.findAll(search);
+	public List<Product> getProducts(@RequestParam(required = false) String search, Pageable pageable) {
+		log.info("Search products by " + search+", page "+pageable);
+		return productService.findAll(search, pageable);
 	}
 
 	@RequestMapping(value = "/product/{id}")

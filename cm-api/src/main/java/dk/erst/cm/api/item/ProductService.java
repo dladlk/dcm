@@ -6,9 +6,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import dk.erst.cm.api.dao.es.ProductES;
@@ -88,30 +89,22 @@ public class ProductService {
 		return productRepository.count();
 	}
 
-	public List<Product> findAll(String searchParam) {
-		PageRequest p = PageRequest.of(0, 20);
-
-		Page<ProductES> result;
-		if (searchParam != null) {
-			result = productESRepository.findByNameOrDescriptionOrCertificatesOrOriginOrStandardNumberOrCategoriesOrKeywords(searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, p);
+	public List<Product> findAll(String searchParam, Pageable pageable) {
+		List<Product> productList;
+		if (!StringUtils.isEmpty(searchParam)) {
+			Page<ProductES> result;
+			result = productESRepository.findByNameOrDescriptionOrCertificatesOrOriginOrStandardNumberOrCategoriesOrKeywords(searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, pageable);
+			List<String> idList = result.stream().map(pes -> pes.getId()).collect(Collectors.toList());
+			log.info("Found " + idList.size() + " ids in ES");
+			Iterable<Product> byId = productRepository.findAllById(idList);
+			productList = StreamSupport.stream(byId.spliterator(), false).collect(Collectors.toList());
+			if (idList.size() != productList.size()) {
+				log.warn(String.format("Number of loaded products from Mongo (%d) is different to number of found ids in ES (%d)", idList.size(), productList.size()));
+			}
 		} else {
-			result = productESRepository.findAll(p);
+			productList = productRepository.findAll(pageable).getContent();
 		}
-
-		List<String> idList = result.stream().map(pes -> pes.getId()).collect(Collectors.toList());
-
-		log.info("Found " + idList.size() + " ids in ES");
-
-		Iterable<Product> byId = productRepository.findAllById(idList);
-
-		List<Product> productList = StreamSupport.stream(byId.spliterator(), false).collect(Collectors.toList());
-
-		if (idList.size() != productList.size()) {
-			log.warn("Number of loaded products from Mongo is different to number of found ids in ES");
-		}
-
 		return productList;
-		// return productRepository.findAll();
 	}
 
 	public Optional<Product> findById(String id) {
