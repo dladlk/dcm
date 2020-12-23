@@ -20,14 +20,22 @@ const useStyles = makeStyles(theme => ({
   },
   previewChip: {
   },
+
   buttonSuccess: {
     backgroundColor: theme.palette.success.main,
   },
+  buttonLoading: {
+    backgroundColor: theme.palette.success.light,
+  },
+  progressWrapper: {
+    margin: theme.spacing(0),
+    position: 'relative',
+  },  
   fabProgress: {
     color: theme.palette.success.main,
     position: 'absolute',
-    top: -6,
-    left: -6,
+    top: -3,
+    left: -3,
     zIndex: 1,
   },
   buttonProgress: {
@@ -37,18 +45,23 @@ const useStyles = makeStyles(theme => ({
     left: '50%',
     marginTop: -12,
     marginLeft: -12,
+    zIndex: 1,
   },
 }));
 
 export default function Upload() {
   const classes = useStyles();
-
   const [selectedFiles, setSelectedFiles] = React.useState([]);
   const [uploadResultList, setUploadResultList] = React.useState([]);
   const [dropzoneKey, setDropzoneKey] = React.useState(0);
   const [dropzoneDisabled, setDropzoneDisabled] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+
+  const buttonClassname = clsx({
+    [classes.buttonSuccess]: success,
+    [classes.buttonLoading]: loading,
+  });  
 
   const history = useHistory();
 
@@ -83,6 +96,9 @@ export default function Upload() {
   };
 
   function handleUpload() {
+    if (loading) {
+      return;
+    }
     if (selectedFiles && selectedFiles.length > 0) {
       uploadFile(selectedFiles);
     }
@@ -108,13 +124,9 @@ export default function Upload() {
     history.push('/');
   }
 
-  const buttonClassname = clsx({
-    [classes.buttonSuccess]: success,
-  });
-
   return (
     <>
-      <Box display="flex" justifyContent="center">
+      <Box display="flex" justifyContent="center" mb={3}>
         <Paper className={classes.paper}>
           <DropzoneArea
             disabled={dropzoneDisabled}
@@ -133,7 +145,7 @@ export default function Upload() {
           />
 
           <Box m={3} display="flex" justifyContent="center">
-            <div className={classes.wrapper}>
+            <div className={classes.progressWrapper}>
               <Fab
                 size="small"
                 aria-label="save"
@@ -144,9 +156,12 @@ export default function Upload() {
               >
                 {success ? <CheckIcon /> : <SaveIcon />}
               </Fab>
-              {loading && <CircularProgress size={68} className={classes.fabProgress} />}
+              {loading && <CircularProgress size={41} thickness="3" className={classes.fabProgress} />}
             </div>
+            <div className={classes.progressWrapper}>
             <Button variant="contained" color="primary" className={buttonClassname} onClick={() => handleUpload()} disabled={isEmpty()} >Upload</Button>
+            {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+            </div>
             <Box pl={1}>
               <Button variant="contained" onClick={() => handleClear()} disabled={isEmpty()}>Clear</Button>
             </Box>
@@ -154,7 +169,6 @@ export default function Upload() {
               <Button variant="contained" onClick={() => handleBack()}>Back</Button>
             </Box>
           </Box>
-
         </Paper>
       </Box>
 
