@@ -39,9 +39,10 @@ const mergeProducts = (list) => {
 
 const mergeItems = (baseSource, curSource, mergedItem, item) => {
     mergedItem.name = mergeString(baseSource, curSource, mergedItem.name, item?.name);
+    mergedItem.sellersItemIdentification = mergeObject(baseSource, curSource, mergedItem?.sellersItemIdentification, item?.sellersItemIdentification);
+    mergedItem.manufacturerParty = mergeObject(baseSource, curSource, mergedItem?.manufacturerParty, item?.manufacturerParty);
     mergedItem.descriptionList = mergeStringList(baseSource, curSource, mergedItem.descriptionList, item?.descriptionList);
     mergedItem.itemSpecificationDocumentReferenceList = mergeObjectList(baseSource, curSource, mergedItem.itemSpecificationDocumentReferenceList, item?.itemSpecificationDocumentReferenceList);
-
 }
 
 const mergeString = (baseSource, curSource, baseList, e) => {
@@ -63,6 +64,21 @@ const mergeString = (baseSource, curSource, baseList, e) => {
                 _source: curSource
             }
         )
+    }
+    return baseList;
+}
+const mergeObject = (baseSource, curSource, baseList, e) => {
+    baseList = Array.isArray(baseList) ? baseList : baseList ? [baseList] : []
+    if (baseSource)
+        for (let i = 0; i < baseList.length; i++) {
+            let e = baseList[i];
+            if (!e._source) {
+                e._source = baseSource;
+            }
+        }
+    if (e) {
+        e._source = curSource;
+        baseList.push(e);
     }
     return baseList;
 }

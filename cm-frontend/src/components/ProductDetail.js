@@ -50,9 +50,9 @@ function DataListView(props) {
             </Fragment>
         )
     }
-    const { name, value, isValueDefined = _isValueDefined, renderListValue = _renderListValue } = props;
+    const { name, value, isValueDefined = _isValueDefined, renderListValue = _renderListValue, extractValue} = props;
     return (
-        <DataView name={name} value={value} isValueDefined={isValueDefined} renderValue={(value) => Array.isArray(value) ? value.map(renderListValue) : renderListValue(value)} />
+        <DataView name={name} value={value} isValueDefined={isValueDefined} renderValue={(value) => Array.isArray(value) ? value.map((e) => { return renderListValue(e, extractValue)}) : renderListValue(value)} />
     )
 }
 
@@ -83,10 +83,13 @@ const renderCatalogs = (source) => {
     )
 }
 
-const renderSourcedValue = (v) => {
+const renderSourcedValue = (v, extractValue = (e)=> {return e.value}) => {
+    console.log(extractValue);
+    console.log(v);
+    console.log(extractValue(v));
     return (
         <div>
-        {v._source ? (<><CatalogBadge code={v._source.code} index={v._source.index}/>{' '}<span>{v.value}</span></>) : <>{v}</>}
+        {v._source ? (<><CatalogBadge code={v._source.code} index={v._source.index}/>{' '}<span>{extractValue(v)}</span></>) : <>{v}</>}
         </div>
     )
 }
@@ -115,8 +118,8 @@ export default function ProductView(props) {
             <DataView name="Catalogs" value={product._source} renderValue={renderCatalogs}></DataView>
             <DataView name="Standard number" value={ItemDetailsService.itemStandardNumber(product.document.item)}></DataView>
             <DataListView name="Name" value={product.document.item.name} renderListValue={renderSourcedValue}></DataListView>
-            <DataView name="Seller number" value={ItemDetailsService.itemSellerNumber(product.document.item)}></DataView>
-            <DataView name="Manufacturer" value={ItemDetailsService.itemManufacturerName(product.document.item)}></DataView>
+            <DataListView name="Seller number" value={product.document.item.sellersItemIdentification} renderListValue={renderSourcedValue} extractValue={(e)=>{return e.id}}></DataListView>
+            <DataListView name="Manufacturer" value={product.document.item.manufacturerParty} renderListValue={renderSourcedValue} extractValue={(e)=>{return e?.partyName?.name}}></DataListView>
             <DataListView name="Description" value={product.document.item.descriptionList} renderListValue={renderSourcedValue}></DataListView>
             <DataListView name="Keywords" value={product.document.item.keywordList}></DataListView>
             <DataView name="UNSPSC" value={ItemDetailsService.itemUNSPSC(product.document.item)}></DataView>
