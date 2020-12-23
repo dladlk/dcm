@@ -15,7 +15,6 @@ const fetchProducts = (search, page = 0, size = 20) => {
     if (search) {
         params.search = search;
     }
-    console.log(params);
     return Axios.get(apiUrl + "/products", {
         params: params
     });
