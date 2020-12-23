@@ -10,10 +10,30 @@ import dk.erst.cm.api.item.ProductDocumentVersion;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document
+@Document(language = "danish")
 @Data
 @NoArgsConstructor
 public class Product {
+
+	public static final String[] FULL_TEXT_SEARCH_FIELDS = new String[] {
+
+			"document.item.name",
+
+			"document.item.descriptionList",
+
+			"document.item.keywordList",
+
+			"document.item.standardItemIdentification.id.id",
+
+			"document.item.certificateList.id",
+
+			"document.item.certificateList.certificateType",
+
+			"document.item.originCountry.identificationCode",
+
+			"document.item.commodityClassificationList.itemClassificationCode.value",
+
+	};
 
 	@Id
 	private String id;
@@ -21,7 +41,9 @@ public class Product {
 	private Instant updateTime;
 	private int version;
 
+	@Indexed
 	private String productCatalogId;
+
 	private ProductDocumentVersion documentVersion;
 
 	@Indexed

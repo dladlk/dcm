@@ -3,36 +3,28 @@ package dk.erst.cm.api.item;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
 
-import dk.erst.cm.api.dao.es.ProductES;
-import dk.erst.cm.api.dao.es.ProductESRepository;
 import dk.erst.cm.api.dao.mongo.ProductRepository;
 import dk.erst.cm.api.data.Product;
 import dk.erst.cm.api.data.ProductCatalogUpdate;
 import dk.erst.cm.xml.ubl21.model.CatalogueLine;
 import dk.erst.cm.xml.ubl21.model.NestedSchemeID;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 public class ProductService {
 
 	private ProductRepository productRepository;
-	private ProductESRepository productESRepository;
 
 	@Autowired
-	public ProductService(ProductRepository itemRepository, ProductESRepository productESRepository) {
+	public ProductService(ProductRepository itemRepository) {
 		this.productRepository = itemRepository;
-		this.productESRepository = productESRepository;
 	}
 
 	public Product saveCatalogUpdateItem(ProductCatalogUpdate catalog, CatalogueLine line) {
@@ -64,12 +56,10 @@ public class ProductService {
 		if (deleteAction) {
 			if (optional.isPresent()) {
 				productRepository.delete(product);
-				productESRepository.deleteById(product.getId());
 			}
 			return null;
 		}
 		productRepository.save(product);
-		productESRepository.save(ProductES.by(product));
 
 		return product;
 	}
@@ -93,16 +83,8 @@ public class ProductService {
 	public Page<Product> findAll(String searchParam, Pageable pageable) {
 		Page<Product> productList;
 		if (!StringUtils.isEmpty(searchParam)) {
-			Page<ProductES> result;
-			result = productESRepository.findByNameOrDescriptionOrCertificatesOrOriginOrStandardNumberOrCategoriesOrKeywords(searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, pageable);
-			List<String> idList = result.stream().map(pes -> pes.getId()).collect(Collectors.toList());
-			log.info("Found " + idList.size() + " ids in ES, total " + result.getTotalElements());
-			Iterable<Product> byId = productRepository.findAllById(idList);
-			List<Product> productList2 = StreamSupport.stream(byId.spliterator(), false).collect(Collectors.toList());
-			if (idList.size() != productList2.size()) {
-				log.warn(String.format("Number of loaded products from Mongo (%d) is different to number of found ids in ES (%d)", idList.size(), productList2.size()));
-			}
-			productList = new PageImpl<>(productList2, pageable, result.getTotalElements());
+			TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matchingPhrase(searchParam);
+			productList = productRepository.findAllBy(textCriteria, pageable);
 		} else {
 			productList = productRepository.findAll(pageable);
 		}
