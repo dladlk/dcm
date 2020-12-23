@@ -12,7 +12,7 @@ public class IndexController {
 	@Autowired
 	private ProductService productService;
 
-	@GetMapping("/")
+	@GetMapping("/api/status")
 	public String index() {
 		return "OK: " + productService.countItems() + " items";
 	}

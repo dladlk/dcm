@@ -28,13 +28,13 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 
-	@RequestMapping(value = "/products")
+	@RequestMapping(value = "/api/products")
 	public Page<Product> getProducts(@RequestParam(required = false) String search, Pageable pageable) {
 		log.info("Search products by " + search + ", page " + pageable);
 		return productService.findAll(search, pageable);
 	}
 
-	@RequestMapping(value = "/product/{id}")
+	@RequestMapping(value = "/api/product/{id}")
 	public ResponseEntity<Product> getProductById(@PathVariable("id") String id) {
 		Optional<Product> findById = productService.findById(id);
 		if (findById.isPresent()) {
@@ -43,7 +43,7 @@ public class ProductController {
 		return ResponseEntity.notFound().build();
 	}
 
-	@RequestMapping(value = "/products/{id}")
+	@RequestMapping(value = "/api/products/{id}")
 	public ResponseEntity<List<Product>> getProductsById(@PathVariable("id") String id) {
 		Optional<Product> findById = productService.findById(id);
 		if (findById.isPresent()) {

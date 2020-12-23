@@ -33,7 +33,7 @@ public class UploadController {
 	@Autowired
 	private LoadCatalogService loadCatalogService;
 
-	@PostMapping(value = "/upload")
+	@PostMapping(value = "/api/upload")
 	public ResponseEntity<List<UploadResult>> upload(@RequestParam("files") MultipartFile files[], RedirectAttributes redirectAttributes) {
 		List<UploadResult> uploadResultList = new ArrayList<UploadController.UploadResult>();
 		for (MultipartFile file : files) {
