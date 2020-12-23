@@ -35,7 +35,7 @@ const _emptyNavigator = {
     getPrevious: (id) => { return null},
 }
 
-export default function DetailHeader(prop) {
+export default function ProductDetailHeader(prop) {
 
     const { name, navigator = _emptyNavigator, id, refreshAction } = prop;
 

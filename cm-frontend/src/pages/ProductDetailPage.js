@@ -1,8 +1,8 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useParams } from "react-router";
-import ProductView from "../components/ProductView";
-import DetailHeader from "../components/DetailHeader";
+import ProductDetail from "../components/ProductDetail";
+import ProductDetailHeader from "../components/ProductDetailHeader";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { Box, FormControl, FormControlLabel, Paper, Radio, RadioGroup } from "@material-ui/core";
 import DataService from "../services/DataService";
@@ -65,7 +65,7 @@ export default function ProductDetailPage(props) {
 
   return (
     <>
-    <DetailHeader name="Product details" navigator = { navigator } id = { id } refreshAction={loadProduct} />
+    <ProductDetailHeader name="Product details" navigator = { navigator } id = { id } refreshAction={loadProduct} />
 
     <ViewToggle viewMode={viewMode} handleViewChange={handleViewChange}/>
 
@@ -77,7 +77,7 @@ export default function ProductDetailPage(props) {
         {viewMode === "json" ? (
           <pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>{JSON.stringify(data, null, 2)}</pre>
         ) : (
-          <ProductView product={data}></ProductView>
+          <ProductDetail product={data}></ProductDetail>
         )
         }
         </>
