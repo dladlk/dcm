@@ -73,7 +73,7 @@ const renderPicture = (specList) => {
 const renderCatalogs = (source) => {
     return (
         <>
-         <span>{source.length}{source.length > 1 ? ' catalog(s): ':' catalog'}</span>
+         <span>{source.length}{source.length > 1 ? ' catalogs: ':' catalog'}</span>
          {source.map((s,i) => {
              return (
                  <CatalogBadge code={s} index={i}/>
@@ -121,7 +121,7 @@ export default function ProductView(props) {
             <DataListView name="Seller number" value={product.document.item.sellersItemIdentification} renderListValue={renderSourcedValue} extractValue={(e)=>{return e.id}}></DataListView>
             <DataListView name="Manufacturer" value={product.document.item.manufacturerParty} renderListValue={renderSourcedValue} extractValue={(e)=>{return e?.partyName?.name}}></DataListView>
             <DataListView name="Description" value={product.document.item.descriptionList} renderListValue={renderSourcedValue}></DataListView>
-            <DataListView name="Keywords" value={product.document.item.keywordList}></DataListView>
+            <DataListView name="Keywords" value={product.document.item.keywordList} renderListValue={renderSourcedValue}></DataListView>
             <DataView name="UNSPSC" value={ItemDetailsService.itemUNSPSC(product.document.item)}></DataView>
             <DataView name="Origin Country" value={ItemDetailsService.itemOriginCountry(product.document.item)}></DataView>
             <DataListView name="Specifications" value={ItemDetailsService.itemSpecifications(product.document.item)} renderListValue={ItemDetailsService.renderItemSpecification} />

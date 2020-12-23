@@ -42,6 +42,7 @@ const mergeItems = (baseSource, curSource, mergedItem, item) => {
     mergedItem.sellersItemIdentification = mergeObject(baseSource, curSource, mergedItem?.sellersItemIdentification, item?.sellersItemIdentification);
     mergedItem.manufacturerParty = mergeObject(baseSource, curSource, mergedItem?.manufacturerParty, item?.manufacturerParty);
     mergedItem.descriptionList = mergeStringList(baseSource, curSource, mergedItem.descriptionList, item?.descriptionList);
+    mergedItem.keywordList = mergeStringList(baseSource, curSource, mergedItem.keywordList, item?.keywordList);
     mergedItem.itemSpecificationDocumentReferenceList = mergeObjectList(baseSource, curSource, mergedItem.itemSpecificationDocumentReferenceList, item?.itemSpecificationDocumentReferenceList);
 }
 
