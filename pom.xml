@@ -17,6 +17,7 @@
         <module>cm-ubl</module>
         <module>cm-api</module>
         <module>cm-webapi</module>
+        <module>cm-all</module>
     </modules>
 
     <properties>
