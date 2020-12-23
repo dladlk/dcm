@@ -69,6 +69,7 @@ export default function Upload() {
     setDropzoneDisabled(true);
     setSuccess(false);
     setLoading(true);
+    setUploadResultList([]);
     const formData = new FormData();
     for (const file of files) {
       let selectedFile = file;
