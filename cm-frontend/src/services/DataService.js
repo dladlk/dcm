@@ -7,10 +7,10 @@ const fetchProductDetails = (productId) => {
     return fetch(apiUrl + "/products/" + productId);
 }
 
-const fetchProducts = (search) => {
+const fetchProducts = (search, page = 0, size = 1) => {
     const params = {
-        page: 0,
-        size: 5,
+        page: page,
+        size: size,
     }
     if (search) {
         params.search = search;
