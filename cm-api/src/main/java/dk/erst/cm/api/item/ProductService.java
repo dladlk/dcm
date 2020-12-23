@@ -83,7 +83,7 @@ public class ProductService {
 	public Page<Product> findAll(String searchParam, Pageable pageable) {
 		Page<Product> productList;
 		if (!StringUtils.isEmpty(searchParam)) {
-			TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matchingPhrase(searchParam);
+			TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matching(searchParam);
 			productList = productRepository.findAllBy(textCriteria, pageable);
 		} else {
 			productList = productRepository.findAll(pageable);
