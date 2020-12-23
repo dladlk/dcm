@@ -30,7 +30,7 @@ public class ProductController {
 
 	@RequestMapping(value = "/products")
 	public Page<Product> getProducts(@RequestParam(required = false) String search, Pageable pageable) {
-		log.info("Search products by " + search+", page "+pageable);
+		log.info("Search products by " + search + ", page " + pageable);
 		return productService.findAll(search, pageable);
 	}
 

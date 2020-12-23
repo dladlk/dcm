@@ -10,16 +10,16 @@ import lombok.Getter;
 public class FileUploadConsumer implements CatalogConsumer<Catalogue, CatalogueLine> {
 
 	private LoadCatalogService loadCatalogService;
-	
+
 	private ProductCatalogUpdate productCatalogUpdate;
-	
+
 	@Getter
 	private int lineCount;
-	
+
 	public FileUploadConsumer(LoadCatalogService loadCatalogService) {
 		this.loadCatalogService = loadCatalogService;
 	}
-	
+
 	@Override
 	public void consumeHead(Catalogue catalog) {
 		this.productCatalogUpdate = loadCatalogService.saveCatalogue(catalog);
