@@ -1,0 +1,1 @@
+docker run --rm -t dcm -p 8080:8080 --network host
