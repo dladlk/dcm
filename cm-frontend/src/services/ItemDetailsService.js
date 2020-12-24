@@ -105,7 +105,7 @@ const renderItemAdditionalProperty = (s) => {
     return (
         <div>
             {s.name && (<span style={{ fontWeight: "bold" }}>{s.name}</span>)}
-            {s.nameCode && (<span style={{ fontWeight: "bold" }}>{' '}{s.nameCode}</span>)}
+            {s.nameCode && (<span style={{ fontWeight: "bold" }}>{' '}{s.nameCode.id}</span>)}
             {(s.name || s.nameCode) && (":")}
             {s.value && (<span>{' '}{s.value}</span>)}
             {s.valueQuantity && (<span>{' '}{s.valueQuantity.quantity}{' '} {s.valueQuantity.unitCode}</span>)}
