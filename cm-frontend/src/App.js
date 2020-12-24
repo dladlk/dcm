@@ -38,7 +38,7 @@ function App() {
       <MuiThemeProvider theme={theme}>
         <div className={classes.layoutWrapper}>
           <div className={classes.flexWrapper}>
-            <Router>
+            <Router basename={"/dcm"}>
               <ProductListContainer/>
               <Route exact path="/generate">
                 <GenerateCatalogPage />

@@ -1,7 +1,7 @@
 import Axios from "axios";
 
-const apiUrl = "http://localhost:8080/api";
-//const apiUrl = "/api";
+//const apiUrl = "http://localhost:8080/api";
+const apiUrl = "/dcm/api";
 
 const fetchProductDetails = (productId) => {
     return fetch(apiUrl + "/products/" + productId);

@@ -1,1 +1,1 @@
-docker run --name dcm --rm -p 8080:8080 -e SPRING_DATA_MONGODB_URI="mongodb://host.docker.internal:27017/dc?ssl=false" -t dcm
+docker run --name dcm --rm -p 8080:8080 -e SPRING_DATA_MONGODB_URI="mongodb://host.docker.internal:27017/dc?ssl=false" -e SERVER_SERVLET_CONTEXT-PATH="/dcm"  -t dcm
