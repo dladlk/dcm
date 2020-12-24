@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3),
     padding: theme.spacing(4),
     width: '50%',
-    minWidth: '480px',
+    minWidth: '300px',
   },
   previewChip: {
   },

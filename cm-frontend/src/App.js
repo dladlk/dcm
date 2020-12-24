@@ -25,8 +25,14 @@ const useStyles = makeStyles(theme => ({
     placeContent: 'stretch center',
   },
   flexWrapper: {
+    [theme.breakpoints.up('lg')]: {
     maxWidth: '70%',
     flex: '1 1 70%',
+    },
+    [theme.breakpoints.down('md')]: {
+      maxWidth: '95%',
+      flex: '1 1 100px',
+    },
   },
 }));
 

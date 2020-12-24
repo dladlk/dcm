@@ -13,7 +13,10 @@ const useStyles = makeStyles(theme => ({
     name: {
         fontWeight: 'bold',
         flex: '1',
+        paddingRight: '1ch',
+        [theme.breakpoints.up('md')]: {
         minWidth: '80px',
+        },
     },
     value: {
         flex: '6',

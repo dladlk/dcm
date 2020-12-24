@@ -5,18 +5,22 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
-import SearchBar from './SearchBar'
+import SearchBar from './SearchBar';
+import './TopNav.css';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
-  menuButton: {
-},
 title: {
     flexGrow: 1,
     marginRight: theme.spacing(2),
   },
+fullName: {
+  [theme.breakpoints.down('sm')]: {
+    display: 'none',
+  },
+},
 link: {
     color: "inherit",
     textDecoration: "none",
@@ -24,6 +28,19 @@ link: {
       color: "#d3d3d3"
     }
   },
+  searchBar: {
+    [theme.breakpoints.down('xs')]: {
+      margin: theme.spacing(2),
+    }
+  },
+  flexBreak: {
+    display: 'none',
+    [theme.breakpoints.down('xs')]: {
+      display: 'flex',
+      flexBasis: '100%',
+      height: '0',
+    }
+  }  
 }));
 
 export default function TopNav(props) {
@@ -36,16 +53,16 @@ export default function TopNav(props) {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            <Link to="/" className={classes.link}>DELIS Catalogue</Link>
+            <Link to="/" className={classes.link}>DELIS<span className={classes.fullName}>{' '}Catalogue</span></Link>
           </Typography>
           <Button color="inherit" onClick={ () => aboutAction() }>About</Button>
           <Link to="/upload" className={classes.link}>
               <Button color="inherit">Upload</Button>
           </Link>
-          <Link to="/generate" className={classes.link}>
-              <Button color="inherit">Generate</Button>
-          </Link>
-          <SearchBar searchAction = { searchAction } />
+          <div className = {classes.flexBreak} />
+          <div className = {classes.searchBar}>
+            <SearchBar searchAction = { searchAction } />
+          </div>
         </Toolbar>
       </AppBar>
     </div>

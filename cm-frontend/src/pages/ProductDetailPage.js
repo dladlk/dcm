@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: "left",
     height: "100%",
     padding: theme.spacing(2),
+    marginBottom: theme.spacing(3),
   }
 }));
 

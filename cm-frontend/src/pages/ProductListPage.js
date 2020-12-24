@@ -22,6 +22,8 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     padding: theme.spacing(2),
+    paddingBottom: 0,
+    marginBottom: theme.spacing(3),
   }
 }));
 
@@ -66,7 +68,7 @@ export default function ProductListPage(props) {
     <>
     <ProductListHeader name="Products" refreshAction = {refreshAction}/>
     <Paper className = {classes.paper}>
-      {isLoading ? (
+      {(isLoading || false) ? (
         <CircularProgress />
       ) : (
         <>

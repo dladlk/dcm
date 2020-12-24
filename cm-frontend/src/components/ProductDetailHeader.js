@@ -15,6 +15,9 @@ const useStyles = makeStyles(theme => ({
     },
     header: {
         flex: '1',
+        [theme.breakpoints.down('sm')]: {
+            display: 'none',
+        },
     },
     buttons: {
         flex: '1',
