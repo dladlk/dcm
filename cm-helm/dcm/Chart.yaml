@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Delis Catalog Manager
+name: dcm
+version: 0.1.0

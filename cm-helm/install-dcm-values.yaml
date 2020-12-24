@@ -1,0 +1,4 @@
+dcm:
+    env:
+        - name: SPRING_DATA_MONGODB_URI
+          value: "mongodb://172.16.2.4:27017/dc?ssl=false"

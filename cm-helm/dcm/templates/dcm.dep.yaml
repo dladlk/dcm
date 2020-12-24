@@ -1,0 +1,49 @@
+{{- if .Values.dcm.enabled -}}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: '{{.Release.Name}}-dcm'
+    chart: '{{.Chart.Name}}-{{.Chart.Version}}'
+    heritage: '{{.Release.Service}}'
+    release: '{{.Release.Name}}'
+  name: {{.Release.Name}}-dcm
+  namespace: '{{.Values.namespace}}'
+spec:
+  selector:
+    matchLabels:
+      app: '{{.Release.Name}}-dcm'
+  strategy:
+    type: 'RollingUpdate'
+  template:
+    metadata:
+      labels:
+        app: '{{.Release.Name}}-dcm'
+    spec:
+      containers:
+      - image: {{.Values.dcm.image}}
+        imagePullPolicy: IfNotPresent
+        name: {{.Release.Name}}-dcm
+        env:
+          - name: SERVER_SERVLET_CONTEXT-PATH
+            value: {{.Values.dcm.contextPath}}
+          {{- with .Values.dcm.env }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        {{- with .Values.dcm.volumeMounts }}
+        volumeMounts:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+      {{- with .Values.dcm.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end}}
+      {{- with .Values.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{.}}
+      {{- end}}
+{{- end }}

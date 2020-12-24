@@ -1,0 +1,23 @@
+{{- if .Values.dcmIngress.enabled -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{.Release.Name}}-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    certmanager.k8s.io/cluster-issuer: {{.Values.dcmIngress.clusterIssuer}}
+spec:
+  tls:
+  - hosts:
+    - {{.Values.dcmIngress.host}}
+    secretName: {{.Values.dcmIngress.secretName}}
+  rules:
+      - host: {{.Values.dcmIngress.host}}
+        http:
+          paths:
+          - path: {{.Values.dcm.contextPath}}
+            backend:
+              serviceName: {{.Release.Name}}-dcm
+              servicePort: 8080
+{{- end }}

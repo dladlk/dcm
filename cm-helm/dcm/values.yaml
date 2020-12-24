@@ -1,0 +1,17 @@
+namespace: default
+
+imagePullSecret: []
+
+dcm:
+    enabled: true
+    image: dcm:latest
+    contextPath: /dcm
+    env: []
+    volumeMounts: []
+    volumes: []
+    
+dcmIngress:
+    enabled: true
+    clusterIssuer: letsencrypt-prod
+    secretName: tls-secret
+    host: edelivery-test.trueservice.dk
