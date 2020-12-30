@@ -23,9 +23,11 @@ public class Product {
 
 			"document.item.keywordList",
 
-			"document.item.standardItemIdentification.id.id",
+			"document.item.standardItemIdentification._id._id",
 
-			"document.item.certificateList.id",
+			"document.item.sellersItemIdentification._id",
+
+			"document.item.certificateList._id",
 
 			"document.item.certificateList.certificateType",
 
