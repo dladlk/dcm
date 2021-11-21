@@ -55,7 +55,7 @@ public enum CodeListStandard {
 
 	EHF1_Labels("ehf-postaward-g2/labels", "labels"),
 	
-	EHF1_Package_Level("ehf-postaward-g2/package-level.xml", "package-level"),
+	EHF1_Package_Level("ehf-postaward-g2/package-level", "package-level"),
 	
 	;
 
