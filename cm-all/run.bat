@@ -1,0 +1,1 @@
+start java -jar target/cm-all-1.0.0.jar "--server.servlet.context-path=/dcm"
