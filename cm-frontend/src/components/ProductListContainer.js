@@ -22,7 +22,7 @@ const currentPosition = (list, id) => {
     for (var i = 0; i < list.length; i++) if (list[i].id === id) {
       list._cachedPos[id] = (i + 1);
       return i;
-    };
+    }
     return 0;
   };
   
@@ -35,7 +35,7 @@ const currentPosition = (list, id) => {
     }
   }
 
-export function ProductListContainer(props) {
+export function ProductListContainer() {
 
   const [showBanner, setShowBanner] = useStickyState(true, 'dcm-banner');
   const [productList, setProductList] = React.useState([]);
@@ -74,7 +74,7 @@ export function ProductListContainer(props) {
       setProductListLoading(false);
     }
     ).catch(error => {
-      console.log('Error occured: ' + error.message);
+      console.log('Error occurred: ' + error.message);
       setProductListLoading(false);
     });
   }
