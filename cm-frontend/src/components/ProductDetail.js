@@ -5,6 +5,7 @@ import { Fragment } from "react";
 import ItemDetailsService from '../services/ItemDetailsService';
 import CatalogBadge from "./CatalogBadge";
 import ProductPictureList from './ProductPictureList';
+import AddToBasket from "./AddToBasket";
 
 const useStyles = makeStyles(theme => ({
     row: {
@@ -25,6 +26,19 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+function DataRow(props) {
+    const { name, children } = props;
+
+    const classes = useStyles();
+
+    return (
+        <div className={classes.row}>
+            <div className={classes.name}>{name}</div>
+            <div className={classes.value}>{children}</div>
+        </div>
+    )
+}
+
 function DataView(props) {
 
     const _isValueDefined = (value) => value ? true : false;
@@ -32,14 +46,10 @@ function DataView(props) {
     const _renderValue = (v, i) => { return v };
 
     const { name, value, isValueDefined = _isValueDefined, renderValue = _renderValue } = props;
-    const classes = useStyles();
 
     return (
         <> {isValueDefined(value) ? (
-            <div className={classes.row}>
-                <div className={classes.name}>{name}</div>
-                <div className={classes.value}>{renderValue(value)}</div>
-            </div>
+            <DataRow name={name}>{renderValue(value)}</DataRow>
         ) : (<></>)}
         </>
     )
@@ -101,10 +111,19 @@ export default function ProductView(props) {
 
     const showTech = false;
 
+    const showOrdering = true;
+
     const { product } = props;
 
     return (
         <>
+            { showOrdering && (
+                <>
+                    <DataRow name={'Order'}>
+                        <AddToBasket />
+                    </DataRow>
+                </>
+            )}
             { showTech && (
                 <>
                     <DataView name="ID" value={product.id}/>
