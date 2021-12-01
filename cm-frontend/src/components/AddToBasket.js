@@ -9,7 +9,9 @@ const ProductBasketStatus = {
     Added: 'added',
 }
 
-export default function AddToBasket() {
+export default function AddToBasket(props) {
+
+    const {changeBasket, product} = props;
 
     const [state, setState] = React.useState(ProductBasketStatus.Empty);
 
@@ -34,9 +36,11 @@ export default function AddToBasket() {
         if (state === ProductBasketStatus.Empty) {
             setState(ProductBasketStatus.Adding);
             timerRef.current = setTimeout(() => {
+                changeBasket(product.id, 1);
                 setState(ProductBasketStatus.Added)
-            }, 800);
+            }, 400);
         } else if (state === ProductBasketStatus.Added) {
+            changeBasket(product.id, 0);
             setState(ProductBasketStatus.Empty);
         }
     }

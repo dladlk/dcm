@@ -19,7 +19,7 @@ const currentPosition = (list, id) => {
     if (!list) {
       return 0;
     }
-    for (var i = 0; i < list.length; i++) if (list[i].id === id) {
+    for (let i = 0; i < list.length; i++) if (list[i].id === id) {
       list._cachedPos[id] = (i + 1);
       return i;
     }
@@ -43,6 +43,25 @@ export function ProductListContainer() {
   const [productListPageSize, setProductListPageSize] = React.useState(20);
   const [productListTotal, setProductListTotal] = React.useState(0);
   const [productListLoading, setProductListLoading] = React.useState(false);
+
+  const [basketData, setBasketData] = React.useState({orderLines: {}, orderLinesCount: 0});
+  const changeBasket = (productId, quantity) => {
+      let newOrderLines = {...basketData.orderLines};
+      let newOrderLinesCount = basketData.orderLinesCount;
+      if (productId in newOrderLines) {
+          if (quantity > 0) {
+              newOrderLines[productId] += quantity;
+          } else {
+              delete newOrderLines[productId]
+              newOrderLinesCount--;
+          }
+      } else {
+          newOrderLines[productId] = quantity;
+          newOrderLinesCount++;
+      }
+      console.log(newOrderLines);
+      setBasketData({orderLines: newOrderLines, orderLinesCount: newOrderLinesCount});
+  }
 
   const setBannerClosed = () => {
     setShowBanner(false);
@@ -81,14 +100,14 @@ export function ProductListContainer() {
 
   return (
     <>
-      <TopNav aboutAction={setBannerOpened} searchAction={searchAction} />
+      <TopNav aboutAction={setBannerOpened} searchAction={searchAction} showBasketBar={basketData.orderLinesCount !== 0} />
       <Banner opened={showBanner} closeAction={setBannerClosed} />
       <Route exact path="/">
         <ProductListPage list={productList} isLoading={productListLoading} refreshAction={searchAction} page={productListPage} pageSize={productListPageSize} total={productListTotal} />
       </Route>
       <Route exact path="/upload" component={UploadPage} />
       <Route path="/product/view/:id">
-        <ProductDetailPage navigator={listNavigator(productList, 1)} />
+        <ProductDetailPage navigator={listNavigator(productList, 1)} changeBasket={changeBasket} />
       </Route>
     </>
   );

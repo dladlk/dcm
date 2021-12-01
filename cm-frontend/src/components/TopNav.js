@@ -52,7 +52,7 @@ link: {
 export default function TopNav(props) {
   const classes = useStyles();
 
-  const { aboutAction, searchAction } = props;
+  const { aboutAction, searchAction, showBasketBar } = props;
 
   return (
     <div className={classes.root}>
@@ -66,9 +66,11 @@ export default function TopNav(props) {
               <Button color="inherit">Upload</Button>
           </Link>
           <div className = {classes.flexBreak} />
+          { showBasketBar && (
           <div className = {classes.basketBar}>
             <BasketBar />
           </div>
+          )}
           <div className = {classes.searchBar}>
             <SearchBar searchAction = { searchAction } />
           </div>

@@ -113,14 +113,14 @@ export default function ProductView(props) {
 
     const showOrdering = true;
 
-    const { product } = props;
+    const { product, changeBasket } = props;
 
     return (
         <>
             { showOrdering && (
                 <>
                     <DataRow name={'Order'}>
-                        <AddToBasket />
+                        <AddToBasket product={product} changeBasket={changeBasket} />
                     </DataRow>
                 </>
             )}
