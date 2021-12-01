@@ -67,9 +67,9 @@ export default function TopNav(props) {
           </Link>
           <div className = {classes.flexBreak} />
           { showBasketBar && (
-          <div className = {classes.basketBar}>
+          <Link to="/basket" className = {classes.basketBar}>
             <BasketBar />
-          </div>
+          </Link>
           )}
           <div className = {classes.searchBar}>
             <SearchBar searchAction = { searchAction } />
