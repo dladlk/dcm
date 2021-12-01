@@ -16,6 +16,7 @@ import RemoveIcon from "@material-ui/icons/Remove";
 import AddIcon from "@material-ui/icons/Add";
 import DataService from "../services/DataService";
 import ItemDetailsService from "../services/ItemDetailsService";
+import * as PropTypes from "prop-types";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -78,6 +79,34 @@ function QuantityControl(props) {
     )
 }
 
+function OrderLineList(props) {
+    return <TableContainer>
+        <Table className={props.classes.table} size="small" aria-label="Basket contents">
+            <TableHead>
+                <TableRow>
+                    <StyledTableCell align="left">#</StyledTableCell>
+                    <StyledTableCell align="center">Quantity</StyledTableCell>
+                    <StyledTableCell align="left">Name</StyledTableCell>
+                    <StyledTableCell align="left">Standard number</StyledTableCell>
+                    <StyledTableCell align="left">Seller number</StyledTableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {!props.basketData.isEmpty() ? props.basketData.getOrderLineList().map(props.callbackFn) : (
+                    <StyledTableRow>
+                        <TableCell colSpan={5} align="center">Basket is empty</TableCell>
+                    </StyledTableRow>
+                )}
+            </TableBody>
+        </Table>
+    </TableContainer>;
+}
+
+OrderLineList.propTypes = {
+    classes: PropTypes.string,
+    basketData: PropTypes.any,
+    callbackFn: PropTypes.func
+};
 export default function BasketPage(props) {
 
     const {basketData, changeBasket} = props;
@@ -144,34 +173,15 @@ export default function BasketPage(props) {
                     <CircularProgress/>
                 ) : (
                     <>
-                        <TableContainer>
-                            <Table className={classes.table} size="small" aria-label="Basket contents">
-                                <TableHead>
-                                    <TableRow>
-                                        <StyledTableCell align="left">#</StyledTableCell>
-                                        <StyledTableCell align="center">Quantity</StyledTableCell>
-                                        <StyledTableCell align="left">Name</StyledTableCell>
-                                        <StyledTableCell align="left">Standard number</StyledTableCell>
-                                        <StyledTableCell align="left">Seller number</StyledTableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {!basketData.isEmpty() ? basketData.getOrderLineList().map((orderLine, index) => (
-                                        <StyledTableRow key={orderLine.productId} onClick={() => showRowDetails(orderLine.productId)}>
-                                            <TableCell>{(index + 1)}</TableCell>
-                                            <TableCell align={"center"}><QuantityControl quantity={orderLine.quantity} productId={orderLine.productId} changeBasket={changeBasket}/></TableCell>
-                                            <TableCell>{ItemDetailsService.itemName(productItem(orderLine.productId))}</TableCell>
-                                            <TableCell>{ItemDetailsService.itemStandardNumber(productItem(orderLine.productId))}</TableCell>
-                                            <TableCell>{ItemDetailsService.itemSellerNumber(productItem(orderLine.productId))}</TableCell>
-                                        </StyledTableRow>
-                                    )) : (
-                                        <StyledTableRow key={'empty'}>
-                                            <TableCell colSpan={5} align="center">Basket is empty</TableCell>
-                                        </StyledTableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <OrderLineList key={'empty'} classes={classes} basketData={basketData} callbackFn={(orderLine, index) => (
+                            <StyledTableRow key={orderLine.productId} onClick={() => showRowDetails(orderLine.productId)}>
+                                <TableCell>{(index + 1)}</TableCell>
+                                <TableCell align={"center"}><QuantityControl quantity={orderLine.quantity} productId={orderLine.productId} changeBasket={changeBasket}/></TableCell>
+                                <TableCell>{ItemDetailsService.itemName(productItem(orderLine.productId))}</TableCell>
+                                <TableCell>{ItemDetailsService.itemStandardNumber(productItem(orderLine.productId))}</TableCell>
+                                <TableCell>{ItemDetailsService.itemSellerNumber(productItem(orderLine.productId))}</TableCell>
+                            </StyledTableRow>
+                        )}/>
                     </>
                 )}
             </Paper>
