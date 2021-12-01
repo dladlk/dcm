@@ -101,7 +101,7 @@ const renderItemCertificate = (cert) => {
 }
 const renderItemSpecification = (s) => {
     return (
-        <div>
+        <div key={s.attachment.externalReference.uri}>
             {s.documentTypeCode && (<Box pr={2} display="inline" style={{fontWeight: "bold"}}>{s.documentTypeCode}</Box>)}
             {renderUrl(s.attachment.externalReference.uri)}
         </div>
@@ -109,7 +109,7 @@ const renderItemSpecification = (s) => {
 }
 const renderItemAdditionalProperty = (s) => {
     return (
-        <div>
+        <div key={s.name + '_' + s.value}>
             {s.name && (<span style={{fontWeight: "bold"}}>{s.name}</span>)}
             {s.nameCode && (<span style={{fontWeight: "bold"}}>{' '}{s.nameCode.id}</span>)}
             {(s.name || s.nameCode) && (":")}

@@ -92,7 +92,7 @@ const renderCatalogs = (source) => {
          <span>{source.length}{source.length > 1 ? ' catalogs: ':' catalog'}</span>
          {source.map((s,i) => {
              return (
-                 <CatalogBadge code={s} index={i}/>
+                 <CatalogBadge key={s} code={s} index={i}/>
              )
         })}
         </>
@@ -101,7 +101,7 @@ const renderCatalogs = (source) => {
 
 const renderSourcedValue = (v, extractValue = (e)=> {return e.value}) => {
     return (
-        <div>
+        <div key={v._source ? v._source.code + '-' + extractValue(v) : v}>
         {v._source ? (<><CatalogBadge code={v._source.code} index={v._source.index}/>{' '}<span>{extractValue(v)}</span></>) : <>{v}</>}
         </div>
     )
