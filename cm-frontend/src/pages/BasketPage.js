@@ -103,7 +103,7 @@ function OrderLineList(props) {
 }
 
 OrderLineList.propTypes = {
-    classes: PropTypes.string,
+    classes: PropTypes.any,
     basketData: PropTypes.any,
     callbackFn: PropTypes.func
 };
@@ -113,13 +113,14 @@ export default function BasketPage(props) {
 
     const [isLoading, setLoading] = React.useState(false);
     const [productList, setProductList] = React.useState({});
+    const [reloadCount, setReloadCount] = React.useState(0);
 
     const classes = useStyles();
 
     const {push} = useHistory();
 
     const refreshAction = () => {
-        loadProducts().then(() => setLoading(false));
+        setReloadCount(reloadCount + 1);
     }
     const sendAction = () => {
     }
@@ -130,6 +131,8 @@ export default function BasketPage(props) {
         }
         return null;
     }
+
+    const callLoadProducts = () => { loadProducts().finally(() => setLoading(false))};
 
     async function loadProducts() {
         if (!basketData.isEmpty()) {
@@ -153,9 +156,7 @@ export default function BasketPage(props) {
         }
     }
 
-    React.useEffect(() => {
-        loadProducts().then(() => setLoading(false));
-    }, []);
+    React.useEffect(callLoadProducts, [reloadCount]);
 
     const showRowDetails = (productId) => {
         push('/product/view/' + productId);
