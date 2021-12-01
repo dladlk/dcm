@@ -12,6 +12,8 @@ import {useHistory} from "react-router";
 import PageHeader from '../components/PageHeader';
 import {Fab} from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
+import RemoveIcon from "@material-ui/icons/Remove";
+import AddIcon from "@material-ui/icons/Add";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -45,6 +47,32 @@ const StyledTableRow = withStyles((theme) => ({
     },
 }))(TableRow);
 
+function QuantityControl(props) {
+    const {productId, quantity, changeBasket} = props;
+
+    const changeQuantity = (e, quantityChange) => {
+        e.stopPropagation();
+        if (quantity + quantityChange === 0) {
+            changeBasket(productId, 0);
+        } else {
+            changeBasket(productId, quantityChange);
+        }
+        return false;
+    }
+
+    return (
+        <div onClick={(e)=> {e.stopPropagation(); return false;}}>
+            <Fab color="default" aria-label="Decrease quantity" size="small" title={"Decrease quantity"}>
+                <RemoveIcon onClick={(e) => changeQuantity(e, -1)}/>
+            </Fab>
+            <span style={{padding: '10px', display: 'inline-block', width: '50px', textAlign: 'center'}}>{quantity}</span>
+            <Fab color="default" aria-label="Increase quantity" size="small" title={"Increase quantity"}>
+                <AddIcon onClick={(e) => changeQuantity(e, 1)}/>
+            </Fab>
+        </div>
+    )
+}
+
 export default function BasketPage(props) {
 
     const {basketData, changeBasket} = props;
@@ -55,8 +83,10 @@ export default function BasketPage(props) {
 
     const {push} = useHistory();
 
-    const refreshAction = () => {}
-    const sendAction = () => {}
+    const refreshAction = () => {
+    }
+    const sendAction = () => {
+    }
 
     const showRowDetails = (productId) => {
         push('/product/view/' + productId);
@@ -66,7 +96,7 @@ export default function BasketPage(props) {
         <>
             <PageHeader name="Basket" refreshAction={refreshAction}>
                 <Fab color="primary" aria-label="Send order" size="small" title={"Send order"}>
-                    <SendIcon onClick = {() => sendAction()}/>
+                    <SendIcon onClick={() => sendAction()}/>
                 </Fab>
             </PageHeader>
             <Paper className={classes.paper}>
@@ -80,7 +110,7 @@ export default function BasketPage(props) {
                                     <TableRow>
                                         <StyledTableCell align="left">#</StyledTableCell>
                                         <StyledTableCell align="left">Product id</StyledTableCell>
-                                        <StyledTableCell align="left">Quantity</StyledTableCell>
+                                        <StyledTableCell align="center">Quantity</StyledTableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -88,7 +118,7 @@ export default function BasketPage(props) {
                                         <StyledTableRow key={orderLine.productId} onClick={() => showRowDetails(orderLine.productId)}>
                                             <TableCell>{(index + 1)}</TableCell>
                                             <TableCell>{orderLine.productId}</TableCell>
-                                            <TableCell>{orderLine.quantity}</TableCell>
+                                            <TableCell align={"center"}><QuantityControl quantity={orderLine.quantity} productId={orderLine.productId} changeBasket={changeBasket}/></TableCell>
                                         </StyledTableRow>
                                     )) : (
                                         <StyledTableRow key={'empty'}>

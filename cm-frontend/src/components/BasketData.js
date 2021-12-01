@@ -26,7 +26,7 @@ export function createBasketData() {
             let newOrderLines = {...this.orderLines};
             let newOrderLinesCount = this.orderLinesCount;
             if (productId in newOrderLines) {
-                if (quantity > 0) {
+                if (quantity !== 0) {
                     newOrderLines[productId] += quantity;
                 } else {
                     delete newOrderLines[productId]
