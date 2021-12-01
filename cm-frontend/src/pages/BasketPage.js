@@ -9,7 +9,9 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {useHistory} from "react-router";
-import ProductListHeader from '../components/ProductListHeader';
+import PageHeader from '../components/PageHeader';
+import {Fab} from "@material-ui/core";
+import SendIcon from "@material-ui/icons/Send";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -53,9 +55,8 @@ export default function BasketPage(props) {
 
     const {push} = useHistory();
 
-    const refreshAction = () => {
-
-    }
+    const refreshAction = () => {}
+    const sendAction = () => {}
 
     const showRowDetails = (productId) => {
         push('/product/view/' + productId);
@@ -63,7 +64,11 @@ export default function BasketPage(props) {
 
     return (
         <>
-            <ProductListHeader name="Basket" refreshAction={refreshAction}/>
+            <PageHeader name="Basket" refreshAction={refreshAction}>
+                <Fab color="primary" aria-label="Send order" size="small" title={"Send order"}>
+                    <SendIcon onClick = {() => sendAction()}/>
+                </Fab>
+            </PageHeader>
             <Paper className={classes.paper}>
                 {(isLoading || false) ? (
                     <CircularProgress/>
@@ -87,7 +92,7 @@ export default function BasketPage(props) {
                                         </StyledTableRow>
                                     )) : (
                                         <StyledTableRow key={'empty'}>
-                                            <TableCell colSpan={2} align="center">Basket is empty</TableCell>
+                                            <TableCell colSpan={3} align="center">Basket is empty</TableCell>
                                         </StyledTableRow>
                                     )}
                                 </TableBody>

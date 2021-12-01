@@ -11,7 +11,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import TablePagination from "@material-ui/core/TablePagination";
 import { useHistory } from "react-router";
 import ItemDetailsService from "../services/ItemDetailsService";
-import ProductListHeader from '../components/ProductListHeader';
+import PageHeader from '../components/PageHeader';
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+// noinspection JSUnusedLocalSymbols
 const StyledTableCell = withStyles((theme) => ({
   head: {
     fontWeight: 'bold',
@@ -66,7 +67,7 @@ export default function ProductListPage(props) {
 
   return (
     <>
-    <ProductListHeader name="Products" refreshAction = {refreshAction}/>
+    <PageHeader name="Products" refreshAction = {refreshAction}/>
     <Paper className = {classes.paper}>
       {(isLoading || false) ? (
         <CircularProgress />
