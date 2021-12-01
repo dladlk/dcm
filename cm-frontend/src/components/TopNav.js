@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import './TopNav.css';
+import BasketBar from "./BasketBar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,6 +27,11 @@ link: {
     textDecoration: "none",
     "&:hover": {
       color: "#d3d3d3"
+    }
+  },
+  basketBar: {
+    [theme.breakpoints.down('xs')]: {
+      margin: theme.spacing(2),
     }
   },
   searchBar: {
@@ -60,6 +66,9 @@ export default function TopNav(props) {
               <Button color="inherit">Upload</Button>
           </Link>
           <div className = {classes.flexBreak} />
+          <div className = {classes.basketBar}>
+            <BasketBar />
+          </div>
           <div className = {classes.searchBar}>
             <SearchBar searchAction = { searchAction } />
           </div>
