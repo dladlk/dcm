@@ -84,11 +84,11 @@ export default function BasketPage(props) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {(!basketData.isEmpty()) ? Object.keys(basketData.orderLines).map((productId, index) => (
-                                        <StyledTableRow key={productId} onClick={() => showRowDetails(productId)}>
+                                    {!basketData.isEmpty() ? basketData.getOrderLineList().map((orderLine, index) => (
+                                        <StyledTableRow key={orderLine.productId} onClick={() => showRowDetails(orderLine.productId)}>
                                             <TableCell>{(index + 1)}</TableCell>
-                                            <TableCell>{productId}</TableCell>
-                                            <TableCell>{basketData.orderLines[productId]}</TableCell>
+                                            <TableCell>{orderLine.productId}</TableCell>
+                                            <TableCell>{orderLine.quantity}</TableCell>
                                         </StyledTableRow>
                                     )) : (
                                         <StyledTableRow key={'empty'}>

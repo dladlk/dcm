@@ -16,6 +16,12 @@ export function createBasketData() {
             return this.orderLinesCount === 0;
         }
 
+        getOrderLineList() {
+            return Object.keys(this.orderLines).map((productId) => {
+                return {productId: productId, quantity: this.orderLines[productId]}
+            });
+        }
+
         changeBasket(productId, quantity) {
             let newOrderLines = {...this.orderLines};
             let newOrderLinesCount = this.orderLinesCount;
