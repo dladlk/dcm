@@ -35,7 +35,7 @@ function ViewToggle(props) {
 
 export default function ProductDetailPage(props) {
   
-  const { navigator, changeBasket } = props;
+  const { navigator } = props;
 
   let { id } = useParams();
 
@@ -78,7 +78,7 @@ export default function ProductDetailPage(props) {
         {viewMode === "json" ? (
           <pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>{JSON.stringify(data, null, 2)}</pre>
         ) : (
-          <ProductDetail product={data} changeBasket={changeBasket}/>
+          <ProductDetail product={data} {...props} />
         )
         }
         </>

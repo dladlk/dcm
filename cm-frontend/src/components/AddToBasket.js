@@ -1,19 +1,14 @@
 import {Button} from "@material-ui/core";
 import React, {useEffect, useRef} from "react";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import {ProductBasketStatus} from "./BasketData";
 
-
-const ProductBasketStatus = {
-    Empty: 'empty',
-    Adding: 'adding',
-    Added: 'added',
-}
 
 export default function AddToBasket(props) {
 
-    const {changeBasket, product} = props;
+    const {changeBasket, basketData, product} = props;
 
-    const [state, setState] = React.useState(ProductBasketStatus.Empty);
+    const [state, setState] = React.useState(basketData.getProductBasketStatus(product.id));
 
     const getButtonTitle = () => {
         switch (state) {

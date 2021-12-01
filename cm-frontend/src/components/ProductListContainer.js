@@ -102,7 +102,7 @@ export function ProductListContainer() {
             </Route>
             <Route exact path="/upload" component={UploadPage}/>
             <Route path="/product/view/:id">
-                <ProductDetailPage navigator={listNavigator(productList, 1)} changeBasket={changeBasket}/>
+                <ProductDetailPage navigator={listNavigator(productList, 1)} changeBasket={changeBasket} basketData={basketData}/>
             </Route>
         </>
     );

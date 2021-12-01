@@ -1,3 +1,9 @@
+export const ProductBasketStatus = {
+    Empty: 'empty',
+    Adding: 'adding',
+    Added: 'added',
+}
+
 export function createBasketData() {
 
     class BasketData {
@@ -25,6 +31,10 @@ export function createBasketData() {
                 newOrderLinesCount++;
             }
             return new BasketData(newOrderLines, newOrderLinesCount);
+        }
+
+        getProductBasketStatus(productId) {
+            return productId in this.orderLines ? ProductBasketStatus.Added : ProductBasketStatus.Empty;
         }
     }
 
