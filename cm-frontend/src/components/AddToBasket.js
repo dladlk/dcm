@@ -33,7 +33,7 @@ export default function AddToBasket(props) {
             timerRef.current = setTimeout(() => {
                 changeBasket(product.id, 1);
                 setState(ProductBasketStatus.Added)
-            }, 400);
+            }, 300);
         } else if (state === ProductBasketStatus.Added) {
             changeBasket(product.id, 0);
             setState(ProductBasketStatus.Empty);
