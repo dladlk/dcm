@@ -30,9 +30,9 @@ link: {
     }
   },
   basketBar: {
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.up('xs')]: {
       margin: theme.spacing(2),
-    }
+    },
   },
   searchBar: {
     [theme.breakpoints.down('xs')]: {
@@ -65,12 +65,12 @@ export default function TopNav(props) {
           <Link to="/upload" className={classes.link}>
               <Button color="inherit">Upload</Button>
           </Link>
-          <div className = {classes.flexBreak} />
           { showBasketBar && (
           <Link to="/basket" className = {classes.basketBar}>
             <BasketBar />
           </Link>
           )}
+          <div className = {classes.flexBreak} />
           <div className = {classes.searchBar}>
             <SearchBar searchAction = { searchAction } />
           </div>
