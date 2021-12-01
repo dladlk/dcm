@@ -78,7 +78,7 @@ export default function ProductDetailPage(props) {
         {viewMode === "json" ? (
           <pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>{JSON.stringify(data, null, 2)}</pre>
         ) : (
-          <ProductDetail product={data}></ProductDetail>
+          <ProductDetail product={data} {...props} />
         )
         }
         </>

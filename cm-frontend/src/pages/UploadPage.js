@@ -93,7 +93,7 @@ export default function Upload() {
         setLoading(false);
       }
       )
-  };
+  }
 
   function handleUpload() {
     if (loading) {
@@ -180,8 +180,7 @@ export default function Upload() {
               <TableCell>Version</TableCell>
               <TableCell>Action</TableCell>
               <TableCell>ID</TableCell>
-              <TableCell>Success</TableCell>
-              <TableCell>Error message</TableCell>
+              <TableCell>Result</TableCell>
               <TableCell>Line count</TableCell>
               <TableCell>Add</TableCell>
               <TableCell>Update</TableCell>
@@ -195,8 +194,7 @@ export default function Upload() {
                     <TableCell>{u.productCatalogUpdate?.documentVersion}</TableCell>
                     <TableCell>{u.productCatalogUpdate?.document?.actionCode}</TableCell>
                     <TableCell>{u.productCatalogUpdate?.document?.id}</TableCell>
-                    <TableCell>{u.success}</TableCell>
-                    <TableCell>{u.errorMessage}</TableCell>
+                    <TableCell>{u.success ? 'OK' : ('ERROR: ' + u.errorMessage)}</TableCell>
                     <TableCell>{u.lineCount}</TableCell>
                     <TableCell>{u.lineActionStat.ADD}</TableCell>
                     <TableCell>{u.lineActionStat.UPDATE}</TableCell>
