@@ -7,7 +7,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import ItemDetailsService from "../services/ItemDetailsService";
 import React from "react";
-import {Fab} from "@material-ui/core";
+import {Fab, Paper} from "@material-ui/core";
 import RemoveIcon from "@material-ui/icons/Remove";
 import AddIcon from "@material-ui/icons/Add";
 
@@ -62,7 +62,12 @@ export default function OrderLineList(props) {
 
     const {basketData, showRowDetails, changeBasket, productList} = props;
 
-    const useStyles = makeStyles(() => ({
+    const useStyles = makeStyles((theme) => ({
+        paper: {
+            padding: theme.spacing(2),
+            paddingBottom: theme.spacing(5),
+            marginBottom: theme.spacing(3),
+        },
         table: {
             minWidth: 600,
         },
@@ -77,32 +82,35 @@ export default function OrderLineList(props) {
         return null;
     }
 
-    return <TableContainer>
-        <Table className={classes.table} size="small" aria-label="Basket contents">
-            <TableHead>
-                <TableRow>
-                    <StyledTableCell align="left">#</StyledTableCell>
-                    <StyledTableCell align="center">Quantity</StyledTableCell>
-                    <StyledTableCell align="left">Name</StyledTableCell>
-                    <StyledTableCell align="left">Standard number</StyledTableCell>
-                    <StyledTableCell align="left">Seller number</StyledTableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {!basketData.isEmpty() ? basketData.getOrderLineList().map((orderLine, index) => (
-                    <StyledTableRow key={orderLine.productId} onClick={() => showRowDetails(orderLine.productId)}>
-                        <TableCell>{(index + 1)}</TableCell>
-                        <TableCell align={"center"}><QuantityControl quantity={orderLine.quantity} productId={orderLine.productId} changeBasket={changeBasket}/></TableCell>
-                        <TableCell>{ItemDetailsService.itemName(productItem(orderLine.productId))}</TableCell>
-                        <TableCell>{ItemDetailsService.itemStandardNumber(productItem(orderLine.productId))}</TableCell>
-                        <TableCell>{ItemDetailsService.itemSellerNumber(productItem(orderLine.productId))}</TableCell>
-                    </StyledTableRow>
-                )) : (
-                    <StyledTableRow>
-                        <TableCell colSpan={5} align="center">Basket is empty</TableCell>
-                    </StyledTableRow>
-                )}
-            </TableBody>
-        </Table>
-    </TableContainer>;
+    return <Paper className={classes.paper}>
+        <TableContainer>
+            <Table className={classes.table} size="small" aria-label="Basket contents">
+                <TableHead>
+                    <TableRow>
+                        <StyledTableCell align="left">#</StyledTableCell>
+                        <StyledTableCell align="center">Quantity</StyledTableCell>
+                        <StyledTableCell align="left">Name</StyledTableCell>
+                        <StyledTableCell align="left">Standard number</StyledTableCell>
+                        <StyledTableCell align="left">Seller number</StyledTableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {!basketData.isEmpty() ? basketData.getOrderLineList().map((orderLine, index) => (
+                        <StyledTableRow key={orderLine.productId} onClick={() => showRowDetails(orderLine.productId)}>
+                            <TableCell>{(index + 1)}</TableCell>
+                            <TableCell align={"center"}><QuantityControl quantity={orderLine.quantity} productId={orderLine.productId} changeBasket={changeBasket}/></TableCell>
+                            <TableCell>{ItemDetailsService.itemName(productItem(orderLine.productId))}</TableCell>
+                            <TableCell>{ItemDetailsService.itemStandardNumber(productItem(orderLine.productId))}</TableCell>
+                            <TableCell>{ItemDetailsService.itemSellerNumber(productItem(orderLine.productId))}</TableCell>
+                        </StyledTableRow>
+                    )) : (
+                        <StyledTableRow>
+                            <TableCell colSpan={5} align="center">Basket is empty</TableCell>
+                        </StyledTableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    </Paper>
+        ;
 }

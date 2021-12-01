@@ -8,6 +8,7 @@ import {Fab} from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import DataService from "../services/DataService";
 import OrderLineList from "../components/OrderLineList";
+import OrderHeader from "../components/OrderHeader";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -18,8 +19,6 @@ const useStyles = makeStyles(theme => ({
     },
     paper: {
         padding: theme.spacing(2),
-        paddingBottom: theme.spacing(5),
-        marginBottom: theme.spacing(3),
     }
 }));
 
@@ -50,7 +49,6 @@ export default function BasketPage(props) {
         if (!basketData.isEmpty()) {
             setLoading(true);
             const productIdList = basketData.getOrderLineList().map((orderLine) => orderLine.productId);
-
             await DataService.fetchProductsByIds(productIdList).then(response => {
                     let responseData = response.data;
                     console.log(responseData);
@@ -82,13 +80,16 @@ export default function BasketPage(props) {
                 </Fab>
             </PageHeader>
 
-            <Paper className={classes.paper}>
-                {(isLoading || false) ? (
+            {(isLoading || false) ? (
+                <Paper className={classes.paper}>
                     <CircularProgress/>
-                ) : (
+                </Paper>
+            ) : (
+                <>
+                    <OrderHeader />
                     <OrderLineList basketData={basketData} showRowDetails={showRowDetails} changeBasket={changeBasket} productList={productList}/>
-                )}
-            </Paper>
+                </>
+            )}
         </>
     );
 }
