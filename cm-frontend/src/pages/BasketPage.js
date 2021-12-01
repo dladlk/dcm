@@ -14,6 +14,8 @@ import {Fab} from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import RemoveIcon from "@material-ui/icons/Remove";
 import AddIcon from "@material-ui/icons/Add";
+import DataService from "../services/DataService";
+import ItemDetailsService from "../services/ItemDetailsService";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -61,7 +63,10 @@ function QuantityControl(props) {
     }
 
     return (
-        <div onClick={(e)=> {e.stopPropagation(); return false;}}>
+        <div onClick={(e) => {
+            e.stopPropagation();
+            return false;
+        }}>
             <Fab color="default" aria-label="Decrease quantity" size="small" title={"Decrease quantity"}>
                 <RemoveIcon onClick={(e) => changeQuantity(e, -1)}/>
             </Fab>
@@ -78,15 +83,50 @@ export default function BasketPage(props) {
     const {basketData, changeBasket} = props;
 
     const [isLoading, setLoading] = React.useState(false);
+    const [productList, setProductList] = React.useState({});
 
     const classes = useStyles();
 
     const {push} = useHistory();
 
     const refreshAction = () => {
+        loadProducts().then(() => setLoading(false));
     }
     const sendAction = () => {
     }
+
+    const productItem = (productId) => {
+        if (productId in productList) {
+            return productList[productId].document.item;
+        }
+        return null;
+    }
+
+    async function loadProducts() {
+        if (!basketData.isEmpty()) {
+            setLoading(true);
+            const productIdList = basketData.getOrderLineList().map((orderLine) => orderLine.productId);
+
+            await DataService.fetchProductsByIds(productIdList).then(response => {
+                    let responseData = response.data;
+                    console.log(responseData);
+                    const productMapById = {}
+                    for (const index in responseData) {
+                        const p = responseData[index];
+                        productMapById[p.id] = p;
+                    }
+                    console.log(productMapById);
+                    setProductList(productMapById);
+                }
+            ).catch(error => {
+                console.log('Error occurred: ' + error.message);
+            });
+        }
+    }
+
+    React.useEffect(() => {
+        loadProducts().then(() => setLoading(false));
+    }, []);
 
     const showRowDetails = (productId) => {
         push('/product/view/' + productId);
@@ -109,20 +149,24 @@ export default function BasketPage(props) {
                                 <TableHead>
                                     <TableRow>
                                         <StyledTableCell align="left">#</StyledTableCell>
-                                        <StyledTableCell align="left">Product id</StyledTableCell>
                                         <StyledTableCell align="center">Quantity</StyledTableCell>
+                                        <StyledTableCell align="left">Name</StyledTableCell>
+                                        <StyledTableCell align="left">Standard number</StyledTableCell>
+                                        <StyledTableCell align="left">Seller number</StyledTableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {!basketData.isEmpty() ? basketData.getOrderLineList().map((orderLine, index) => (
                                         <StyledTableRow key={orderLine.productId} onClick={() => showRowDetails(orderLine.productId)}>
                                             <TableCell>{(index + 1)}</TableCell>
-                                            <TableCell>{orderLine.productId}</TableCell>
                                             <TableCell align={"center"}><QuantityControl quantity={orderLine.quantity} productId={orderLine.productId} changeBasket={changeBasket}/></TableCell>
+                                            <TableCell>{ItemDetailsService.itemName(productItem(orderLine.productId))}</TableCell>
+                                            <TableCell>{ItemDetailsService.itemStandardNumber(productItem(orderLine.productId))}</TableCell>
+                                            <TableCell>{ItemDetailsService.itemSellerNumber(productItem(orderLine.productId))}</TableCell>
                                         </StyledTableRow>
                                     )) : (
                                         <StyledTableRow key={'empty'}>
-                                            <TableCell colSpan={3} align="center">Basket is empty</TableCell>
+                                            <TableCell colSpan={5} align="center">Basket is empty</TableCell>
                                         </StyledTableRow>
                                     )}
                                 </TableBody>
