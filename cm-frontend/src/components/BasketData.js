@@ -85,6 +85,10 @@ export function createOrderData() {
             this.buyerContact.setDefault();
         }
 
+        isEmpty() {
+            // TODO: Implement empty validation
+            return false;
+        }
     }
 
     return new OrderData();

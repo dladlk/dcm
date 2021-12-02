@@ -20,6 +20,13 @@ const fetchProducts = (search, page = 0, size = 20) => {
     });
 }
 
+const sendBasket = (basketData, orderData) => {
+    return Axios.post(apiUrl + "/basket/send", {
+        basketData: basketData,
+        orderData: orderData,
+    });
+}
+
 const fetchProductsByIds = (productIdList = []) => {
     return Axios.post(apiUrl + "/products_by_ids", {
         ids: productIdList
@@ -34,6 +41,7 @@ const DataService = {
     fetchProductDetails,
     fetchProducts,
     fetchProductsByIds,
+    sendBasket,
     uploadFiles,
 }
 

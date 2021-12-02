@@ -3,7 +3,7 @@ import {makeStyles} from "@material-ui/core/styles";
 
 export default function OrderHeader(props) {
 
-    const {orderData: orderData} = props;
+    const {orderData: orderData, lockControls} = props;
 
     const useStyles = makeStyles((theme) => ({
         paper: {
@@ -31,7 +31,7 @@ export default function OrderHeader(props) {
     const classes = useStyles();
 
     function DataInput(props) {
-        return <TextField className={classes.input} size={"small"} {...props} />
+        return <TextField className={classes.input} size={"small"} {...props} disabled={lockControls}/>
     }
 
     function DataBlock(props) {

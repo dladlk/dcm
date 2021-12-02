@@ -10,6 +10,7 @@ import DataService from "../services/DataService";
 import OrderLineList from "../components/OrderLineList";
 import OrderHeader from "../components/OrderHeader";
 import {createOrderData} from "../components/BasketData";
+import delay from "../utils/delay";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -29,6 +30,7 @@ export default function BasketPage(props) {
     const {basketData, changeBasket} = props;
 
     const [isLoading, setLoading] = React.useState(false);
+    const [isSending, setSending] = React.useState(false);
     const [productList, setProductList] = React.useState({});
     const [reloadCount, setReloadCount] = React.useState(0);
 
@@ -42,6 +44,22 @@ export default function BasketPage(props) {
         setReloadCount(reloadCount + 1);
     }
     const sendAction = () => {
+        sendBasket().finally(() => setSending(false));
+    }
+
+    async function sendBasket() {
+        if (!basketData.isEmpty() && !orderData.isEmpty()) {
+            setSending(true);
+            // TODO: Remove test delay
+            await delay(1000);
+            await DataService.sendBasket(basketData, orderData).then(response => {
+                    let responseData = response.data;
+                    console.log(responseData);
+                }
+            ).catch(error => {
+                console.log('Error occurred: ' + error.message);
+            });
+        }
     }
 
     const callLoadProducts = () => {
@@ -77,9 +95,13 @@ export default function BasketPage(props) {
 
     return (
         <>
-            <PageHeader name="Basket" refreshAction={refreshAction}>
-                <Fab color="primary" aria-label="Send order" size="small" title={"Send order"}>
-                    <SendIcon onClick={() => sendAction()}/>
+            <PageHeader name="Basket" refreshAction={isSending ? null : refreshAction}>
+                <Fab color="primary" aria-label="Send order" size="small" title={"Send order"} disabled={isSending}>
+                    {isSending ? (
+                        <CircularProgress/>
+                    ) : (
+                        <SendIcon onClick={() => sendAction()}/>
+                    )}
                 </Fab>
             </PageHeader>
 
@@ -89,8 +111,8 @@ export default function BasketPage(props) {
                 </Paper>
             ) : (
                 <>
-                    <OrderHeader orderData={orderData}/>
-                    <OrderLineList basketData={basketData} showRowDetails={showRowDetails} changeBasket={changeBasket} productList={productList}/>
+                    <OrderHeader orderData={orderData} lockControls={isSending}/>
+                    <OrderLineList basketData={basketData} showRowDetails={showRowDetails} changeBasket={changeBasket} productList={productList} lockControls={isSending}/>
                 </>
             )}
         </>
