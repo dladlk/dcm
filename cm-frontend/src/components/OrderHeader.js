@@ -1,7 +1,9 @@
 import {Grid, Paper, TextField, Typography} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 
-export default function OrderHeader() {
+export default function OrderHeader(props) {
+
+    const {orderData: orderData} = props;
 
     const useStyles = makeStyles((theme) => ({
         paper: {
@@ -47,14 +49,14 @@ export default function OrderHeader() {
     return <Paper className={classes.paper}>
         <Grid container spacing={2}>
             <DataBlock name={"Buyer company"}>
-                <DataInput label="Registration name" defaultValue="My Company ApS" required/>
-                <DataInput label="Legal identifier" defaultValue="DK11223344" required/>
-                <DataInput label="Party identifier" defaultValue="7300010000001" required/>
+                <DataInput label="Registration name" required value={orderData.buyerCompany.registrationName}/>
+                <DataInput label="Legal identifier" required value={orderData.buyerCompany.legalIdentifier}/>
+                <DataInput label="Party identifier" required value={orderData.buyerCompany.partyIdentifier}/>
             </DataBlock>
             <DataBlock name={"Buyer contact"}>
-                <DataInput label="Person name" defaultValue="John Dohn"/>
-                <DataInput label="Email" defaultValue="unexisting@email.com"/>
-                <DataInput label="Telephone" defaultValue="+45 11223344"/>
+                <DataInput label="Person name" value={orderData.buyerContact.personName}/>
+                <DataInput label="Email" value={orderData.buyerContact.email}/>
+                <DataInput label="Telephone" value={orderData.buyerContact.telephone}/>
             </DataBlock>
         </Grid>
     </Paper>
