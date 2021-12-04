@@ -1,23 +1,12 @@
+// Global state for order data - because I want not finished input of sending form to be kept between page navigations,
+// so changes should be applied without any submit. But when useState on the root component was used, any changes
+// led to re-render of many components. So instead local useState per input is used, current global value is passed as
+// parameter and is used as local state initial value in each input.
 const _orderData = createOrderData();
 
 export const getOrderData = () => _orderData;
 
 function createOrderData() {
-    return {
-        buyerCompany: {
-            registrationName: "My Company ApS",
-            legalIdentifier: "DK11223344",
-            partyIdentifier: "7300010000001",
-        },
-        buyerContact: {
-            personName: "John Doe",
-            email: "unexisting@email.com",
-            telephone: "+45 11223344",
-        },
-    }
-}
-
-function xcreateOrderData() {
 
     class Company {
         constructor() {
@@ -42,7 +31,7 @@ function xcreateOrderData() {
 
         setDefault() {
             this.personName = "John Doe";
-            this.email = "unexisting@email.com";
+            this.email = "some@email.com";
             this.telephone = "+45 11223344";
         }
     }

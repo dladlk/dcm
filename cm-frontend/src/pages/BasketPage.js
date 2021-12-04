@@ -9,7 +9,6 @@ import SendIcon from "@material-ui/icons/Send";
 import DataService from "../services/DataService";
 import OrderLineList from "../components/OrderLineList";
 import OrderHeader from "../components/OrderHeader";
-import {createOrderData} from "../components/BasketData";
 import delay from "../utils/delay";
 
 const useStyles = makeStyles(theme => ({
@@ -27,14 +26,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function BasketPage(props) {
 
-    const {basketData, changeBasket} = props;
+    const {basketData, changeBasket, orderData} = props;
 
     const [isLoading, setLoading] = React.useState(false);
     const [isSending, setSending] = React.useState(false);
     const [productList, setProductList] = React.useState({});
     const [reloadCount, setReloadCount] = React.useState(0);
-
-    const [orderData, setOrderData] = React.useState(createOrderData());
 
     const classes = useStyles();
 
