@@ -66,7 +66,7 @@ export default function TopNav(props) {
               <Button color="inherit">Upload</Button>
           </Link>
           { showBasketBar && (
-          <Link to="/basket" className = {classes.basketBar}>
+          <Link to="/send" className = {classes.basketBar}>
             <BasketBar />
           </Link>
           )}
