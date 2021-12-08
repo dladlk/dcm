@@ -10,6 +10,7 @@ import DataService from "../services/DataService";
 import OrderLineList from "../components/OrderLineList";
 import OrderHeader from "../components/OrderHeader";
 import delay from "../utils/delay";
+import BasketSendResult from "../components/BasketSendResult";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -30,6 +31,7 @@ export default function BasketPage(props) {
 
     const [isLoading, setLoading] = React.useState(false);
     const [isSending, setSending] = React.useState(false);
+    const [sendResult, setSendResult] = React.useState(null);
     const [productList, setProductList] = React.useState({});
     const [reloadCount, setReloadCount] = React.useState(0);
 
@@ -48,10 +50,12 @@ export default function BasketPage(props) {
         if (!basketData.isEmpty() && !orderData.isEmpty()) {
             setSending(true);
             // TODO: Remove test delay
-            await delay(1000);
+            await delay(500);
             await DataService.sendBasket(basketData, orderData).then(response => {
                     let responseData = response.data;
                     console.log(responseData);
+                    setSendResult(responseData);
+                    changeBasket(null, 0);
                 }
             ).catch(error => {
                 console.log('Error occurred: ' + error.message);
@@ -92,24 +96,32 @@ export default function BasketPage(props) {
 
     return (
         <>
-            <PageHeader name="Basket" refreshAction={isSending ? null : refreshAction}>
-                <Fab color="primary" aria-label="Send order" size="small" title={"Send order"} disabled={isSending}>
-                    {isSending ? (
-                        <CircularProgress/>
-                    ) : (
-                        <SendIcon onClick={() => sendAction()}/>
-                    )}
-                </Fab>
+            <PageHeader name="Basket" refreshAction={(isSending || sendResult !== null) ? null : refreshAction}>
+                {(sendResult === null) && (
+                    <Fab color="primary" aria-label="Send order" size="small" title={"Send order"} disabled={isSending}>
+                        {isSending ? (
+                            <CircularProgress/>
+                        ) : (
+                            <SendIcon onClick={() => sendAction()}/>
+                        )}
+                    </Fab>
+                )}
             </PageHeader>
 
-            {(isLoading || false) ? (
+            {(isLoading) ? (
                 <Paper className={classes.paper}>
                     <CircularProgress/>
                 </Paper>
             ) : (
                 <>
-                    <OrderHeader orderData={orderData} lockControls={isSending}/>
-                    <OrderLineList basketData={basketData} showRowDetails={showRowDetails} changeBasket={changeBasket} productList={productList} lockControls={isSending}/>
+                    {(sendResult === null) ? (
+                        <>
+                            <OrderHeader orderData={orderData} lockControls={isSending}/>
+                            <OrderLineList basketData={basketData} showRowDetails={showRowDetails} changeBasket={changeBasket} productList={productList} lockControls={isSending}/>
+                        </>
+                    ) : (
+                        <BasketSendResult result={sendResult}/>
+                    )}
                 </>
             )}
         </>

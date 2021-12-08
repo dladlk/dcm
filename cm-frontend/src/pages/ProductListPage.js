@@ -28,13 +28,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 // noinspection JSUnusedLocalSymbols
-const StyledTableCell = withStyles((theme) => ({
+export const StyledTableCell = withStyles((theme) => ({
   head: {
     fontWeight: 'bold',
   },
 }))(TableCell);
 
-const StyledTableRow = withStyles((theme) => ({
+export const StyledTableRow = withStyles((theme) => ({
   root: {
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover,
