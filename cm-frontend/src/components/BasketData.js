@@ -1,6 +1,5 @@
 export const ProductBasketStatus = {
     Empty: 'empty',
-    Adding: 'adding',
     Added: 'added',
 }
 

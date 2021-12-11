@@ -1,7 +1,11 @@
 import {Card, CardContent, Fab, makeStyles, Typography} from "@material-ui/core";
 import ArrowIcon from '@material-ui/icons/KeyboardBackspaceOutlined';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasketOutlined';
 import {useHistory} from "react-router";
+import React from "react";
+import {getProductBasketButtonTitle, handleProductBasketIconClick} from "./AddToBasket";
+import {ProductBasketStatus} from "./BasketData";
 
 const useStyles = makeStyles(theme => ({
 
@@ -49,7 +53,7 @@ const _emptyNavigator = {
 
 export default function ProductDetailHeader(prop) {
 
-    const {name, navigator = _emptyNavigator, id, refreshAction} = prop;
+    const {name, navigator = _emptyNavigator, id, refreshAction, basketData, product, changeBasket} = prop;
 
     const classes = useStyles();
 
@@ -63,6 +67,14 @@ export default function ProductDetailHeader(prop) {
         history.push(path);
     }
 
+    const handleIconClick = () => {
+        handleProductBasketIconClick(basketData, product, changeBasket);
+    }
+
+    const getShoppingBasketColor = (product) => {
+        return product && basketData.getProductBasketStatus(product.id) === ProductBasketStatus.Empty ? "" : "primary";
+    }
+
     return (
         <Card style={{marginTop: '16px'}}>
             <CardContent className={classes.cardContent}>
@@ -71,6 +83,9 @@ export default function ProductDetailHeader(prop) {
                         <Typography variant="h4">{name}</Typography>
                     </div>
                     <div className={classes.buttons}>
+                        <Fab color={getShoppingBasketColor(product)} aria-label={getProductBasketButtonTitle(product)} title={getProductBasketButtonTitle(product)} size="small" onClick={() => handleIconClick()}>
+                            <ShoppingBasketIcon/>
+                        </Fab>
                         <Fab color="primary" aria-label="Previous" title={"Previous product"} size="small" disabled={!navigator.hasPrevious(id)} onClick={() => navigateTo(navigator.getPrevious(id))}>
                             <ArrowIcon style={{transform: 'rotate(90deg)'}}/>
                         </Fab>
