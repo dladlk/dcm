@@ -1,0 +1,320 @@
+package dk.erst.cm.webapi;
+
+import java.io.File;
+import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import dk.erst.cm.AppProperties;
+import dk.erst.cm.api.data.Basket;
+import dk.erst.cm.api.data.Order;
+import dk.erst.cm.api.data.OrderStatus;
+import dk.erst.cm.api.data.Product;
+import dk.erst.cm.api.item.CatalogService;
+import dk.erst.cm.api.item.ProductService;
+import dk.erst.cm.api.order.OrderProducerService;
+import dk.erst.cm.api.order.OrderService;
+import dk.erst.cm.api.order.data.CustomerOrderData;
+import dk.erst.cm.xml.ubl21.model.Party;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import oasis.names.specification.ubl.schema.xsd.order_21.OrderType;
+
+@CrossOrigin(maxAge = 3600)
+@RestController
+@Slf4j
+public class OrderController {
+
+	private final ProductService productService;
+	private final OrderService orderService;
+	private final OrderProducerService orderProducerService;
+	private final CatalogService catalogService;
+	private AppProperties appProperties;
+
+	@Autowired
+	public OrderController(ProductService productService, OrderService orderService, CatalogService catalogService, OrderProducerService orderProducerService, AppProperties appProperties) {
+		this.productService = productService;
+		this.orderService = orderService;
+		this.catalogService = catalogService;
+		this.orderProducerService = orderProducerService;
+		this.appProperties = appProperties;
+	}
+
+	@Data
+	public static class BasketData {
+		private Map<String, Integer> orderLines;
+	}
+
+	@Data
+	public static class SendBasketData {
+		private BasketData basketData;
+		private CustomerOrderData orderData;
+	}
+
+	@Data
+	public static class SendBasketResponse {
+		private boolean success;
+		private String basketId;
+		private String errorMessage;
+		private List<String> errorProductIdList;
+
+		public static SendBasketResponse error(String message) {
+			SendBasketResponse r = new SendBasketResponse();
+			r.setSuccess(false);
+			r.setErrorMessage(message);
+			return r;
+		}
+
+		public SendBasketResponse withErrorProductIdList(List<String> errorProductIdList) {
+			this.setErrorProductIdList(errorProductIdList);
+			return this;
+		}
+
+		public static SendBasketResponse success(String basketId) {
+			SendBasketResponse r = new SendBasketResponse();
+			r.setSuccess(true);
+			r.setBasketId(basketId);
+			return r;
+		}
+	}
+
+	@RequestMapping(value = "/api/basket/send")
+	public SendBasketResponse basketSend(@RequestBody SendBasketData query) {
+		log.info("basketSend: query=" + query);
+		SendBasketResponse res = basketSendInternal(query);
+		if (res.isSuccess()) {
+			log.info("basketSend OK: " + res);
+		} else {
+			log.info("basketSend Error: " + res);
+		}
+		return res;
+	}
+
+	private SendBasketResponse basketSendInternal(SendBasketData query) {
+		Set<String> queryProductIdSet = query.basketData.orderLines.keySet();
+		Iterable<Product> products = productService.findAllByIds(queryProductIdSet);
+
+		Set<String> resolvedProductIdSet = new HashSet<String>();
+
+		log.debug("1. Load necessary data for XML generation");
+
+		Map<String, List<Product>> byCatalogMap = new HashMap<>();
+		for (Product p : products) {
+			String productCatalogId = p.getProductCatalogId();
+			List<Product> productList = byCatalogMap.get(productCatalogId);
+			if (productList == null) {
+				productList = new ArrayList<>();
+				byCatalogMap.put(productCatalogId, productList);
+			}
+			productList.add(p);
+			resolvedProductIdSet.add(p.getId());
+		}
+
+		if (resolvedProductIdSet.size() < queryProductIdSet.size()) {
+			int countNotFoundProducts = queryProductIdSet.size() - resolvedProductIdSet.size();
+			String errorMessage = countNotFoundProducts + " product" + (countNotFoundProducts > 1 ? "s are" : "is") + " not found, please delete highlighted products to send the basket.";
+			Set<String> notResolvedProductIdSet = new HashSet<String>(queryProductIdSet);
+			notResolvedProductIdSet.removeAll(resolvedProductIdSet);
+			return SendBasketResponse.error(errorMessage).withErrorProductIdList(new ArrayList<String>(notResolvedProductIdSet));
+		}
+
+		Set<String> noSellerCatalogSet = new HashSet<String>();
+		Map<String, Party> sellerPartyByCatalog = new HashMap<String, Party>();
+		for (String catalogId : byCatalogMap.keySet()) {
+			Party sellerParty = catalogService.loadLastSellerParty(catalogId);
+			if (sellerParty != null) {
+				sellerPartyByCatalog.put(catalogId, sellerParty);
+			} else {
+				noSellerCatalogSet.add(catalogId);
+			}
+		}
+
+		if (!noSellerCatalogSet.isEmpty()) {
+			int countProductIncompleteSeller = 0;
+
+			List<String> errorProductIdList = new ArrayList<String>();
+			for (String catalogId : noSellerCatalogSet) {
+				List<Product> list = byCatalogMap.get(catalogId);
+				errorProductIdList.addAll(errorProductIdList);
+				countProductIncompleteSeller += list.size();
+			}
+			String errorMessage = buildErrorMessageNoSellerInfo(byCatalogMap, noSellerCatalogSet, countProductIncompleteSeller);
+			return SendBasketResponse.error(errorMessage).withErrorProductIdList(errorProductIdList);
+		}
+
+		log.debug("2. Generate internal models for XML");
+
+		List<Order> orderList = new ArrayList<Order>();
+		int orderIndex = 0;
+		for (String catalogId : byCatalogMap.keySet()) {
+			List<Product> productList = byCatalogMap.get(catalogId);
+
+			Order order = new Order();
+			order.setOrderIndex(orderIndex);
+			order.setCreateTime(Instant.now());
+			order.setId(UUID.randomUUID().toString());
+			order.setLineCount(productList.size());
+			order.setStatus(OrderStatus.GENERATED);
+			order.setOrderNumber(generateOrderNumber(order));
+			order.setSupplierName(extractSupplierName(sellerPartyByCatalog.get(catalogId)));
+			order.setVersion(1);
+			OrderType sendOrder = orderProducerService.generateOrder(order, query.getOrderData(), productList);
+			order.setDocument(sendOrder);
+			
+			orderList.add(order);
+
+			orderIndex++;
+		}
+
+		Basket basket = new Basket();
+		basket.setCreateTime(Instant.now());
+		basket.setId(UUID.randomUUID().toString());
+		basket.setLineCount(resolvedProductIdSet.size());
+		basket.setOrderCount(orderList.size());
+		basket.setVersion(1);
+
+		File tempDirectory = createTempDirectory("delis-cm-" + basket.getId());
+
+		log.debug("3. Save XML files into temporary folder " + tempDirectory);
+
+		Map<String, Order> fileNameToOrderMap = new HashMap<String, Order>();
+		for (Order order : orderList) {
+			try {
+				File orderFile = orderService.saveOrderXML(tempDirectory, (OrderType) order.getDocument());
+				log.debug(" - Saved order XML to "+orderFile.getAbsolutePath());
+				order.setResultFileName(orderFile.getName());
+				fileNameToOrderMap.put(orderFile.getName(), order);
+			} catch (IOException e) {
+				log.error(" - Failed to generate xml by order " + order, e);
+				return SendBasketResponse.error("Failed to generate XML for order to " + order.getSupplierName() + ": " + e.getMessage());
+			}
+		}
+
+		log.debug("4. Save basket and orders to database");
+
+		orderService.saveBasket(basket);
+		for (Order order : orderList) {
+			orderService.saveOrder(order);
+		}
+
+		log.debug("5. Move XML files from temporary folder to destination folder at " + appProperties.getIntegration().getOutboxOrder());
+
+		File[] tempFiles = tempDirectory.listFiles();
+		Set<File> notMovedFiles = new HashSet<File>();
+		Set<File> movedFiles = new HashSet<File>();
+		for (File file : tempFiles) {
+			File outFile = new File(appProperties.getIntegration().getOutboxOrder(), file.getName());
+			try {
+				Order order = fileNameToOrderMap.get(file.getName());
+				String supplierName = order.getSupplierName();
+				FileUtils.moveFile(file, outFile);
+				movedFiles.add(file);
+				log.debug(" - Order " + order.getId() + " to " + supplierName + " successfully moved to " + outFile);
+			} catch (IOException e) {
+				log.error(" - Failed to move file " + file + " to " + outFile, e);
+				notMovedFiles.add(file);
+			}
+		}
+
+		if (!notMovedFiles.isEmpty()) {
+			if (movedFiles.isEmpty()) {
+				return SendBasketResponse.error("Failed to move XML files to destination folder, please contact system administrator.");
+			} else {
+				String notSentOrdersToSuppliers = getSupplierNamesByFileSet(notMovedFiles, fileNameToOrderMap);
+				String sentOrdersToSuppliers = getSupplierNamesByFileSet(movedFiles, fileNameToOrderMap);
+				String errorMessage = notMovedFiles.size() + " file(s) to supplier(s) " + notSentOrdersToSuppliers + " failed to move to destination folder, please contact system administrator. " + movedFiles.size() + " orders to " + sentOrdersToSuppliers + " were sent.";
+				return SendBasketResponse.error(errorMessage);
+			}
+		}
+
+		log.debug("6. Cleanup temporary folder " + tempDirectory);
+
+		// Delete temporary folder anyway
+		if (!FileUtils.deleteQuietly(tempDirectory)) {
+			log.error("Failed to delete temporary directory, check that streams are closed: " + tempDirectory);
+		}
+
+		log.debug("7. Basket #" + basket.getId() + " is sent succesfully");
+
+		return SendBasketResponse.success(basket.getId());
+	}
+
+	private String getSupplierNamesByFileSet(Set<File> files, Map<String, Order> fileNameToOrderMap) {
+		StringBuilder sb = new StringBuilder();
+		for (File file : files) {
+			Order order = fileNameToOrderMap.get(file.getName());
+			if (sb.length() > 0) {
+				sb.append(", ");
+			}
+			sb.append(order.getSupplierName());
+		}
+		return sb.toString();
+	}
+
+	private String buildErrorMessageNoSellerInfo(Map<String, List<Product>> byCatalog, Set<String> noSellerCatalog, int countProductWithCatalogWithoutSeller) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Cannot send basket, as ");
+		sb.append(countProductWithCatalogWithoutSeller);
+		sb.append(" product");
+		if (countProductWithCatalogWithoutSeller > 1) {
+			sb.append("s");
+		}
+		int countNoSellerCatalog = noSellerCatalog.size();
+		sb.append(" relate to ");
+		if (countNoSellerCatalog == 1) {
+			sb.append("a");
+		} else {
+			sb.append(countNoSellerCatalog);
+		}
+		sb.append(" catalog");
+		if (countNoSellerCatalog > 1) {
+			sb.append("s");
+		}
+		sb.append(" for which there is not enough information about seller to send an order.");
+		if (byCatalog.size() > countNoSellerCatalog) {
+			sb.append(" Remove highlighted products from the basket to send the rest.");
+		}
+		return sb.toString();
+	}
+
+	private File createTempDirectory(String dirName) {
+		File tempDirectory = new File(FileUtils.getTempDirectory(), dirName);
+		tempDirectory.mkdirs();
+		return tempDirectory;
+	}
+
+	private String extractSupplierName(Party party) {
+		if (party.getPartyName() != null) {
+			return party.getPartyName().getName();
+		}
+		if (party.getPartyLegalEntity() != null) {
+			if (party.getPartyLegalEntity().getRegistrationName() != null) {
+				return party.getPartyLegalEntity().getRegistrationName();
+			}
+		}
+		return null;
+	}
+
+	private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").withZone(ZoneOffset.UTC);
+
+	private String generateOrderNumber(Order order) {
+		String creationTimeFormatted = DATE_TIME_FORMATTER.format(order.getCreateTime());
+		return creationTimeFormatted + "-" + (order.getOrderIndex() + 1);
+	}
+
+}

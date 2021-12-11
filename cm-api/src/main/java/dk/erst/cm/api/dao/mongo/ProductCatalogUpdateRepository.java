@@ -6,4 +6,6 @@ import dk.erst.cm.api.data.ProductCatalogUpdate;
 
 public interface ProductCatalogUpdateRepository extends MongoRepository<ProductCatalogUpdate, String> {
 
+	ProductCatalogUpdate findTop1ByProductCatalogIdOrderByCreateTimeDesc(String productCatalogId);
+
 }

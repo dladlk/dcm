@@ -1,28 +1,17 @@
 package dk.erst.cm.api.order;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.jupiter.api.Test;
+import org.springframework.stereotype.Service;
 
-import com.helger.commons.error.IError;
-import com.helger.commons.error.list.IErrorList;
-import com.helger.ubl21.UBL21Reader;
-import com.helger.ubl21.UBL21Validator;
-import com.helger.ubl21.UBL21Writer;
-
+import dk.erst.cm.api.data.Product;
+import dk.erst.cm.api.order.data.CustomerOrderData;
+import dk.erst.cm.xml.ubl21.model.CatalogueLine;
 import lombok.Data;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AddressType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CountryType;
@@ -39,84 +28,90 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Per
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
 import oasis.names.specification.ubl.schema.xsd.order_21.OrderType;
 
-@SuppressWarnings("ConstantConditions")
-class OrderProducerTest {
+@Service
+public class OrderProducerService {
 
-	@Test
-	void read() throws IOException {
-		try (InputStream is = new FileInputStream("../cm-resources/examples/order/OrderOnly.xml")) {
-			OrderType res = UBL21Reader.order().read(is);
-			assertEquals("1005", res.getIDValue());
-			assertEquals("Contract0101", res.getContract().get(0).getIDValue());
-			List<OrderLineType> orderLine = res.getOrderLine();
-			for (int i = 0; i < orderLine.size(); i++) {
-				OrderLineType orderLineType = orderLine.get(i);
-				assertEquals(String.valueOf(i + 1), orderLineType.getLineItem().getIDValue());
-			}
+	@Data
+	public static class PartyInfo {
+
+		private String endpointID;
+		private String endpointIdSchemeID;
+		private String partyIdentificationID;
+		private String partyIdentificationIDSchemeID;
+		private String partyName;
+		private String legalEntityRegistrationName;
+		private String legalEntityCompanyID;
+		private String legalEntityCompanyIDSchemeID;
+
+		public PartyInfo(String defaultId, String defaultSchemeID, String defaultName) {
+			this.endpointID = defaultId;
+			this.endpointIdSchemeID = defaultSchemeID;
+			this.partyIdentificationID = defaultId;
+			this.partyIdentificationIDSchemeID = defaultSchemeID;
+			this.legalEntityCompanyID = defaultId;
+			this.legalEntityCompanyIDSchemeID = defaultSchemeID;
+			this.partyName = defaultName;
+			this.legalEntityRegistrationName = defaultName;
 		}
 	}
 
-	@Test
-	void produce() {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		OrderType order = buildOrder();
-		IErrorList errorList = UBL21Validator.order().validate(order);
-		if (errorList.isNotEmpty()) {
-			System.out.println("Found " + errorList.size() + " errors:");
-			for (int i = 0; i < errorList.size(); i++) {
-				IError error = errorList.get(i);
-				System.out.println((i + 1) + "\t" + error.toString());
-			}
-		}
-		assertTrue(errorList.isEmpty());
-		UBL21Writer.order().write(order, out);
-		String xml = new String(out.toByteArray(), StandardCharsets.UTF_8);
-		System.out.println(xml);
-		assertTrue(xml.indexOf(order.getSellerSupplierParty().getParty().getPostalAddress().getCountry().getIdentificationCodeValue()) > 0);
-	}
-
-	@SuppressWarnings("SpellCheckingInspection")
-	private OrderType buildOrder() {
+	public OrderType generateOrder(dk.erst.cm.api.data.Order dataOrder, CustomerOrderData customerOrderData, List<Product> productList) {
 		OrderType order = new OrderType();
+
 		order.setCustomizationID("urn:fdc:peppol.eu:poacc:trns:order:3");
 		order.setProfileID("urn:fdc:peppol.eu:poacc:bis:order_only:3");
 		order.setID(UUID.randomUUID().toString());
-		order.setIssueDate(LocalDate.now());
-		order.setIssueTime(LocalTime.now());
+		order.setIssueDate(dataOrder.getCreateTime().atZone(ZoneOffset.UTC).toLocalDate());
+		order.setIssueTime(dataOrder.getCreateTime().atZone(ZoneOffset.UTC).toLocalTime());
 		order.setDocumentCurrencyCode("DKK");
+
 		CustomerPartyType buyerCustomerParty = new CustomerPartyType();
-		buyerCustomerParty.setParty(buildParty(new PartyInfo("5798009882806", "0088", "Swedish Company")));
+		buyerCustomerParty.setParty(buildParty(new PartyInfo("5798009882806", "0088", customerOrderData.getBuyerCompany().getRegistrationName())));
 		order.setBuyerCustomerParty(buyerCustomerParty);
+
 		SupplierPartyType supplierPartyType = new SupplierPartyType();
 		supplierPartyType.setParty(buildParty(new PartyInfo("5798009882783", "0088", "Danish Company")));
 		order.setSellerSupplierParty(supplierPartyType);
-		AddressType addressType = new AddressType();
-		addressType.setCityName("Stockholm");
-		addressType.setPostalZone("2100");
+
+		AddressType supplierAddress = new AddressType();
+		supplierAddress.setCityName("Stockholm");
+		supplierAddress.setPostalZone("2100");
 		CountryType countryType = new CountryType();
 		countryType.setIdentificationCode("SE");
-		addressType.setCountry(countryType);
-		supplierPartyType.getParty().setPostalAddress(addressType);
+		supplierAddress.setCountry(countryType);
+		supplierPartyType.getParty().setPostalAddress(supplierAddress);
+
 		ArrayList<PeriodType> validityPeriodList = new ArrayList<>();
 		PeriodType periodType = new PeriodType();
 		periodType.setEndDate(LocalDate.now().plusDays(1));
 		validityPeriodList.add(periodType);
 		order.setValidityPeriod(validityPeriodList);
+
 		ArrayList<OrderLineType> orderLineList = new ArrayList<>();
 		order.setOrderLine(orderLineList);
-		OrderLineType line = new OrderLineType();
-		LineItemType lineItem = new LineItemType();
-		lineItem.setID("1");
-		lineItem.setQuantity(BigDecimal.valueOf(1));
-		lineItem.getQuantity().setUnitCode("EA");
-		ItemType item = new ItemType();
-		item.setName("Test");
-		ItemIdentificationType itemIdentificationType = new ItemIdentificationType();
-		itemIdentificationType.setID("1234");
-		item.setSellersItemIdentification(itemIdentificationType);
-		lineItem.setItem(item);
-		line.setLineItem(lineItem);
-		orderLineList.add(line);
+
+		for (int i = 0; i < productList.size(); i++) {
+			Product product = productList.get(i);
+
+			CatalogueLine catalogueLine = (CatalogueLine) product.getDocument();
+
+			OrderLineType line = new OrderLineType();
+			LineItemType lineItem = new LineItemType();
+			lineItem.setID(String.valueOf(i + 1));
+			lineItem.setQuantity(BigDecimal.valueOf(1));
+			lineItem.getQuantity().setUnitCode("EA");
+			ItemType item = new ItemType();
+			item.setName(catalogueLine.getItem().getName());
+
+			ItemIdentificationType itemIdentificationType = new ItemIdentificationType();
+			itemIdentificationType.setID(catalogueLine.getItem().getSellersItemIdentification().getId());
+			item.setSellersItemIdentification(itemIdentificationType);
+
+			lineItem.setItem(item);
+			line.setLineItem(lineItem);
+			orderLineList.add(line);
+		}
+
 		return order;
 	}
 
@@ -145,27 +140,4 @@ class OrderProducerTest {
 		return buyerParty;
 	}
 
-	@Data
-	private static class PartyInfo {
-
-		private String endpointID;
-		private String endpointIdSchemeID;
-		private String partyIdentificationID;
-		private String partyIdentificationIDSchemeID;
-		private String partyName;
-		private String legalEntityRegistrationName;
-		private String legalEntityCompanyID;
-		private String legalEntityCompanyIDSchemeID;
-
-		public PartyInfo(String defaultId, String defaultSchemeID, String defaultName) {
-			this.endpointID = defaultId;
-			this.endpointIdSchemeID = defaultSchemeID;
-			this.partyIdentificationID = defaultId;
-			this.partyIdentificationIDSchemeID = defaultSchemeID;
-			this.legalEntityCompanyID = defaultId;
-			this.legalEntityCompanyIDSchemeID = defaultSchemeID;
-			this.partyName = defaultName;
-			this.legalEntityRegistrationName = defaultName;
-		}
-	}
 }
