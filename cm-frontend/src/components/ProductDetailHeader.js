@@ -72,7 +72,7 @@ export default function ProductDetailHeader(prop) {
     }
 
     const getShoppingBasketColor = (product) => {
-        return product && basketData.getProductBasketStatus(product.id) === ProductBasketStatus.Empty ? "" : "primary";
+        return product && basketData.getProductBasketStatus(product.id) === ProductBasketStatus.Empty ? "default" : "primary";
     }
 
     return (
