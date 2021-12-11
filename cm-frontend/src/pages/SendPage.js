@@ -9,8 +9,7 @@ import SendIcon from "@material-ui/icons/Send";
 import DataService from "../services/DataService";
 import OrderLineList from "../components/OrderLineList";
 import OrderHeader from "../components/OrderHeader";
-import delay from "../utils/delay";
-import BasketSendResult from "../components/BasketSendResult";
+import {Alert, AlertTitle} from "@material-ui/lab";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -31,9 +30,11 @@ export default function SendPage(props) {
 
     const [isLoading, setLoading] = React.useState(false);
     const [isSending, setSending] = React.useState(false);
-    const [sendResult, setSendResult] = React.useState(null);
     const [productList, setProductList] = React.useState({});
     const [reloadCount, setReloadCount] = React.useState(0);
+
+    const [errorMessage, setErrorMessage] = React.useState(null);
+    const [errorProductIdSet, setErrorProductIdSet] = React.useState(null);
 
     const classes = useStyles();
 
@@ -48,19 +49,30 @@ export default function SendPage(props) {
 
     async function sendBasket() {
         if (!basketData.isEmpty() && !orderData.isEmpty()) {
+            setErrorMessage(null);
             setSending(true);
-            // TODO: Remove test delay
-            await delay(500);
             await DataService.sendBasket(basketData, orderData).then(response => {
                     let responseData = response.data;
                     console.log(responseData);
-                    // setSendResult(responseData);
-                    changeBasket(null, 0);
-                    const basketId = "234f029dfj23d2";
-                    push("/basket/"+basketId);
+
+                    if (false) {
+                        responseData.success = false;
+                        responseData.errorMessage = "Some error message";
+                        responseData.errorProductIdList = basketData.getOrderLineList().slice(0, 1).map((ol) => ol.productId);
+                    }
+
+                    if (responseData.success) {
+                        changeBasket(null, 0);
+                        const basketId = responseData.basketId;
+                        push("/basket/"+basketId);
+                    } else {
+                        setErrorMessage(responseData.errorMessage);
+                        setErrorProductIdSet(new Set(responseData.errorProductIdList));
+                    }
                 }
             ).catch(error => {
                 console.log('Error occurred: ' + error.message);
+                setErrorMessage(error.message);
             });
         }
     }
@@ -71,6 +83,7 @@ export default function SendPage(props) {
 
     async function loadProducts() {
         if (!basketData.isEmpty()) {
+            setErrorMessage(null);
             setLoading(true);
             const productIdList = basketData.getOrderLineList().map((orderLine) => orderLine.productId);
             await DataService.fetchProductsByIds(productIdList).then(response => {
@@ -81,11 +94,11 @@ export default function SendPage(props) {
                         const p = responseData[index];
                         productMapById[p.id] = p;
                     }
-                    console.log(productMapById);
                     setProductList(productMapById);
                 }
             ).catch(error => {
                 console.log('Error occurred: ' + error.message);
+                setErrorMessage(error.message);
             });
         }
     }
@@ -98,16 +111,14 @@ export default function SendPage(props) {
 
     return (
         <>
-            <PageHeader name="Send basket" refreshAction={(isSending || sendResult !== null) ? null : refreshAction}>
-                {(sendResult === null) && (
-                    <Fab color="primary" aria-label="Send order" size="small" title={"Send order"} disabled={isSending}>
-                        {isSending ? (
-                            <CircularProgress/>
-                        ) : (
-                            <SendIcon onClick={() => sendAction()}/>
-                        )}
-                    </Fab>
-                )}
+            <PageHeader name="Send basket" refreshAction={(isSending) ? null : refreshAction}>
+                <Fab color="primary" aria-label="Send order" size="small" title={"Send order"} disabled={isSending}>
+                    {isSending ? (
+                        <CircularProgress/>
+                    ) : (
+                        <SendIcon onClick={() => sendAction()}/>
+                    )}
+                </Fab>
             </PageHeader>
 
             {(isLoading) ? (
@@ -116,14 +127,16 @@ export default function SendPage(props) {
                 </Paper>
             ) : (
                 <>
-                    {(sendResult === null) ? (
-                        <>
-                            <OrderHeader orderData={orderData} lockControls={isSending}/>
-                            <OrderLineList basketData={basketData} showRowDetails={showRowDetails} changeBasket={changeBasket} productList={productList} lockControls={isSending}/>
-                        </>
-                    ) : (
-                        <BasketSendResult result={sendResult} showSuccess={true}/>
-                    )}
+                    <>
+                        {errorMessage && (
+                            <Alert severity="error" variant={"outlined"} style={{marginBottom: "1em", marginTop: "1em"}}>
+                                <AlertTitle>Error</AlertTitle>
+                                <div>{errorMessage}</div>
+                            </Alert>
+                        )}
+                        <OrderHeader orderData={orderData} lockControls={isSending}/>
+                        <OrderLineList basketData={basketData} showRowDetails={showRowDetails} changeBasket={changeBasket} productList={productList} lockControls={isSending} errorProductIdSet={errorProductIdSet}/>
+                    </>
                 </>
             )}
         </>

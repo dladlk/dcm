@@ -60,7 +60,7 @@ function QuantityControl(props) {
 
 export default function OrderLineList(props) {
 
-    const {basketData, showRowDetails, changeBasket, productList, lockControls} = props;
+    const {basketData, showRowDetails, changeBasket, productList, lockControls, errorProductIdSet} = props;
 
     const useStyles = makeStyles((theme) => ({
         paper: {
@@ -71,6 +71,10 @@ export default function OrderLineList(props) {
         table: {
             minWidth: 600,
         },
+        errorLine: {
+            textDecoration: "line-through",
+            color: theme.palette.error.main,
+        }
     }));
 
     const classes = useStyles();
@@ -80,6 +84,10 @@ export default function OrderLineList(props) {
             return productList[productId].document.item;
         }
         return null;
+    }
+
+    const isErrorLine = (productId) => {
+        return productId && errorProductIdSet && errorProductIdSet.has(productId);
     }
 
     return <Paper className={classes.paper}>
@@ -96,7 +104,7 @@ export default function OrderLineList(props) {
                 </TableHead>
                 <TableBody>
                     {!basketData.isEmpty() ? basketData.getOrderLineList().map((orderLine, index) => (
-                        <StyledTableRow key={orderLine.productId} onClick={() => showRowDetails(orderLine.productId)}>
+                        <StyledTableRow key={orderLine.productId} onClick={() => showRowDetails(orderLine.productId)} className={isErrorLine(orderLine.productId) ? classes.errorLine : null}>
                             <TableCell>{(index + 1)}</TableCell>
                             <TableCell align={"center"}><QuantityControl quantity={orderLine.quantity} productId={orderLine.productId} changeBasket={changeBasket} lockControls={lockControls}/></TableCell>
                             <TableCell>{ItemDetailsService.itemName(productItem(orderLine.productId))}</TableCell>
