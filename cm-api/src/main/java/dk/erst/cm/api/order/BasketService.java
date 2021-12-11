@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,6 +45,12 @@ public class BasketService {
 		this.orderService = orderService;
 		this.catalogService = catalogService;
 		this.orderProducerService = orderProducerService;
+	}
+
+	@Data
+	public static class SentBasketData {
+		private Basket basket;
+		private List<Order> orderList;
 	}
 
 	@Data
@@ -138,15 +145,23 @@ public class BasketService {
 
 		log.debug("2. Generate internal models for XML");
 
+		Basket basket = new Basket();
+		basket.setCreateTime(Instant.now());
+		basket.setId(generateId());
+		basket.setLineCount(resolvedProductIdSet.size());
+		basket.setOrderCount(byCatalogMap.size());
+		basket.setVersion(1);
+
 		List<Order> orderList = new ArrayList<Order>();
 		int orderIndex = 0;
 		for (String catalogId : byCatalogMap.keySet()) {
 			List<Product> productList = byCatalogMap.get(catalogId);
 
 			Order order = new Order();
+			order.setBasketId(basket.getId());
 			order.setOrderIndex(orderIndex);
 			order.setCreateTime(Instant.now());
-			order.setId(UUID.randomUUID().toString());
+			order.setId(generateId());
 			order.setLineCount(productList.size());
 			order.setStatus(OrderStatus.GENERATED);
 			order.setOrderNumber(generateOrderNumber(order));
@@ -159,13 +174,6 @@ public class BasketService {
 
 			orderIndex++;
 		}
-
-		Basket basket = new Basket();
-		basket.setCreateTime(Instant.now());
-		basket.setId(UUID.randomUUID().toString());
-		basket.setLineCount(resolvedProductIdSet.size());
-		basket.setOrderCount(orderList.size());
-		basket.setVersion(1);
 
 		File tempDirectory = createTempDirectory("delis-cm-" + basket.getId());
 
@@ -233,6 +241,10 @@ public class BasketService {
 		return SendBasketResponse.success(basket.getId());
 	}
 
+	private String generateId() {
+		return UUID.randomUUID().toString();
+	}
+
 	private String getSupplierNamesByFileSet(Set<File> files, Map<String, Order> fileNameToOrderMap) {
 		StringBuilder sb = new StringBuilder();
 		for (File file : files) {
@@ -294,5 +306,20 @@ public class BasketService {
 	private String generateOrderNumber(Order order) {
 		String creationTimeFormatted = DATE_TIME_FORMATTER.format(order.getCreateTime());
 		return creationTimeFormatted + "-" + (order.getOrderIndex() + 1);
+	}
+
+	public Optional<SentBasketData> loadSentBasketData(String basketId) {
+		Optional<Basket> optional = this.orderService.findBasketById(basketId);
+		if (optional.isPresent()) {
+			SentBasketData sbd = new SentBasketData();
+			sbd.setBasket(optional.get());
+			sbd.setOrderList(this.orderService.findOrdersByBasketId(sbd.getBasket().getId()));
+			return Optional.of(sbd);
+		}
+		return Optional.empty();
+	}
+
+	public Optional<Order> loadSentOrder(String orderId) {
+		return this.orderService.findOrderById(orderId);
 	}
 }

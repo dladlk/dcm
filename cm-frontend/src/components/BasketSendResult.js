@@ -14,7 +14,9 @@ import {DataRow, DataView} from "./ProductDetail";
 
 export default function BasketSendResult(props) {
 
-    const {showSuccess = false} = props;
+    const {showSuccess = false, sentBasketData} = props;
+
+    const {orderList, basket} = sentBasketData;
 
     const useStyles = makeStyles((theme) => ({
         paper: {
@@ -24,11 +26,6 @@ export default function BasketSendResult(props) {
     }));
 
     const classes = useStyles();
-
-    const basketStatus = {
-        sentDate: '01.12.2021 12:54:43',
-        id: 'vs094fj34f309jv340',
-    }
 
     const orderDataList = [
         {
@@ -66,9 +63,9 @@ export default function BasketSendResult(props) {
 
             <Paper className={classes.paper}>
 
-                <DataView name="Sent" value={basketStatus.sentDate}/>
-                <DataView name="Orders" value={orderDataList.length}/>
-                <DataView name="Lines" value={orderDataList.reduce((prev, cur) => prev + cur.orderLines, 0)}/>
+                <DataView name="Sent" value={basket.createTime}/>
+                <DataView name="Orders" value={basket.orderCount}/>
+                <DataView name="Lines" value={basket.lineCount}/>
                 <DataRow name={'Actions'}>
                     <Button variant={"outlined"} size={"small"} color="primary" style={{marginRight: '1em'}}>Download all</Button>
                     <Button variant={"outlined"} size={"small"} color="primary">Copy basket link</Button>
@@ -77,7 +74,7 @@ export default function BasketSendResult(props) {
             <Paper className={classes.paper}>
 
                 <TableContainer style={{marginTop: "2em"}}>
-                    <Table className={classes.table} size="small" aria-label="Items table">
+                    <Table size="small" aria-label="Items table">
                         <TableHead>
                             <TableRow>
                                 <StyledTableCell align="center">Order</StyledTableCell>
@@ -89,13 +86,13 @@ export default function BasketSendResult(props) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {orderDataList?.map((row, index) => (
+                            {orderList?.map((row, index) => (
                                 <StyledTableRow key={row.id}>
                                     <TableCell align={"center"}>{(index + 1)}</TableCell>
                                     <TableCell>{row.status}</TableCell>
                                     <TableCell>{row.supplierName}</TableCell>
                                     <TableCell>{row.orderNumber}</TableCell>
-                                    <TableCell>{row.orderLines}</TableCell>
+                                    <TableCell>{row.lineCount}</TableCell>
                                     <TableCell align={"center"}>
                                         <Button size={"small"} color="primary">Download</Button>
                                         <Button size={"small"} color="primary">Copy link</Button>

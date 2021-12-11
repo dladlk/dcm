@@ -19,8 +19,12 @@ public class Order {
 	private Instant createTime;
 	private int version;
 
+	@Indexed
+	private String basketId;
+
 	private OrderStatus status;
 	private int orderIndex;
+
 	private String supplierName;
 
 	@Indexed

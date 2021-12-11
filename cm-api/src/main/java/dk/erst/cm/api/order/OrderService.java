@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,18 @@ public class OrderService {
 	public OrderService(BasketRepository basketRepository, OrderRepository orderRepository) {
 		this.basketRepository = basketRepository;
 		this.orderRepository = orderRepository;
+	}
+
+	public Optional<Basket> findBasketById(String basketId) {
+		return basketRepository.findById(basketId);
+	}
+
+	public List<Order> findOrdersByBasketId(String basketId) {
+		return orderRepository.findByBasketId(basketId);
+	}
+
+	public Optional<Order> findOrderById(String orderId) {
+		return orderRepository.findById(orderId);
 	}
 
 	public void saveBasket(Basket basket) {

@@ -47,6 +47,8 @@ export default function SendPage(props) {
         sendBasket().finally(() => setSending(false));
     }
 
+    let imitateError = false;
+
     async function sendBasket() {
         if (!basketData.isEmpty() && !orderData.isEmpty()) {
             setErrorMessage(null);
@@ -55,7 +57,7 @@ export default function SendPage(props) {
                     let responseData = response.data;
                     console.log(responseData);
 
-                    if (false) {
+                    if (imitateError) {
                         responseData.success = false;
                         responseData.errorMessage = "Some error message";
                         responseData.errorProductIdList = basketData.getOrderLineList().slice(0, 1).map((ol) => ol.productId);
@@ -64,7 +66,7 @@ export default function SendPage(props) {
                     if (responseData.success) {
                         changeBasket(null, 0);
                         const basketId = responseData.basketId;
-                        push("/basket/"+basketId);
+                        push("/basket/"+basketId+"?ok=1");
                     } else {
                         setErrorMessage(responseData.errorMessage);
                         setErrorProductIdSet(new Set(responseData.errorProductIdList));
