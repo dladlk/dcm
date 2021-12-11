@@ -73,16 +73,16 @@ class OrderProducerServiceTest {
 		OrderType order = service.generateOrder(dataOrder, customerOrderData, productList);
 		IErrorList errorList = UBL21Validator.order().validate(order);
 		if (errorList.isNotEmpty()) {
-			System.out.println("Found " + errorList.size() + " errors:");
+			log.error("Found " + errorList.size() + " errors:");
 			for (int i = 0; i < errorList.size(); i++) {
 				IError error = errorList.get(i);
-				System.out.println((i + 1) + "\t" + error.toString());
+				log.error((i + 1) + "\t" + error.toString());
 			}
 		}
 		assertTrue(errorList.isEmpty());
 		UBL21Writer.order().write(order, out);
 		String xml = new String(out.toByteArray(), StandardCharsets.UTF_8);
-		System.out.println(xml);
+		log.info(xml);
 		assertTrue(xml.indexOf(order.getSellerSupplierParty().getParty().getPostalAddress().getCountry().getIdentificationCodeValue()) > 0);
 	}
 
