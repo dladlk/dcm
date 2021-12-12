@@ -11,11 +11,17 @@ import TableCell from "@material-ui/core/TableCell";
 import {StyledTableCell, StyledTableRow} from "../pages/ProductListPage";
 import {DataRow, DataView} from "./ProductDetail";
 import {useHistory} from "react-router";
+import {ViewToggle} from "../pages/ProductDetailPage";
 
 export default function OrderSendResult(props) {
 
     const {sentOrderData} = props;
 
+    const [viewMode, setViewMode] = React.useState("table");
+
+    const handleViewChange = (event) => {
+        setViewMode(event.target.value);
+    }
     const useStyles = makeStyles((theme) => ({
         paper: {
             padding: theme.spacing(2),
@@ -49,27 +55,37 @@ export default function OrderSendResult(props) {
                     <Button variant={"outlined"} size={"small"} color="primary">Copy link</Button>
                 </DataRow>
             </Paper>
+
+            <ViewToggle viewMode={viewMode} handleViewChange={handleViewChange}/>
+
             <Paper className={classes.paper}>
-                <TableContainer>
-                    <Table size="small" aria-label="Items table">
-                        <TableHead>
-                            <TableRow>
-                                <StyledTableCell align="center">Line</StyledTableCell>
-                                <StyledTableCell align="left">Name</StyledTableCell>
-                                <StyledTableCell align="left">Seller number</StyledTableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {sentOrderData.document?.orderLine.map((row, index) => (
-                                <StyledTableRow key={row.lineItem.idvalue} onClick={() => showProductDetails(row.lineItem.idvalue)}>
-                                    <TableCell align={"center"}>{(index + 1)}</TableCell>
-                                    <TableCell>{row.lineItem.item.nameValue}</TableCell>
-                                    <TableCell>{row.lineItem.item.sellersItemIdentification.idvalue}</TableCell>
-                                </StyledTableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+
+            {viewMode === "json" ? (
+                <pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>{JSON.stringify(sentOrderData, null, 2)}</pre>
+            ) : (
+
+                    <TableContainer>
+                        <Table size="small" aria-label="Items table">
+                            <TableHead>
+                                <TableRow>
+                                    <StyledTableCell align="center">Line</StyledTableCell>
+                                    <StyledTableCell align="left">Name</StyledTableCell>
+                                    <StyledTableCell align="left">Seller number</StyledTableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {sentOrderData.document?.orderLine.map((row, index) => (
+                                    <StyledTableRow key={row.lineItem.idvalue} onClick={() => showProductDetails(row.lineItem.idvalue)}>
+                                        <TableCell align={"center"}>{(index + 1)}</TableCell>
+                                        <TableCell>{row.lineItem.item.nameValue}</TableCell>
+                                        <TableCell>{row.lineItem.item.sellersItemIdentification.idvalue}</TableCell>
+                                    </StyledTableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )}
+
             </Paper>
         </>
 

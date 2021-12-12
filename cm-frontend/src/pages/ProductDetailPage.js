@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function ViewToggle(props) {
+export function ViewToggle(props) {
     return (
         <Box display="flex" flex="1" justifyContent="flex-end">
             <FormControl component="fieldset">
