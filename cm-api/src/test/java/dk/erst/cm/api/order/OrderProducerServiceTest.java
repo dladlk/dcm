@@ -22,6 +22,8 @@ import com.helger.ubl21.UBL21Writer;
 
 import dk.erst.cm.api.data.Order;
 import dk.erst.cm.api.data.Product;
+import dk.erst.cm.api.order.OrderProducerService.OrderDefaultConfig;
+import dk.erst.cm.api.order.OrderProducerService.PartyInfo;
 import dk.erst.cm.api.order.data.CustomerOrderData;
 import dk.erst.cm.api.order.data.CustomerOrderData.Company;
 import dk.erst.cm.xml.ubl21.model.CatalogueLine;
@@ -70,7 +72,13 @@ class OrderProducerServiceTest {
 		customerOrderData.setBuyerCompany(buyerCompany);
 		Order dataOrder = new Order();
 		dataOrder.setCreateTime(Instant.now());
-		OrderType order = service.generateOrder(dataOrder, customerOrderData, productList);
+
+		PartyInfo buyer = new PartyInfo("5798009882806", "0088", "Buyer Company");
+		PartyInfo seller = new PartyInfo("5798009882783", "0088", "Seller Company");
+
+		OrderDefaultConfig defaultConfig = new OrderDefaultConfig();
+		defaultConfig.setNote("TEST NOTE");
+		OrderType order = service.generateOrder(dataOrder, defaultConfig, buyer, seller, productList);
 		IErrorList errorList = UBL21Validator.order().validate(order);
 		if (errorList.isNotEmpty()) {
 			log.error("Found " + errorList.size() + " errors:");
@@ -84,6 +92,7 @@ class OrderProducerServiceTest {
 		String xml = new String(out.toByteArray(), StandardCharsets.UTF_8);
 		log.info(xml);
 		assertTrue(xml.indexOf(order.getSellerSupplierParty().getParty().getPostalAddress().getCountry().getIdentificationCodeValue()) > 0);
+		assertTrue(xml.indexOf(defaultConfig.getNote()) > 0);
 	}
 
 }

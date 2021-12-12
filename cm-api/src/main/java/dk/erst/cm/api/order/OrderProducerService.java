@@ -5,15 +5,16 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
 import dk.erst.cm.api.data.Order;
 import dk.erst.cm.api.data.Product;
-import dk.erst.cm.api.order.data.CustomerOrderData;
 import dk.erst.cm.xml.ubl21.model.CatalogueLine;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AddressType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CountryType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CustomerPartyType;
@@ -27,10 +28,19 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Par
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PeriodType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.NoteType;
 import oasis.names.specification.ubl.schema.xsd.order_21.OrderType;
 
 @Service
 public class OrderProducerService {
+
+	@Getter
+	@Setter
+	@ToString
+	public static class OrderDefaultConfig {
+		private String endpointGLN;
+		private String note;
+	}
 
 	@Data
 	public static class PartyInfo {
@@ -56,22 +66,26 @@ public class OrderProducerService {
 		}
 	}
 
-	public OrderType generateOrder(Order dataOrder, CustomerOrderData customerOrderData, List<Product> productList) {
+	public OrderType generateOrder(Order dataOrder, OrderDefaultConfig defaultConfig, PartyInfo buyer, PartyInfo seller, List<Product> productList) {
 		OrderType order = new OrderType();
 
 		order.setCustomizationID("urn:fdc:peppol.eu:poacc:trns:order:3");
 		order.setProfileID("urn:fdc:peppol.eu:poacc:bis:order_only:3");
-		order.setID(UUID.randomUUID().toString());
+		order.setUUID(dataOrder.getId());
+		order.setID(dataOrder.getOrderNumber());
 		order.setIssueDate(dataOrder.getCreateTime().atZone(ZoneOffset.UTC).toLocalDate());
 		order.setIssueTime(dataOrder.getCreateTime().atZone(ZoneOffset.UTC).toLocalTime());
 		order.setDocumentCurrencyCode("DKK");
+		if (defaultConfig.getNote() != null) {
+			order.getNote().add(new NoteType(defaultConfig.getNote()));
+		}
 
 		CustomerPartyType buyerCustomerParty = new CustomerPartyType();
-		buyerCustomerParty.setParty(buildParty(new PartyInfo("5798009882806", "0088", customerOrderData.getBuyerCompany().getRegistrationName())));
+		buyerCustomerParty.setParty(buildParty(buyer));
 		order.setBuyerCustomerParty(buyerCustomerParty);
 
 		SupplierPartyType supplierPartyType = new SupplierPartyType();
-		supplierPartyType.setParty(buildParty(new PartyInfo("5798009882783", "0088", "Danish Company")));
+		supplierPartyType.setParty(buildParty(seller));
 		order.setSellerSupplierParty(supplierPartyType);
 
 		AddressType supplierAddress = new AddressType();

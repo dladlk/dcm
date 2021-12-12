@@ -24,6 +24,8 @@ import dk.erst.cm.api.data.OrderStatus;
 import dk.erst.cm.api.data.Product;
 import dk.erst.cm.api.item.CatalogService;
 import dk.erst.cm.api.item.ProductService;
+import dk.erst.cm.api.order.OrderProducerService.OrderDefaultConfig;
+import dk.erst.cm.api.order.OrderProducerService.PartyInfo;
 import dk.erst.cm.api.order.data.CustomerOrderData;
 import dk.erst.cm.xml.ubl21.model.Party;
 import lombok.Data;
@@ -91,7 +93,7 @@ public class BasketService {
 		}
 	}
 
-	public SendBasketResponse basketSend(SendBasketData query, String outboxFolder) {
+	public SendBasketResponse basketSend(SendBasketData query, String outboxFolder, OrderDefaultConfig orderConfig) {
 		Set<String> queryProductIdSet = query.basketData.orderLines.keySet();
 		Iterable<Product> products = productService.findAllByIds(queryProductIdSet);
 
@@ -167,7 +169,12 @@ public class BasketService {
 			order.setOrderNumber(generateOrderNumber(order));
 			order.setSupplierName(extractSupplierName(sellerPartyByCatalog.get(catalogId)));
 			order.setVersion(1);
-			OrderType sendOrder = orderProducerService.generateOrder(order, query.getOrderData(), productList);
+
+			CustomerOrderData customerOrderData = query.getOrderData();
+			PartyInfo buyer = new PartyInfo("5798009882806", "0088", customerOrderData.getBuyerCompany().getRegistrationName());
+			PartyInfo seller = new PartyInfo("5798009882783", "0088", "Danish Company");
+
+			OrderType sendOrder = orderProducerService.generateOrder(order, orderConfig, buyer, seller, productList);
 			order.setDocument(sendOrder);
 
 			orderList.add(order);

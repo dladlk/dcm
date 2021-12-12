@@ -36,7 +36,7 @@ public class OrderController {
 	@RequestMapping(value = "/api/basket/send")
 	public SendBasketResponse basketSend(@RequestBody SendBasketData query) {
 		log.info("START basketSend: query=" + query);
-		SendBasketResponse res = basketService.basketSend(query, appProperties.getIntegration().getOutboxOrder());
+		SendBasketResponse res = basketService.basketSend(query, appProperties.getIntegration().getOutboxOrder(), appProperties.getOrder());
 		if (res.isSuccess()) {
 			log.info("END basketSend OK: " + res);
 		} else {

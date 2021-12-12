@@ -1,11 +1,13 @@
 package dk.erst.cm;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+import dk.erst.cm.api.order.OrderProducerService.OrderDefaultConfig;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "app")
@@ -13,6 +15,8 @@ import org.springframework.context.annotation.Configuration;
 public class AppProperties {
 
     private IntegrationProperties integration;
+    
+    private OrderDefaultConfig order;
 
     @Getter
     @Setter
@@ -22,4 +26,5 @@ public class AppProperties {
         private String inboxOrderResponse;
         private String outboxOrder;
     }
+
 }
