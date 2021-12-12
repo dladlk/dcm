@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import dk.erst.cm.api.data.Order;
 import dk.erst.cm.api.data.Product;
 import dk.erst.cm.api.order.data.CustomerOrderData;
 import dk.erst.cm.xml.ubl21.model.CatalogueLine;
@@ -55,7 +56,7 @@ public class OrderProducerService {
 		}
 	}
 
-	public OrderType generateOrder(dk.erst.cm.api.data.Order dataOrder, CustomerOrderData customerOrderData, List<Product> productList) {
+	public OrderType generateOrder(Order dataOrder, CustomerOrderData customerOrderData, List<Product> productList) {
 		OrderType order = new OrderType();
 
 		order.setCustomizationID("urn:fdc:peppol.eu:poacc:trns:order:3");
