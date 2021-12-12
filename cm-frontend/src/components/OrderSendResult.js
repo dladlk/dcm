@@ -50,13 +50,12 @@ export default function OrderSendResult(props) {
                 </DataRow>
             </Paper>
             <Paper className={classes.paper}>
-
-                <TableContainer style={{marginTop: "2em"}}>
+                <TableContainer>
                     <Table size="small" aria-label="Items table">
                         <TableHead>
                             <TableRow>
                                 <StyledTableCell align="center">Line</StyledTableCell>
-                                <StyledTableCell align="left">Item name</StyledTableCell>
+                                <StyledTableCell align="left">Name</StyledTableCell>
                                 <StyledTableCell align="left">Seller number</StyledTableCell>
                             </TableRow>
                         </TableHead>
