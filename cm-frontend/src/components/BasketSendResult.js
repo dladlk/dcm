@@ -11,12 +11,15 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import {StyledTableCell, StyledTableRow} from "../pages/ProductListPage";
 import {DataRow, DataView} from "./ProductDetail";
+import {useHistory} from "react-router";
 
 export default function BasketSendResult(props) {
 
     const {showSuccess = false, sentBasketData} = props;
 
     const {orderList, basket} = sentBasketData;
+
+    const [stateShowSuccess, setStateShowSuccess] = React.useState(showSuccess);
 
     const useStyles = makeStyles((theme) => ({
         paper: {
@@ -25,11 +28,17 @@ export default function BasketSendResult(props) {
         },
     }));
 
+    const {push} = useHistory();
+
+    const showRowDetails = (rowId) => {
+        push('/order/' + rowId);
+    }
+
     const classes = useStyles();
 
     return (
         <>
-            {showSuccess && (
+            {stateShowSuccess && (
                 <Alert severity="success" variant={"outlined"} style={{marginBottom: "1em", marginTop: "1em"}}>
                     <AlertTitle>Success</AlertTitle>
                     <div>{orderList.length} order{orderList.length > 1 ? 's' : ''} in the basket {orderList.length > 1 ? 'are' : 'is'} successfully generated and scheduled for sending.</div>
@@ -41,7 +50,7 @@ export default function BasketSendResult(props) {
                             <li>download each order in XML format separately.</li>
                         </ul>
                     </div>
-                    <Button variant={"outlined"} color={"primary"} size={"small"}>Close</Button>
+                    <Button variant={"outlined"} color={"primary"} size={"small"} onClick={() => setStateShowSuccess(false)}>Close</Button>
                 </Alert>
             )}
 
@@ -71,7 +80,7 @@ export default function BasketSendResult(props) {
                         </TableHead>
                         <TableBody>
                             {orderList?.map((row, index) => (
-                                <StyledTableRow key={row.id}>
+                                <StyledTableRow key={row.id} onClick={() => showRowDetails(row.id)}>
                                     <TableCell align={"center"}>{(index + 1)}</TableCell>
                                     <TableCell>{row.status}</TableCell>
                                     <TableCell>{row.supplierName}</TableCell>

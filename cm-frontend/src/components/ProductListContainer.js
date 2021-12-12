@@ -11,6 +11,7 @@ import {createBasketData} from "./BasketData";
 import {getOrderData} from "./OrderData";
 import SendPage from "../pages/SendPage";
 import BasketPage from "../pages/BasketPage";
+import OrderPage from "../pages/OrderPage";
 
 const currentPosition = (list, id) => {
     if (list._cachedPos) {
@@ -112,6 +113,9 @@ export function ProductListContainer() {
             </Route>
             <Route path="/basket/:id">
                 <BasketPage />
+            </Route>
+            <Route path="/order/:id">
+                <OrderPage />
             </Route>
         </>
     );
