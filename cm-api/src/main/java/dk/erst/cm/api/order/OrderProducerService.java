@@ -97,7 +97,7 @@ public class OrderProducerService {
 
 			OrderLineType line = new OrderLineType();
 			LineItemType lineItem = new LineItemType();
-			lineItem.setID(String.valueOf(i + 1));
+			lineItem.setID(product.getId());
 			lineItem.setQuantity(BigDecimal.valueOf(1));
 			lineItem.getQuantity().setUnitCode("EA");
 			ItemType item = new ItemType();
