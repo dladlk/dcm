@@ -27,29 +27,12 @@ export default function BasketSendResult(props) {
 
     const classes = useStyles();
 
-    const orderDataList = [
-        {
-            id: "b42f4f4f3gfegsfdgadsfasdfasdf",
-            orderNumber: "20211205-131812-01",
-            orderLines: 1,
-            supplierName: "Danish Supplier A/S",
-            status: "Generated",
-        },
-        {
-            id: "b422434vfsdfdsfaf24ff",
-            orderNumber: "20211205-131812-02",
-            orderLines: 1,
-            supplierName: "Norwegian Supplier ApS",
-            status: "Downloaded",
-        },
-    ]
-
     return (
         <>
             {showSuccess && (
                 <Alert severity="success" variant={"outlined"} style={{marginBottom: "1em", marginTop: "1em"}}>
                     <AlertTitle>Success</AlertTitle>
-                    <div>{orderDataList.length} order{orderDataList.length > 1 ? 's' : ''} in the basket are successfully generated and scheduled for sending.</div>
+                    <div>{orderList.length} order{orderList.length > 1 ? 's' : ''} in the basket {orderList.length > 1 ? 'are' : 'is'} successfully generated and scheduled for sending.</div>
                     <div style={{marginTop: "10px"}}>You can either:
                         <ul>
                             <li>copy and save link to the whole basket with all orders to track their status together;</li>
@@ -58,6 +41,7 @@ export default function BasketSendResult(props) {
                             <li>download each order in XML format separately.</li>
                         </ul>
                     </div>
+                    <Button variant={"outlined"} color={"primary"} size={"small"}>Close</Button>
                 </Alert>
             )}
 
