@@ -1,6 +1,6 @@
 import {makeStyles} from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-import {Button} from "@material-ui/core";
+import {Button, IconButton} from "@material-ui/core";
 import React from "react";
 import {Alert, AlertTitle} from "@material-ui/lab";
 import TableContainer from "@material-ui/core/TableContainer";
@@ -12,6 +12,7 @@ import TableCell from "@material-ui/core/TableCell";
 import {StyledTableCell, StyledTableRow} from "../pages/ProductListPage";
 import {DataRow, DataView} from "./ProductDetail";
 import {useHistory} from "react-router";
+import CloseIcon from "@material-ui/icons/Close";
 
 export default function BasketSendResult(props) {
 
@@ -34,12 +35,20 @@ export default function BasketSendResult(props) {
         push('/order/' + rowId);
     }
 
+    const closeAlertAction = () => setStateShowSuccess(false);
+
     const classes = useStyles();
 
     return (
         <>
             {stateShowSuccess && (
-                <Alert severity="success" variant={"outlined"} style={{marginBottom: "1em", marginTop: "1em"}}>
+                <Alert severity="success" variant={"outlined"} style={{marginBottom: "1em", marginTop: "1em"}} action={
+                    <IconButton aria-label="Close info" onClick={() => {
+                        closeAlertAction()
+                    }}>
+                        <CloseIcon/>
+                    </IconButton>
+                }>
                     <AlertTitle>Success</AlertTitle>
                     <div>{orderList.length} order{orderList.length > 1 ? 's' : ''} in the basket {orderList.length > 1 ? 'are' : 'is'} successfully generated and scheduled for sending.</div>
                     <div style={{marginTop: "10px"}}>You can either:
