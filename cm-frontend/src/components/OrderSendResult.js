@@ -12,12 +12,15 @@ import {StyledTableCell, StyledTableRow} from "../pages/ProductListPage";
 import {DataRow, DataView} from "./ProductDetail";
 import {useHistory} from "react-router";
 import {ViewToggle} from "../pages/ProductDetailPage";
+import SmallSnackbar from "./SmallSnackbar";
+import {copyCurrentUrlToClipboard} from "../services/ClipboardService";
 
 export default function OrderSendResult(props) {
 
     const {sentOrderData} = props;
 
     const [viewMode, setViewMode] = React.useState("table");
+    const [showSnackBar, setShowSnackBar] = React.useState(false);
 
     const handleViewChange = (event) => {
         setViewMode(event.target.value);
@@ -28,6 +31,7 @@ export default function OrderSendResult(props) {
             marginBottom: theme.spacing(2),
         },
     }));
+
 
     const classes = useStyles();
 
@@ -52,7 +56,7 @@ export default function OrderSendResult(props) {
                 <DataRow name={'Actions'}>
                     <Button variant={"outlined"} size={"small"} color="primary" style={{marginRight: '1em'}} onClick={() => showBasketDetails(sentOrderData.basketId)}>View basket</Button>
                     <Button variant={"outlined"} size={"small"} color="primary" style={{marginRight: '1em'}}>Download</Button>
-                    <Button variant={"outlined"} size={"small"} color="primary">Copy link</Button>
+                    <Button variant={"outlined"} size={"small"} color="primary" onClick={() => copyCurrentUrlToClipboard(() => setShowSnackBar(true))}>Copy link</Button>
                 </DataRow>
             </Paper>
 
@@ -60,9 +64,9 @@ export default function OrderSendResult(props) {
 
             <Paper className={classes.paper}>
 
-            {viewMode === "json" ? (
-                <pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>{JSON.stringify(sentOrderData, null, 2)}</pre>
-            ) : (
+                {viewMode === "json" ? (
+                    <pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>{JSON.stringify(sentOrderData, null, 2)}</pre>
+                ) : (
 
                     <TableContainer>
                         <Table size="small" aria-label="Items table">
@@ -87,6 +91,8 @@ export default function OrderSendResult(props) {
                 )}
 
             </Paper>
+
+            <SmallSnackbar opened={showSnackBar} hide={() => setShowSnackBar(false)}/>
         </>
 
     )
