@@ -1,10 +1,18 @@
 import Axios from "axios";
+import {API_URL} from "./DataServiceConfig"
 
-//const apiUrl = "http://localhost:8080/api";
-const apiUrl = "/dcm/api";
+Axios.defaults.timeout = 10000;
+
+const apiUrl = API_URL;
 
 const fetchProductDetails = (productId) => {
-    return fetch(apiUrl + "/products/" + productId);
+    return Axios.get(apiUrl + "/products/" + productId);
+}
+const fetchSentBasketData = (basketId) => {
+    return Axios.get(apiUrl + "/basket/" + basketId);
+}
+const fetchSentOrderData = (orderId) => {
+    return Axios.get(apiUrl + "/order/" + orderId);
 }
 
 const fetchProducts = (search, page = 0, size = 20) => {
@@ -42,6 +50,8 @@ const DataService = {
     fetchProducts,
     fetchProductsByIds,
     sendBasket,
+    fetchSentBasketData,
+    fetchSentOrderData,
     uploadFiles,
 }
 

@@ -46,18 +46,22 @@ export default function ProductDetailPage(props) {
     const [viewMode, setViewMode] = React.useState("table");
 
     React.useEffect(() => {
-        loadProduct(id);
+        loadProduct(id).finally(() => setDataLoading(false));
     }, [id]);
 
     async function loadProduct(id) {
         setDataLoading(true);
-        const response = await DataService.fetchProductDetails(id);
-        let res = await response.json();
-        if (Array.isArray(res)) {
-            res = MergeService.mergeProducts(res);
-        }
-        setData(res);
-        setDataLoading(false);
+        await DataService.fetchProductDetails(id).then(response => {
+            let res = response.data;
+            if (Array.isArray(res)) {
+                res = MergeService.mergeProducts(res);
+            }
+            setData(res);
+        }).catch((error) => {
+            setData(null);
+            console.log('Error occurred: ' + error.message);
+            // setErrorMessage(error.message);
+        });
     }
 
     const handleViewChange = (event) => {
@@ -75,12 +79,18 @@ export default function ProductDetailPage(props) {
                     <CircularProgress/>
                 ) : (
                     <>
-                        {viewMode === "json" ? (
-                            <pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>{JSON.stringify(data, null, 2)}</pre>
+                        {data !== null ? (
+                            <>
+                                {viewMode === "json" ? (
+                                    <pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>{JSON.stringify(data, null, 2)}</pre>
+                                ) : (
+                                    <ProductDetail product={data} {...props} />
+                                )
+                                }
+                            </>
                         ) : (
-                            <ProductDetail product={data} {...props} />
-                        )
-                        }
+                            <div>Product not found</div>
+                        )}
                     </>
                 )}
             </Paper>
