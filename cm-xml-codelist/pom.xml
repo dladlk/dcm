@@ -61,9 +61,6 @@
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<packageName>dk.erst.cm.xml.syntax.codelist</packageName>
-					<sources>
-						<source>../cm-resources/structure/codelist-1.xsd</source>
-					</sources>
 					<arguments>
 						<argument>-Xcommons-lang</argument>
 					</arguments>

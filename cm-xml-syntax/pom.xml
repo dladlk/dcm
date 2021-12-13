@@ -53,9 +53,6 @@
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<packageName>dk.erst.cm.xml.syntax.structure</packageName>
-					<sources>
-						<source>../cm-resources/structure/structure-1.xsd</source>
-					</sources>
 					<arguments>
 						<argument>-Xcommons-lang</argument>
 					</arguments>
