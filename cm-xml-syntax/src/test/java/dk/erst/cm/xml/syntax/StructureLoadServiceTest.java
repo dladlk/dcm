@@ -18,8 +18,6 @@ import org.junit.jupiter.api.Test;
 import dk.erst.cm.xml.syntax.structure.AttributeType;
 import dk.erst.cm.xml.syntax.structure.ElementType;
 import dk.erst.cm.xml.syntax.structure.StructureType;
-import lombok.Getter;
-import lombok.Setter;
 
 public class StructureLoadServiceTest {
 
@@ -58,7 +56,7 @@ public class StructureLoadServiceTest {
 		for (String[] strings : structures) {
 			String pathname = rootPath + "/" + strings[0];
 			StructureType s;
-			try (InputStream is = new FileInputStream(new File(pathname))) {
+			try (InputStream is = new FileInputStream(pathname)) {
 				s = service.loadStructure(is, pathname);
 			} catch (Exception e) {
 				throw new IllegalStateException("Failed to load Peppol Catalogue structure by path " + pathname, e);
@@ -95,9 +93,12 @@ public class StructureLoadServiceTest {
 	}
 
 	private static class StructureDumpService {
-		@Getter
-		@Setter
+
 		private boolean removeTagNsAlias = false;
+
+		public void setRemoveTagNsAlias(boolean removeTagNsAlias) {
+			this.removeTagNsAlias = removeTagNsAlias;
+		}
 
 		public String dump(StructureType s) {
 			StringBuilder sb = new StringBuilder();

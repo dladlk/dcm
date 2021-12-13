@@ -49,7 +49,7 @@ public enum CodeListStandard {
 
 	UNECERec20("UNECERec20-11e"),
 
-	EAS("EAS", "eas"),
+	EAS("eas", "EAS"),
 
 	EHF1_ActionCode_documentLevel("ehf-postaward-g2/actioncode-documentlevel", "Actioncodedocumentlevel"),
 

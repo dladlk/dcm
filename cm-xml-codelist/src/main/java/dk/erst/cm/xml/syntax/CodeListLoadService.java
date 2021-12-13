@@ -22,10 +22,11 @@ public class CodeListLoadService {
 
 	public CodeList loadCodeList(CodeListStandard standard) {
 		String pathname = "../cm-resources/structure/codelist/" + standard.getResourceName() + ".xml";
-		try (InputStream is = new FileInputStream(new File(pathname))) {
+		File file = new File(pathname);
+		try (InputStream is = new FileInputStream(file)) {
 			return this.loadStructure(is, pathname);
 		} catch (Exception e) {
-			throw new IllegalStateException("Failed to load code list standard " + standard + " by path " + pathname, e);
+			throw new IllegalStateException("Failed to load code list standard " + standard + " by path " + pathname + " resovled to " + file.getAbsolutePath(), e);
 		}
 	}
 }

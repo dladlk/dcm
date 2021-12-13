@@ -54,6 +54,10 @@ export default function Banner(props) {
                     <li>related items</li>
                   </ul>
                 </Box>
+                <Box flex="1" maxWidth = "500px">
+                  Products can be added to basket and sent as BIS3 Orders for demo purposes, generated orders can be downloaded as XML, delivery status and potential OrderResponse
+                  can be checked by direct link.
+                </Box>
               </Box>
               <Button size="small" color="primary" variant="outlined" onClick={() => { closeAction() }}>
                 Close
