@@ -1,9 +1,12 @@
 package dk.erst.cm.webapi;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import dk.erst.cm.api.data.ProductCatalogUpdate;
+import dk.erst.cm.api.item.LoadCatalogService;
+import dk.erst.cm.api.load.PeppolLoadService;
+import dk.erst.cm.webapi.FileUploadConsumer.LineAction;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import dk.erst.cm.api.data.ProductCatalogUpdate;
-import dk.erst.cm.api.item.LoadCatalogService;
-import dk.erst.cm.api.load.PeppolLoadService;
-import dk.erst.cm.webapi.FileUploadConsumer.LineAction;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(maxAge = 3600)
@@ -34,8 +32,8 @@ public class UploadController {
 	private LoadCatalogService loadCatalogService;
 
 	@PostMapping(value = "/api/upload")
-	public ResponseEntity<List<UploadResult>> upload(@RequestParam("files") MultipartFile files[], RedirectAttributes redirectAttributes) {
-		List<UploadResult> uploadResultList = new ArrayList<UploadController.UploadResult>();
+	public ResponseEntity<List<UploadResult>> upload(@RequestParam("files") MultipartFile[] files) {
+		List<UploadResult> uploadResultList = new ArrayList<>();
 		for (MultipartFile file : files) {
 			UploadResult ur = new UploadResult();
 			ur.setFileName(file.getOriginalFilename());

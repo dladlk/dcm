@@ -30,7 +30,7 @@ const StyledTableRow = withStyles((theme) => ({
 }))(TableRow);
 
 function QuantityControl(props) {
-    const {productId, quantity, changeBasket} = props;
+    const {productId, quantity, changeBasket, lockControls} = props;
 
     const changeQuantity = (e, quantityChange) => {
         e.stopPropagation();
@@ -47,11 +47,11 @@ function QuantityControl(props) {
             e.stopPropagation();
             return false;
         }}>
-            <Fab color="default" aria-label="Decrease quantity" size="small" title={"Decrease quantity"}>
+            <Fab color="default" aria-label="Decrease quantity" size="small" title={"Decrease quantity"} disabled={lockControls}>
                 <RemoveIcon onClick={(e) => changeQuantity(e, -1)}/>
             </Fab>
             <span style={{padding: '10px', display: 'inline-block', width: '50px', textAlign: 'center'}}>{quantity}</span>
-            <Fab color="default" aria-label="Increase quantity" size="small" title={"Increase quantity"}>
+            <Fab color="default" aria-label="Increase quantity" size="small" title={"Increase quantity"} disabled={lockControls}>
                 <AddIcon onClick={(e) => changeQuantity(e, 1)}/>
             </Fab>
         </div>
@@ -60,7 +60,7 @@ function QuantityControl(props) {
 
 export default function OrderLineList(props) {
 
-    const {basketData, showRowDetails, changeBasket, productList} = props;
+    const {basketData, showRowDetails, changeBasket, productList, lockControls, errorProductIdSet} = props;
 
     const useStyles = makeStyles((theme) => ({
         paper: {
@@ -71,6 +71,10 @@ export default function OrderLineList(props) {
         table: {
             minWidth: 600,
         },
+        errorLine: {
+            textDecoration: "line-through",
+            color: theme.palette.error.main,
+        }
     }));
 
     const classes = useStyles();
@@ -80,6 +84,10 @@ export default function OrderLineList(props) {
             return productList[productId].document.item;
         }
         return null;
+    }
+
+    const isErrorLine = (productId) => {
+        return productId && errorProductIdSet && errorProductIdSet.has(productId);
     }
 
     return <Paper className={classes.paper}>
@@ -96,9 +104,9 @@ export default function OrderLineList(props) {
                 </TableHead>
                 <TableBody>
                     {!basketData.isEmpty() ? basketData.getOrderLineList().map((orderLine, index) => (
-                        <StyledTableRow key={orderLine.productId} onClick={() => showRowDetails(orderLine.productId)}>
+                        <StyledTableRow key={orderLine.productId} onClick={() => showRowDetails(orderLine.productId)} className={isErrorLine(orderLine.productId) ? classes.errorLine : null}>
                             <TableCell>{(index + 1)}</TableCell>
-                            <TableCell align={"center"}><QuantityControl quantity={orderLine.quantity} productId={orderLine.productId} changeBasket={changeBasket}/></TableCell>
+                            <TableCell align={"center"}><QuantityControl quantity={orderLine.quantity} productId={orderLine.productId} changeBasket={changeBasket} lockControls={lockControls}/></TableCell>
                             <TableCell>{ItemDetailsService.itemName(productItem(orderLine.productId))}</TableCell>
                             <TableCell>{ItemDetailsService.itemStandardNumber(productItem(orderLine.productId))}</TableCell>
                             <TableCell>{ItemDetailsService.itemSellerNumber(productItem(orderLine.productId))}</TableCell>

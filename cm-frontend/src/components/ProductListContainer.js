@@ -8,7 +8,10 @@ import TopNav from "./TopNav";
 import DataService from "../services/DataService";
 import useStickyState from '../utils/useStickyState';
 import {createBasketData} from "./BasketData";
+import {getOrderData} from "./OrderData";
+import SendPage from "../pages/SendPage";
 import BasketPage from "../pages/BasketPage";
+import OrderPage from "../pages/OrderPage";
 
 const currentPosition = (list, id) => {
     if (list._cachedPos) {
@@ -101,12 +104,18 @@ export function ProductListContainer() {
             <Route exact path="/">
                 <ProductListPage list={productList} isLoading={productListLoading} refreshAction={searchAction} page={productListPage} pageSize={productListPageSize} total={productListTotal}/>
             </Route>
-            <Route exact path="/basket">
-                <BasketPage changeBasket={changeBasket} basketData={basketData}/>
+            <Route exact path="/send">
+                <SendPage changeBasket={changeBasket} basketData={basketData} orderData={getOrderData()}/>
             </Route>
             <Route exact path="/upload" component={UploadPage}/>
             <Route path="/product/view/:id">
                 <ProductDetailPage navigator={listNavigator(productList, 1)} changeBasket={changeBasket} basketData={basketData}/>
+            </Route>
+            <Route path="/basket/:id">
+                <BasketPage />
+            </Route>
+            <Route path="/order/:id">
+                <OrderPage />
             </Route>
         </>
     );

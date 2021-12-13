@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function DataRow(props) {
+export function DataRow(props) {
     const { name, children } = props;
 
     const classes = useStyles();
@@ -39,7 +39,7 @@ function DataRow(props) {
     )
 }
 
-function DataView(props) {
+export function DataView(props) {
 
     const _isValueDefined = (value) => value ? true : false;
     // noinspection JSUnusedLocalSymbols
@@ -55,7 +55,7 @@ function DataView(props) {
     )
 }
 
-const isListFilled = (list) => list && list.length > 0 ? true : false;
+const isListFilled = (list) => list && list.length > 0;
 
 function DataListView(props) {
     const _isValueDefined = isListFilled;

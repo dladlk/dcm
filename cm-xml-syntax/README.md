@@ -7,3 +7,5 @@ It allows to have a model of Peppol document types with next information:
 - description
 - validation rules
 - attributes, their code lists, cardinality
+
+structure-1.xsd - copied from <https://github.com/OpenPEPPOL/poacc-upgrade-3/tree/master/structure>
