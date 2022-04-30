@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,18 +98,14 @@ public class BasketService {
 		Set<String> queryProductIdSet = query.basketData.orderLines.keySet();
 		Iterable<Product> products = productService.findAllByIds(queryProductIdSet);
 
-		Set<String> resolvedProductIdSet = new HashSet<String>();
+		Set<String> resolvedProductIdSet = new HashSet<>();
 
 		log.debug("1. Load necessary data for XML generation");
 
 		Map<String, List<Product>> byCatalogMap = new HashMap<>();
 		for (Product p : products) {
 			String productCatalogId = p.getProductCatalogId();
-			List<Product> productList = byCatalogMap.get(productCatalogId);
-			if (productList == null) {
-				productList = new ArrayList<>();
-				byCatalogMap.put(productCatalogId, productList);
-			}
+			List<Product> productList = byCatalogMap.computeIfAbsent(productCatalogId, k -> new ArrayList<>());
 			productList.add(p);
 			resolvedProductIdSet.add(p.getId());
 		}
@@ -116,13 +113,13 @@ public class BasketService {
 		if (resolvedProductIdSet.size() < queryProductIdSet.size()) {
 			int countNotFoundProducts = queryProductIdSet.size() - resolvedProductIdSet.size();
 			String errorMessage = countNotFoundProducts + " product" + (countNotFoundProducts > 1 ? "s are" : "is") + " not found, please delete highlighted products to send the basket.";
-			Set<String> notResolvedProductIdSet = new HashSet<String>(queryProductIdSet);
+			Set<String> notResolvedProductIdSet = new HashSet<>(queryProductIdSet);
 			notResolvedProductIdSet.removeAll(resolvedProductIdSet);
-			return SendBasketResponse.error(errorMessage).withErrorProductIdList(new ArrayList<String>(notResolvedProductIdSet));
+			return SendBasketResponse.error(errorMessage).withErrorProductIdList(new ArrayList<>(notResolvedProductIdSet));
 		}
 
-		Set<String> noSellerCatalogSet = new HashSet<String>();
-		Map<String, Party> sellerPartyByCatalog = new HashMap<String, Party>();
+		Set<String> noSellerCatalogSet = new HashSet<>();
+		Map<String, Party> sellerPartyByCatalog = new HashMap<>();
 		for (String catalogId : byCatalogMap.keySet()) {
 			Party sellerParty = catalogService.loadLastSellerParty(catalogId);
 			if (sellerParty != null) {
@@ -135,10 +132,10 @@ public class BasketService {
 		if (!noSellerCatalogSet.isEmpty()) {
 			int countProductIncompleteSeller = 0;
 
-			List<String> errorProductIdList = new ArrayList<String>();
+			List<String> errorProductIdList = new ArrayList<>();
 			for (String catalogId : noSellerCatalogSet) {
 				List<Product> list = byCatalogMap.get(catalogId);
-				errorProductIdList.addAll(errorProductIdList);
+				errorProductIdList.addAll(list.stream().map(Product::getId).collect(Collectors.toList()));
 				countProductIncompleteSeller += list.size();
 			}
 			String errorMessage = buildErrorMessageNoSellerInfo(byCatalogMap, noSellerCatalogSet, countProductIncompleteSeller);
@@ -154,7 +151,7 @@ public class BasketService {
 		basket.setOrderCount(byCatalogMap.size());
 		basket.setVersion(1);
 
-		List<Order> orderList = new ArrayList<Order>();
+		List<Order> orderList = new ArrayList<>();
 		int orderIndex = 0;
 		for (String catalogId : byCatalogMap.keySet()) {
 			List<Product> productList = byCatalogMap.get(catalogId);
@@ -186,7 +183,7 @@ public class BasketService {
 
 		log.debug("3. Save XML files into temporary folder " + tempDirectory);
 
-		Map<String, Order> fileNameToOrderMap = new HashMap<String, Order>();
+		Map<String, Order> fileNameToOrderMap = new HashMap<>();
 		for (Order order : orderList) {
 			try {
 				File orderFile = orderService.saveOrderXML(tempDirectory, (OrderType) order.getDocument());
@@ -209,8 +206,9 @@ public class BasketService {
 		log.debug("5. Move XML files from temporary folder to destination folder at " + outboxFolder);
 
 		File[] tempFiles = tempDirectory.listFiles();
-		Set<File> notMovedFiles = new HashSet<File>();
-		Set<File> movedFiles = new HashSet<File>();
+		Set<File> notMovedFiles = new HashSet<>();
+		Set<File> movedFiles = new HashSet<>();
+		assert tempFiles != null;
 		for (File file : tempFiles) {
 			File outFile = new File(outboxFolder, file.getName());
 			try {
@@ -243,7 +241,7 @@ public class BasketService {
 			log.error("Failed to delete temporary directory, check that streams are closed: " + tempDirectory);
 		}
 
-		log.debug("7. Basket #" + basket.getId() + " is sent succesfully");
+		log.debug("7. Basket #" + basket.getId() + " is sent successfully");
 
 		return SendBasketResponse.success(basket.getId());
 	}
@@ -292,6 +290,7 @@ public class BasketService {
 
 	private File createTempDirectory(String dirName) {
 		File tempDirectory = new File(FileUtils.getTempDirectory(), dirName);
+		//noinspection ResultOfMethodCallIgnored
 		tempDirectory.mkdirs();
 		return tempDirectory;
 	}
