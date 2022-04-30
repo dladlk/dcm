@@ -1,7 +1,7 @@
 import Axios from "axios";
 import {API_URL} from "./DataServiceConfig"
 
-Axios.defaults.timeout = 10000;
+Axios.defaults.timeout = 30000;
 
 const apiUrl = API_URL;
 
