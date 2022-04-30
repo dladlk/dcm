@@ -326,7 +326,7 @@ public class BasketService {
 		return Optional.empty();
 	}
 
-	public Optional<Order> loadSentOrder(String orderId) {
-		return this.orderService.findOrderById(orderId);
+	public Optional<String> loadSentOrderAsJSON(String orderId) {
+		return this.orderService.findOrderByIdAsJSON(orderId);
 	}
 }

@@ -47,7 +47,7 @@ export default function OrderSendResult(props) {
     return (
         <>
             <Paper className={classes.paper}>
-                <DataView name="Sent" value={sentOrderData.createTime}/>
+                <DataView name="Sent" value={sentOrderData.createTime.$date}/>
                 <DataView name="Status" value={sentOrderData.status}/>
                 <DataView name="Supplier" value={sentOrderData.supplierName}/>
                 <DataView name="Order number" value={sentOrderData.orderNumber}/>
@@ -73,16 +73,18 @@ export default function OrderSendResult(props) {
                             <TableHead>
                                 <TableRow>
                                     <StyledTableCell align="center">Line</StyledTableCell>
+                                    <StyledTableCell align="left">Quantity</StyledTableCell>
                                     <StyledTableCell align="left">Name</StyledTableCell>
                                     <StyledTableCell align="left">Seller number</StyledTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {sentOrderData.document?.orderLine.map((row, index) => (
-                                    <StyledTableRow key={row.lineItem.idvalue} onClick={() => showProductDetails(row.lineItem.idvalue)}>
+                                    <StyledTableRow key={row.lineItem._id.value} onClick={() => showProductDetails(row.lineItem._id.value)}>
                                         <TableCell align={"center"}>{(index + 1)}</TableCell>
-                                        <TableCell>{row.lineItem.item.nameValue}</TableCell>
-                                        <TableCell>{row.lineItem.item.sellersItemIdentification.idvalue}</TableCell>
+                                        <TableCell>{row.lineItem.quantity.value} {row.lineItem.quantity.unitCode}</TableCell>
+                                        <TableCell>{row.lineItem.item.name.value}</TableCell>
+                                        <TableCell>{row.lineItem.item.sellersItemIdentification._id.value}</TableCell>
                                     </StyledTableRow>
                                 ))}
                             </TableBody>

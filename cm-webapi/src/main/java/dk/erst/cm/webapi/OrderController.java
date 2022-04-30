@@ -1,7 +1,11 @@
 package dk.erst.cm.webapi;
 
-import java.util.Optional;
-
+import dk.erst.cm.AppProperties;
+import dk.erst.cm.api.order.BasketService;
+import dk.erst.cm.api.order.BasketService.SendBasketData;
+import dk.erst.cm.api.order.BasketService.SendBasketResponse;
+import dk.erst.cm.api.order.BasketService.SentBasketData;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import dk.erst.cm.AppProperties;
-import dk.erst.cm.api.data.Order;
-import dk.erst.cm.api.order.BasketService;
-import dk.erst.cm.api.order.BasketService.SendBasketData;
-import dk.erst.cm.api.order.BasketService.SendBasketResponse;
-import dk.erst.cm.api.order.BasketService.SentBasketData;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
@@ -55,8 +53,8 @@ public class OrderController {
 	}
 
 	@RequestMapping(value = "/api/order/{id}")
-	public ResponseEntity<Order> getOrderById(@PathVariable("id") String id) {
-		Optional<Order> findById = basketService.loadSentOrder(id);
+	public ResponseEntity<String> getOrderById(@PathVariable("id") String id) {
+		Optional<String> findById = basketService.loadSentOrderAsJSON(id);
 		if (findById.isPresent()) {
 			return new ResponseEntity<>(findById.get(), HttpStatus.OK);
 		}

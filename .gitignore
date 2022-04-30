@@ -53,3 +53,4 @@ log/
 .vscode/
 
 .tomcat/
+.integration/
