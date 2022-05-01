@@ -71,7 +71,10 @@ public class OrderProducerService {
 
 		order.setCustomizationID("urn:fdc:peppol.eu:poacc:trns:order:3");
 		order.setProfileID("urn:fdc:peppol.eu:poacc:bis:order_only:3");
-		order.setUUID(dataOrder.getId());
+		/*
+		 * PEPPOL-T01-B00110 	Document MUST NOT contain elements not part of the data model. 	/Order[1] /UUID[1]
+		 */
+//		order.setUUID(dataOrder.getId());
 		order.setID(dataOrder.getOrderNumber());
 		order.setIssueDate(dataOrder.getCreateTime().atZone(ZoneOffset.UTC).toLocalDate());
 		order.setIssueTime(dataOrder.getCreateTime().atZone(ZoneOffset.UTC).toLocalTime());
