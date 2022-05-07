@@ -5,6 +5,9 @@ Axios.defaults.timeout = 30000;
 
 const apiUrl = API_URL;
 
+const downloadOrderXmlLink = (id) => { return API_URL + "/order/" + id + "/xml"}
+const downloadBasketZipLink = (id) => { return API_URL + "/basket/" + id + "/zip"}
+
 const fetchProductDetails = (productId) => {
     return Axios.get(apiUrl + "/products/" + productId);
 }
@@ -53,6 +56,8 @@ const DataService = {
     fetchSentBasketData,
     fetchSentOrderData,
     uploadFiles,
+    downloadOrderXmlLink,
+    downloadBasketZipLink,
 }
 
 export default DataService;

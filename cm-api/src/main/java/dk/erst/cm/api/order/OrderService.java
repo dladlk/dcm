@@ -93,9 +93,13 @@ public class OrderService {
     public File saveOrderXML(File directory, OrderType sendOrder) throws IOException {
         File tempFile = new File(directory, "delis-cm-" + sendOrder.getIDValue() + ".xml");
         try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(tempFile.toPath()))) {
-            UBL21Writer.order().write(sendOrder, out);
+            saveOrderXMLToStream(sendOrder, out);
         }
         return tempFile;
+    }
+
+    public void saveOrderXMLToStream(OrderType sendOrder, OutputStream out) {
+        UBL21Writer.order().write(sendOrder, out);
     }
 
 }

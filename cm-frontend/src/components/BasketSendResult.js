@@ -15,6 +15,7 @@ import {useHistory} from "react-router";
 import CloseIcon from "@material-ui/icons/Close";
 import SmallSnackbar from "./SmallSnackbar";
 import {copyCurrentUrlToClipboard, copySubUrlToClipboard} from "../services/ClipboardService";
+import DataService from "../services/DataService";
 
 export default function BasketSendResult(props) {
 
@@ -72,7 +73,7 @@ export default function BasketSendResult(props) {
                 <DataView name="Orders" value={basket.orderCount}/>
                 <DataView name="Lines" value={basket.lineCount}/>
                 <DataRow name={'Actions'}>
-                    <Button variant={"outlined"} size={"small"} color="primary" style={{marginRight: '1em'}}>Download all</Button>
+                    <Button variant={"outlined"} size={"small"} color="primary" style={{marginRight: '1em'}} href={DataService.downloadBasketZipLink(basket.id)} target={"_blank"}>Download all</Button>
                     <Button variant={"outlined"} size={"small"} color="primary" onClick={() => copyCurrentUrlToClipboard(() => setShowSnackBar(true))}>Copy basket link</Button>
                 </DataRow>
             </Paper>

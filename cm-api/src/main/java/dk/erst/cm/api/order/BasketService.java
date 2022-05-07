@@ -1,5 +1,6 @@
 package dk.erst.cm.api.order;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
@@ -49,6 +50,7 @@ public class BasketService {
 		this.catalogService = catalogService;
 		this.orderProducerService = orderProducerService;
 	}
+
 
 	@Data
 	public static class SentBasketData {
@@ -327,5 +329,15 @@ public class BasketService {
 
 	public Optional<String> loadSentOrderAsJSON(String orderId) {
 		return this.orderService.findOrderByIdAsJSON(orderId);
+	}
+
+	public Optional<byte[]> loadSentOrderAsXML(String id) {
+		Optional<Order> orderById = this.orderService.findOrderById(id);
+		if (orderById.isPresent() && orderById.get().getDocument() != null) {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			this.orderService.saveOrderXMLToStream((OrderType) orderById.get().getDocument(), out);
+			return Optional.of(out.toByteArray());
+		}
+		return Optional.empty();
 	}
 }

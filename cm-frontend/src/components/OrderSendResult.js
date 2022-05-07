@@ -14,6 +14,8 @@ import {useHistory} from "react-router";
 import {ViewToggle} from "../pages/ProductDetailPage";
 import SmallSnackbar from "./SmallSnackbar";
 import {copyCurrentUrlToClipboard} from "../services/ClipboardService";
+import DataService from "../services/DataService";
+
 
 export default function OrderSendResult(props) {
 
@@ -55,7 +57,7 @@ export default function OrderSendResult(props) {
                 <DataView name="Index in basket" value={(sentOrderData.orderIndex + 1)}/>
                 <DataRow name={'Actions'}>
                     <Button variant={"outlined"} size={"small"} color="primary" style={{marginRight: '1em'}} onClick={() => showBasketDetails(sentOrderData.basketId)}>View basket</Button>
-                    <Button variant={"outlined"} size={"small"} color="primary" style={{marginRight: '1em'}}>Download</Button>
+                    <Button variant={"outlined"} size={"small"} color="primary" style={{marginRight: '1em'}} href={DataService.downloadOrderXmlLink(sentOrderData._id)} target="_blank">Download XML</Button>
                     <Button variant={"outlined"} size={"small"} color="primary" onClick={() => copyCurrentUrlToClipboard(() => setShowSnackBar(true))}>Copy link</Button>
                 </DataRow>
             </Paper>
