@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import dk.erst.cm.api.load.PeppolLoadService;
 import dk.erst.cm.test.TestDocument;
-import dk.erst.cm.webapi.FileUploadConsumer;
+import dk.erst.cm.api.load.handler.FileUploadConsumer;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
