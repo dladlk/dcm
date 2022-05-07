@@ -173,7 +173,7 @@ public class BasketService {
 			PartyInfo buyer = new PartyInfo("5798009882806", "0088", customerOrderData.getBuyerCompany().getRegistrationName());
 			PartyInfo seller = new PartyInfo("5798009882783", "0088", "Danish Company");
 
-			OrderType sendOrder = orderProducerService.generateOrder(order, orderConfig, buyer, seller, productList);
+			OrderType sendOrder = orderProducerService.generateOrder(order, orderConfig, buyer, seller, productList, query.basketData.orderLines);
 			order.setDocument(sendOrder);
 
 			orderList.add(order);

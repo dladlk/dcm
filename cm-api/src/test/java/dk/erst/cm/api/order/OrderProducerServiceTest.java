@@ -10,7 +10,10 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
@@ -57,6 +60,7 @@ class OrderProducerServiceTest {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		List<Product> productList = new ArrayList<Product>();
 		Product product = new Product();
+		product.setId(UUID.randomUUID().toString());
 		CatalogueLine catalogueLine = new CatalogueLine();
 		Item item = new Item();
 		item.setName("Test line");
@@ -78,7 +82,9 @@ class OrderProducerServiceTest {
 
 		OrderDefaultConfig defaultConfig = new OrderDefaultConfig();
 		defaultConfig.setNote("TEST NOTE");
-		OrderType order = service.generateOrder(dataOrder, defaultConfig, buyer, seller, productList);
+		Map<String, Integer> productQuantityMap = new HashMap<String, Integer>();
+		productList.forEach(p -> productQuantityMap.put(p.getId(), 2));
+		OrderType order = service.generateOrder(dataOrder, defaultConfig, buyer, seller, productList, productQuantityMap);
 		IErrorList errorList = UBL21Validator.order().validate(order);
 		if (errorList.isNotEmpty()) {
 			log.error("Found " + errorList.size() + " errors:");

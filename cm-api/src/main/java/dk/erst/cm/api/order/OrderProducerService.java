@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -66,7 +67,7 @@ public class OrderProducerService {
 		}
 	}
 
-	public OrderType generateOrder(Order dataOrder, OrderDefaultConfig defaultConfig, PartyInfo buyer, PartyInfo seller, List<Product> productList) {
+	public OrderType generateOrder(Order dataOrder, OrderDefaultConfig defaultConfig, PartyInfo buyer, PartyInfo seller, List<Product> productList, Map<String, Integer> productQuantityMap) {
 		OrderType order = new OrderType();
 
 		order.setCustomizationID("urn:fdc:peppol.eu:poacc:trns:order:3");
@@ -116,7 +117,11 @@ public class OrderProducerService {
 			OrderLineType line = new OrderLineType();
 			LineItemType lineItem = new LineItemType();
 			lineItem.setID(product.getId());
-			lineItem.setQuantity(BigDecimal.valueOf(1));
+			long quantity = 1;
+			if (productQuantityMap != null && productQuantityMap.containsKey(product.getId())) {
+				quantity = productQuantityMap.get(product.getId());
+			}
+			lineItem.setQuantity(BigDecimal.valueOf(quantity));
 			lineItem.getQuantity().setUnitCode("EA");
 			ItemType item = new ItemType();
 			item.setName(catalogueLine.getItem().getName());
