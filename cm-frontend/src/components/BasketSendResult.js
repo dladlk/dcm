@@ -99,7 +99,7 @@ export default function BasketSendResult(props) {
                                 <TableCell>{row.orderNumber}</TableCell>
                                 <TableCell>{row.lineCount}</TableCell>
                                 <TableCell align={"center"}>
-                                    <Button size={"small"} color="primary">Download</Button>
+                                    <Button size={"small"} color="primary" target={"_blank"} href={DataService.downloadOrderXmlLink(row.id)}>Download</Button>
                                     <Button size={"small"} color="primary" onClick={(e) => copyOrderUrl(e, row.id)}>Copy link</Button>
                                 </TableCell>
                             </StyledTableRow>))}
