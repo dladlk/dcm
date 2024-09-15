@@ -51,3 +51,6 @@ log/
 
 # Skip VisualStudio Code folders
 .vscode/
+
+.tomcat/
+.integration/

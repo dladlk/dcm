@@ -23,7 +23,7 @@ export default function RenderPictureList(props) {
     const classes = useStyles();
 
     return (
-        <GridList className={classes.gridList} cols={3} cellHeight="360">
+        <GridList className={classes.gridList} cols={3} cellHeight={360}>
             {props.specList.map((spec) => (
                 <GridListTile key={spec.attachment.externalReference.uri}>
                     <img src={spec.attachment.externalReference.uri} alt="Product" />

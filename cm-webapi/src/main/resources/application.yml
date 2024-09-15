@@ -1,0 +1,13 @@
+app:
+  integration:
+    inbox-catalogue: ./.integration/inbox/catalogue    
+    inbox-order-response: ./.integration/inbox/order-response
+    outbox-order: ./.integration/outbox/order
+    
+  order:
+    endpointGLN: '5798009882783'
+    note: 'This order is generated for education purposes via Delis Catalogue.'
+
+job.interval:
+  load-catalogue: 10
+  load-order-response: -1

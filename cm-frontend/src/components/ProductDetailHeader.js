@@ -1,7 +1,11 @@
-import { Card, CardContent, Fab, makeStyles, Typography } from "@material-ui/core";
+import {Card, CardContent, Fab, makeStyles, Typography} from "@material-ui/core";
 import ArrowIcon from '@material-ui/icons/KeyboardBackspaceOutlined';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { useHistory } from "react-router";
+import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasketOutlined';
+import {useHistory} from "react-router";
+import React from "react";
+import {getProductBasketButtonTitle, handleProductBasketIconClick} from "./AddToBasket";
+import {ProductBasketStatus} from "./BasketData";
 
 const useStyles = makeStyles(theme => ({
 
@@ -31,16 +35,25 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+// noinspection JSUnusedLocalSymbols
 const _emptyNavigator = {
-    hasNext: (id) => {return false},
-    hasPrevious: (id) => {return false},
-    getNext: (id) => { return null},
-    getPrevious: (id) => { return null},
+    hasNext: (id) => {
+        return false
+    },
+    hasPrevious: (id) => {
+        return false
+    },
+    getNext: (id) => {
+        return null
+    },
+    getPrevious: (id) => {
+        return null
+    },
 }
 
 export default function ProductDetailHeader(prop) {
 
-    const { name, navigator = _emptyNavigator, id, refreshAction } = prop;
+    const {name, navigator = _emptyNavigator, id, refreshAction, basketData, product, changeBasket} = prop;
 
     const classes = useStyles();
 
@@ -54,25 +67,36 @@ export default function ProductDetailHeader(prop) {
         history.push(path);
     }
 
+    const handleIconClick = () => {
+        handleProductBasketIconClick(basketData, product, changeBasket);
+    }
+
+    const getShoppingBasketColor = (product) => {
+        return product && basketData.getProductBasketStatus(product.id) === ProductBasketStatus.Empty ? "default" : "primary";
+    }
+
     return (
-        <Card style={{ marginTop: '16px' }}>
+        <Card style={{marginTop: '16px'}}>
             <CardContent className={classes.cardContent}>
-                <div className={classes.row} >
+                <div className={classes.row}>
                     <div className={classes.header}>
                         <Typography variant="h4">{name}</Typography>
                     </div>
                     <div className={classes.buttons}>
-                        <Fab color="primary" aria-label="Previous" size="small" disabled = {!navigator.hasPrevious(id)} onClick = { () => navigateTo(navigator.getPrevious(id)) } >
-                            <ArrowIcon style={{ transform: 'rotate(90deg)' }} />
+                        <Fab color={getShoppingBasketColor(product)} aria-label={getProductBasketButtonTitle(product)} title={getProductBasketButtonTitle(product)} size="small" onClick={() => handleIconClick()}>
+                            <ShoppingBasketIcon/>
                         </Fab>
-                        <Fab color="primary" aria-label="Next" size="small" disabled = {!navigator.hasNext(id)} onClick = { () => navigateTo(navigator.getNext(id)) } >
-                            <ArrowIcon style={{ transform: 'rotate(270deg)' }} />
+                        <Fab color="primary" aria-label="Previous" title={"Previous product"} size="small" disabled={!navigator.hasPrevious(id)} onClick={() => navigateTo(navigator.getPrevious(id))}>
+                            <ArrowIcon style={{transform: 'rotate(90deg)'}}/>
                         </Fab>
-                        <Fab color="primary" aria-label="Refresh" size="small" onClick={() => refreshAction(id)}>
+                        <Fab color="primary" aria-label="Next" title={"Next product"} size="small" disabled={!navigator.hasNext(id)} onClick={() => navigateTo(navigator.getNext(id))}>
+                            <ArrowIcon style={{transform: 'rotate(270deg)'}}/>
+                        </Fab>
+                        <Fab color="primary" aria-label="Refresh" title={"Refresh product"} size="small" onClick={() => refreshAction(id)}>
                             <RefreshIcon/>
                         </Fab>
-                        <Fab color="primary" aria-label="Back" size="small" onClick={ handleBack }>
-                            <ArrowIcon />
+                        <Fab color="primary" aria-label="Back" title={"Return back to list"} size="small" onClick={handleBack}>
+                            <ArrowIcon/>
                         </Fab>
                     </div>
                 </div>

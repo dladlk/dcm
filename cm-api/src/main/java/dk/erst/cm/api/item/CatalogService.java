@@ -12,6 +12,7 @@ import dk.erst.cm.api.dao.mongo.ProductRepository;
 import dk.erst.cm.api.data.ProductCatalog;
 import dk.erst.cm.api.data.ProductCatalogUpdate;
 import dk.erst.cm.xml.ubl21.model.Catalogue;
+import dk.erst.cm.xml.ubl21.model.NestedParty;
 import dk.erst.cm.xml.ubl21.model.Party;
 import dk.erst.cm.xml.ubl21.model.SchemeID;
 import lombok.extern.slf4j.Slf4j;
@@ -70,6 +71,43 @@ public class CatalogService {
 		}
 
 		return c;
+	}
+
+	public Party loadLastSellerParty(String productCatalogId) {
+
+		log.debug("Requested to load last seller party for productCatalog " + productCatalogId);
+
+		long start = System.currentTimeMillis();
+		ProductCatalogUpdate catalogUpdate = productCatalogUpdateRepository.findTop1ByProductCatalogIdOrderByCreateTimeDesc(productCatalogId);
+		long duration = System.currentTimeMillis() - start;
+		if (duration > 50) {
+			log.warn("LastSellerParty Mongo lookup by " + productCatalogId + " took more than 50ms: " + 50);
+		}
+
+		if (catalogUpdate != null && catalogUpdate.getDocument() != null) {
+			if (catalogUpdate.getDocument() instanceof Catalogue) {
+				Catalogue document = (Catalogue) catalogUpdate.getDocument();
+
+				if (document.getSellerSupplierParty() != null) {
+					NestedParty sellerSupplierParty = document.getSellerSupplierParty();
+					if (sellerSupplierParty != null && sellerSupplierParty.getParty() != null) {
+						log.debug("LastSellerParty found by document.sellerSupplierParty.party for productCatalog " + productCatalogId);
+						return sellerSupplierParty.getParty();
+					}
+				}
+				if (document.getProviderParty() != null) {
+					log.debug("LastSellerParty found by document.providerParty for productCatalog " + productCatalogId);
+					return document.getProviderParty();
+				}
+				log.warn("Neither sellerSupplierParty, nor providerParty are defined by last catalogUpdate by id " + productCatalogId + ": " + document);
+			} else {
+				log.warn("Found catalogUpdate by lastCatalog with id" + productCatalogId + " has unexpected type: " + catalogUpdate.getDocument().getClass());
+			}
+		} else {
+			log.warn("No catalogUpdate found by lastCatalog with id" + productCatalogId);
+		}
+
+		return null;
 	}
 
 	private String buildSellerLocalId(Catalogue catalogue) {

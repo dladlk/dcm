@@ -1,4 +1,4 @@
-import { Box } from "@material-ui/core";
+import {Box} from "@material-ui/core";
 
 const itemOriginCountry = (item) => {
     if (item && item.originCountry) {
@@ -15,6 +15,12 @@ const itemUNSPSC = (item) => {
                 return code.itemClassificationCode.value;
             }
         }
+    }
+    return null;
+}
+const itemName = (item) => {
+    if (item) {
+        return item.name;
     }
     return null;
 }
@@ -95,17 +101,17 @@ const renderItemCertificate = (cert) => {
 }
 const renderItemSpecification = (s) => {
     return (
-        <div>
-            {s.documentTypeCode && (<Box pr={2} display="inline" style={{ fontWeight: "bold" }}>{s.documentTypeCode}</Box>)}
+        <div key={s.attachment.externalReference.uri}>
+            {s.documentTypeCode && (<Box pr={2} display="inline" style={{fontWeight: "bold"}}>{s.documentTypeCode}</Box>)}
             {renderUrl(s.attachment.externalReference.uri)}
         </div>
     )
 }
 const renderItemAdditionalProperty = (s) => {
     return (
-        <div>
-            {s.name && (<span style={{ fontWeight: "bold" }}>{s.name}</span>)}
-            {s.nameCode && (<span style={{ fontWeight: "bold" }}>{' '}{s.nameCode.id}</span>)}
+        <div key={s.name + '_' + s.value}>
+            {s.name && (<span style={{fontWeight: "bold"}}>{s.name}</span>)}
+            {s.nameCode && (<span style={{fontWeight: "bold"}}>{' '}{s.nameCode.id}</span>)}
             {(s.name || s.nameCode) && (":")}
             {s.value && (<span>{' '}{s.value}</span>)}
             {s.valueQuantity && (<span>{' '}{s.valueQuantity.quantity}{' '} {s.valueQuantity.unitCode}</span>)}
@@ -113,11 +119,16 @@ const renderItemAdditionalProperty = (s) => {
     )
 }
 
-const renderUrlListValue = (v) => { return (renderUrl(v.attachment.externalReference.uri)) };
+const renderUrlListValue = (v) => {
+    return (renderUrl(v.attachment.externalReference.uri))
+};
 
-const renderUrl = (v) => { return (<a href={v} rel="noreferrer" target="_blank">{v}</a>) };
+const renderUrl = (v) => {
+    return (<a href={v} rel="noreferrer" target="_blank">{v}</a>)
+};
 
 const ItemDetailsService = {
+    itemName,
     itemOriginCountry,
     itemUNSPSC,
     itemSellerNumber,

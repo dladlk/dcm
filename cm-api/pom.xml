@@ -12,7 +12,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<cm.version>1.0.0</cm.version>
-		<spring.boot.version>2.4.0</spring.boot.version>
+		<spring.boot.version>2.6.7</spring.boot.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
@@ -24,6 +24,13 @@
 			<artifactId>cm-ubl</artifactId>
 			<version>${cm.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.helger.ubl</groupId>
+			<artifactId>ph-ubl21</artifactId>
+			<version>6.6.3</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -33,7 +40,7 @@
 		<dependency>
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
-			<version>4.4</version>
+			<version>5.6</version>
 		</dependency>
 
 		<!-- Commons -->
