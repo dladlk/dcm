@@ -67,7 +67,7 @@ public class TestDocumentGenerator {
 				writer.write(xml.substring(0, lineEnd));
 
 				while (curLen < sizeMB * 1024 * 1024) {
-					writer.write(catalogLinePart);
+					writer.write(catalogLinePart.replace("SUB-53478965", "AP" + countAppended));
 					curLen += catalogLinePart.length();
 					countAppended++;
 				}
@@ -101,6 +101,13 @@ public class TestDocumentGenerator {
 		getTestDocumentFile(TestDocument.CATALOGUE_PEPPOL, 0);
 		getTestDocumentFile(TestDocument.CATALOGUE_PEPPOL, 1);
 		getTestDocumentFile(TestDocument.CATALOGUE_PEPPOL, 1);
+	}
+
+	public static void main(String[] args) throws IOException {
+		System.out.println("Start generation");
+		TestDocumentFile file = TestDocumentGenerator.getTestDocumentFile(TestDocument.CATALOGUE_OIOUBL, 300);
+		System.out.println(file);
+		System.out.println(file.getFile());
 	}
 
 }
